@@ -1,5 +1,5 @@
 const config = Object.freeze({
-  POO_LIMIT: 5,
+  POO_LIMIT: 100,
   EMOJIS: ["🦋", "🐛", "🐈", "🦆", "🐒", "🐢", "🦩", "🦒", "🐀", "🦔"]
 });
 

@@ -74,7 +74,7 @@ const App = () => {
       setIsUiFrozen(false);
     }
     counterCheck();
-  }, [counter, limit]);
+  }, [counter, limit, selectedEmoji]);
 
   return (
     <div className="App">
