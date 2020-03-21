@@ -1,17 +1,17 @@
 image: node:latest
 before_script:
-  - npm ci
+  - yarn install
 cache:
   paths:
     - node_modules/
 test:
   stage: test
   script:
-    - npm run test
+    - yarn run test
 pages:
   stage: deploy
   script:
-    - npm run build
+    - yarn run build
     - rm -rf public && mkdir public
     - mv dist/* public
   artifacts:
