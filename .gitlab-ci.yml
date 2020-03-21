@@ -7,13 +7,13 @@ cache:
 test:
   stage: test
   script:
-    - yarn run test
+    - yarn test
 pages:
   stage: deploy
   script:
-    - yarn run build
+    - yarn build
     - rm -rf public && mkdir public
-    - mv dist/* public
+    - mv build/* public
   artifacts:
     paths:
       - public
