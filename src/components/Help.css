@@ -1,0 +1,19 @@
+.help {
+  display: flex;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 50px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+}
+
+.help .text {
+  display: none;
+}
+
+.help .text.animate {
+  display: block;
+}

@@ -1,0 +1,53 @@
+.button {
+  user-select: none;
+  position: relative;
+  display: flex;
+  font-size: 250px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transform: scale(1, 1);
+}
+
+.button.animate {
+  animation: animalPushAnimation 0.2s;
+}
+
+.poo {
+  user-select: none;
+  position: absolute;
+  font-size: 100px;
+  bottom: 0;
+  opacity: 0;
+}
+
+.poo.animate {
+  animation: pooAnimation 2s;
+}
+
+@keyframes pooAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(200px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+}
+
+@keyframes animalPushAnimation {
+  0% {
+    transform: scale(0.8, 0.8);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}

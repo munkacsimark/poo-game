@@ -1,0 +1,8 @@
+.footer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-size: 12px;
+  color: #fff;
+  text-shadow: 0 0 3px #000;
+}
