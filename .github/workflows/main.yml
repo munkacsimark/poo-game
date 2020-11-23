@@ -1,2 +1,5 @@
-- name: Deploy to GitHub Pages
-  uses: JamesIves/github-pages-deploy-action@3.7.1
+- name: GitHub Pages action
+  uses: peaceiris/actions-gh-pages@v3.7.3
+  with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    publish_dir: ./public
