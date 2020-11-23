@@ -1,2 +1,2 @@
 Give it a try ¯\\\_(ツ)_/¯
-https://munkacsimark.gitlab.io/poo-game/
+https://munkacsimark.github.io/poo-game/
