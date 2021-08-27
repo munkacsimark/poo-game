@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/poo-game/static/css/main.bbfe0c76.chunk.css",
+    "main.js": "/poo-game/static/js/main.4ca3eff3.chunk.js",
+    "main.js.map": "/poo-game/static/js/main.4ca3eff3.chunk.js.map",
+    "runtime-main.js": "/poo-game/static/js/runtime-main.7b4cf086.js",
+    "runtime-main.js.map": "/poo-game/static/js/runtime-main.7b4cf086.js.map",
+    "static/js/2.b99f4a46.chunk.js": "/poo-game/static/js/2.b99f4a46.chunk.js",
+    "static/js/2.b99f4a46.chunk.js.map": "/poo-game/static/js/2.b99f4a46.chunk.js.map",
+    "index.html": "/poo-game/index.html",
+    "static/css/main.bbfe0c76.chunk.css.map": "/poo-game/static/css/main.bbfe0c76.chunk.css.map",
+    "static/js/2.b99f4a46.chunk.js.LICENSE.txt": "/poo-game/static/js/2.b99f4a46.chunk.js.LICENSE.txt",
+    "static/media/09037.f0cc9546.mp3": "/poo-game/static/media/09037.f0cc9546.mp3",
+    "static/media/App.css": "/poo-game/static/media/courtney-kenady.523b2af5.jpg",
+    "static/media/dry-fart.a26510f2.mp3": "/poo-game/static/media/dry-fart.a26510f2.mp3",
+    "static/media/fart-sound.e78f9c37.mp3": "/poo-game/static/media/fart-sound.e78f9c37.mp3",
+    "static/media/perfect-fart.e4945696.mp3": "/poo-game/static/media/perfect-fart.e4945696.mp3"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.7b4cf086.js",
+    "static/js/2.b99f4a46.chunk.js",
+    "static/css/main.bbfe0c76.chunk.css",
+    "static/js/main.4ca3eff3.chunk.js"
+  ]
+}
