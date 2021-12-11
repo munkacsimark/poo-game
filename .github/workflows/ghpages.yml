@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
   workflow_dispatch:
 
@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
-      
+
       - name: Build 🛠
-        run: npm ci && npm run build
+        run: yarn && yarn build
 
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v3
