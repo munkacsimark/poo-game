@@ -12,7 +12,8 @@
 .collectedEmojis {
   display: flex;
   justify-content: center;
-  padding: 10px 20px;
+  flex-wrap: wrap;
+  padding: 5px 20px;
   font-size: 2rem;
   background-color: rgba(0, 0, 0, 0.6);
   width: 100vw;
@@ -26,7 +27,7 @@
   border-radius: 5px;
   padding: 5px;
   width: fit-content;
-  margin: 0 5px;
+  margin: 5px;
   background-color: rgba(83, 83, 83, 0.7);
 }
 
