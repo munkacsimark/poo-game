@@ -32,6 +32,8 @@ const App = () => {
   const [animateHelpClass, setAnimateHelpClass] = useState(false);
   const [collectedEmojis, setCollectedEmojis] = useState([]);
 
+  let fartSound = new Audio(getRandomFart());
+
   const doPoo = () =>
     new Promise((resolve) => {
       setAnimatePooClass(true);
@@ -50,8 +52,8 @@ const App = () => {
       clearTimeout(timeout);
     }, 200);
     setCounter(counter + 1);
-    const fartSound = new Audio(getRandomFart());
     fartSound.play();
+    fartSound = new Audio(getRandomFart());
   };
 
   const openHelp = () => {
