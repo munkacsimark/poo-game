@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/poo-game/static/css/main.d3a149f6.chunk.css",
-    "main.js": "/poo-game/static/js/main.c6862b84.chunk.js",
-    "main.js.map": "/poo-game/static/js/main.c6862b84.chunk.js.map",
+    "main.js": "/poo-game/static/js/main.d43ab60c.chunk.js",
+    "main.js.map": "/poo-game/static/js/main.d43ab60c.chunk.js.map",
     "runtime-main.js": "/poo-game/static/js/runtime-main.e9eb01b3.js",
     "runtime-main.js.map": "/poo-game/static/js/runtime-main.e9eb01b3.js.map",
     "static/js/2.92e98ba4.chunk.js": "/poo-game/static/js/2.92e98ba4.chunk.js",
     "static/js/2.92e98ba4.chunk.js.map": "/poo-game/static/js/2.92e98ba4.chunk.js.map",
     "index.html": "/poo-game/index.html",
-    "precache-manifest.9e41a47d321cdfd48205c15b8216c7b2.js": "/poo-game/precache-manifest.9e41a47d321cdfd48205c15b8216c7b2.js",
+    "precache-manifest.1f6f8943fd60366a924a0997f007a91c.js": "/poo-game/precache-manifest.1f6f8943fd60366a924a0997f007a91c.js",
     "service-worker.js": "/poo-game/service-worker.js",
     "static/css/main.d3a149f6.chunk.css.map": "/poo-game/static/css/main.d3a149f6.chunk.css.map",
     "static/js/2.92e98ba4.chunk.js.LICENSE.txt": "/poo-game/static/js/2.92e98ba4.chunk.js.LICENSE.txt",
@@ -22,6 +22,6 @@
     "static/js/runtime-main.e9eb01b3.js",
     "static/js/2.92e98ba4.chunk.js",
     "static/css/main.d3a149f6.chunk.css",
-    "static/js/main.c6862b84.chunk.js"
+    "static/js/main.d43ab60c.chunk.js"
   ]
 }
