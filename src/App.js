@@ -6,8 +6,38 @@ import Footer from "./components/Footer";
 import config from "./config";
 import { getRandomFart } from "./assets/farts/farts";
 
-const getRandomEmoji = () =>
-  config.EMOJIS[Math.floor(Math.random() * config.EMOJIS.length)];
+const rarities = {
+  LEGENDARY: "legendary",
+  EPIC: "epic",
+  RARE: "rare",
+  COMMON: "common",
+};
+
+const getRarity = () => {
+  const randomNumber = Math.random() * 100;
+  if (randomNumber < 2) return rarities.LEGENDARY;
+  if (randomNumber >= 2 && randomNumber < 6) return rarities.EPIC;
+  if (randomNumber >= 6 && randomNumber < 21) return rarities.RARE;
+  else return rarities.COMMON;
+};
+
+const getRandomEmoji = (rarity) => {
+  const generatedRarity = rarity || getRarity();
+
+  console.log(">>>", generatedRarity, `FORCED:${rarity}`);
+
+  const configKeyMap = {
+    legendary: "LEGENDARY_EMOJIS",
+    epic: "EPIC_EMOJIS",
+    rare: "RARE_EMOJIS",
+    common: "COMMON_EMOJIS",
+  };
+
+  return config[configKeyMap[generatedRarity]][
+    Math.floor(Math.random() * config[configKeyMap[generatedRarity]].length)
+  ];
+};
+
 const getPooLimit = () => {
   const limit = Math.floor(Math.random() * config.POO_LIMIT) + 1;
   console.log(`LIMIT: ${limit}`);
@@ -25,7 +55,6 @@ const App = () => {
 
   const doPoo = () =>
     new Promise((resolve, reject) => {
-      console.log("POOOOO");
       setAnimatePooClass(true);
       const timeout = setTimeout(() => {
         setAnimatePooClass(false);
