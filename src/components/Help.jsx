@@ -7,10 +7,7 @@ const Help = ({ openHelp, animateHelpClass }) => (
       ❓
     </span>
     <span className={`text ${animateHelpClass ? "animate" : ""}`}>
-      Just push the animal{" "}
-      <span role="img" aria-label="Pointing hand emoji">
-        👉
-      </span>
+      Just push the emoji and collect them all
     </span>
   </div>
 );
