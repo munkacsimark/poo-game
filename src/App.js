@@ -21,10 +21,15 @@ const getRarity = () => {
   else return rarities.COMMON;
 };
 
+const getEmojiRarity = (emoji) => {
+  if (config.LEGENDARY_EMOJIS.includes(emoji)) return rarities.LEGENDARY;
+  if (config.EPIC_EMOJIS.includes(emoji)) return rarities.EPIC;
+  if (config.RARE_EMOJIS.includes(emoji)) return rarities.RARE;
+  return rarities.COMMON;
+};
+
 const getRandomEmoji = (rarity) => {
   const generatedRarity = rarity || getRarity();
-
-  console.log(">>>", generatedRarity, `FORCED:${rarity}`);
 
   const configKeyMap = {
     legendary: "LEGENDARY_EMOJIS",
@@ -38,10 +43,33 @@ const getRandomEmoji = (rarity) => {
   ];
 };
 
-const getPooLimit = () => {
-  const limit = Math.floor(Math.random() * config.POO_LIMIT) + 1;
-  console.log(`LIMIT: ${limit}`);
-  return limit;
+const getPooLimit = () => Math.floor(Math.random() * config.POO_LIMIT) + 1;
+
+const emojiSorter = (a, b) => {
+  const { emoji: emojiA } = a;
+  const { emoji: emojiB } = b;
+  if (emojiA === emojiB) return 0;
+  if (emojiA > emojiB) return 1;
+  return -1;
+};
+
+const emojiRaritySorter = (a, b) => {
+  const { emoji: emojiA } = a;
+  const { emoji: emojiB } = b;
+
+  const rarityMap = {
+    legendary: 3,
+    epic: 2,
+    rare: 1,
+    common: 0,
+  };
+
+  const emojiARarity = rarityMap[getEmojiRarity(emojiA)];
+  const emojiBRarity = rarityMap[getEmojiRarity(emojiB)];
+
+  if (emojiARarity === emojiBRarity) return 0;
+  if (emojiARarity < emojiBRarity) return 1;
+  return -1;
 };
 
 const App = () => {
@@ -52,9 +80,10 @@ const App = () => {
   const [animatePooClass, setAnimatePooClass] = useState(false);
   const [animatePushClass, setAnimatePushClass] = useState(false);
   const [animateHelpClass, setAnimateHelpClass] = useState(false);
+  const [collectedEmojis, setCollectedEmojis] = useState([]);
 
   const doPoo = () =>
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
       setAnimatePooClass(true);
       const timeout = setTimeout(() => {
         setAnimatePooClass(false);
@@ -85,13 +114,19 @@ const App = () => {
 
   useEffect(() => {
     setLimit(getPooLimit());
-    setSelectedEmoji(getRandomEmoji());
+    const emoji = getRandomEmoji(rarities.COMMON);
+    setSelectedEmoji(emoji);
+    setCollectedEmojis([
+      {
+        emoji,
+        pcs: 1,
+      },
+    ]);
   }, []);
 
   useEffect(() => {
     async function counterCheck() {
       setIsUiFrozen(true);
-      console.log(`COUNTER: ${counter}`);
       if (counter === limit) {
         let newEmoji = getRandomEmoji();
         await doPoo();
@@ -99,6 +134,15 @@ const App = () => {
         setLimit(getPooLimit());
         while (newEmoji === selectedEmoji) newEmoji = getRandomEmoji();
         setSelectedEmoji(newEmoji);
+        setCollectedEmojis((emojis) => {
+          const existingEmoji = emojis.find(({ emoji }) => newEmoji === emoji);
+          if (existingEmoji)
+            return [
+              ...emojis.filter(({ emoji }) => emoji !== existingEmoji.emoji),
+              { emoji: existingEmoji.emoji, pcs: existingEmoji.pcs + 1 },
+            ];
+          return [...emojis, { emoji: newEmoji, pcs: 1 }];
+        });
       }
       setIsUiFrozen(false);
     }
@@ -114,6 +158,17 @@ const App = () => {
         selectedEmoji={selectedEmoji}
         doFart={doFart}
       />
+      <div className="collectedEmojis">
+        {collectedEmojis
+          .sort(emojiSorter)
+          .sort(emojiRaritySorter)
+          .map(({ emoji, pcs }) => (
+            <span className={`emoji ${getEmojiRarity(emoji)}`}>
+              {emoji}
+              <span className="emoji-pcs">{pcs}</span>
+            </span>
+          ))}
+      </div>
       <Footer />
     </div>
   );
