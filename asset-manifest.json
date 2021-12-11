@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/poo-game/static/css/main.9c126c73.chunk.css",
+    "main.css": "/poo-game/static/css/main.1a807520.chunk.css",
     "main.js": "/poo-game/static/js/main.d12efd52.chunk.js",
     "main.js.map": "/poo-game/static/js/main.d12efd52.chunk.js.map",
     "runtime-main.js": "/poo-game/static/js/runtime-main.77a9e94b.js",
@@ -8,7 +8,7 @@
     "static/js/2.7f861449.chunk.js": "/poo-game/static/js/2.7f861449.chunk.js",
     "static/js/2.7f861449.chunk.js.map": "/poo-game/static/js/2.7f861449.chunk.js.map",
     "index.html": "/poo-game/index.html",
-    "static/css/main.9c126c73.chunk.css.map": "/poo-game/static/css/main.9c126c73.chunk.css.map",
+    "static/css/main.1a807520.chunk.css.map": "/poo-game/static/css/main.1a807520.chunk.css.map",
     "static/js/2.7f861449.chunk.js.LICENSE.txt": "/poo-game/static/js/2.7f861449.chunk.js.LICENSE.txt",
     "static/media/09037.f0cc9546.mp3": "/poo-game/static/media/09037.f0cc9546.mp3",
     "static/media/App.css": "/poo-game/static/media/courtney-kenady.523b2af5.jpg",
@@ -19,7 +19,7 @@
   "entrypoints": [
     "static/js/runtime-main.77a9e94b.js",
     "static/js/2.7f861449.chunk.js",
-    "static/css/main.9c126c73.chunk.css",
+    "static/css/main.1a807520.chunk.css",
     "static/js/main.d12efd52.chunk.js"
   ]
 }
