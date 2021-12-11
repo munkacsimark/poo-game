@@ -12,6 +12,14 @@ import {
   emojiRaritySorter,
 } from "./helpers";
 import { getRandomFart } from "./assets/farts/farts";
+import config from "./config";
+
+const logEmojis = () => {
+  console.log(`LEGENDARY:${config.LEGENDARY_EMOJIS.length}`);
+  console.log(`EPIC:${config.EPIC_EMOJIS.length}`);
+  console.log(`RARE:${config.RARE_EMOJIS.length}`);
+  console.log(`COMMON:${config.COMMON_EMOJIS.length}`);
+};
 
 const App = () => {
   const [isUiFrozen, setIsUiFrozen] = useState(false);
@@ -54,6 +62,8 @@ const App = () => {
   };
 
   useEffect(() => {
+    logEmojis();
+
     setLimit(getPooLimit());
     const emoji = getRandomEmoji(rarities.COMMON);
     setSelectedEmoji(emoji);
