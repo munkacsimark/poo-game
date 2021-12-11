@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/poo-game/precache-manifest.dbe0768740e498a12adbab886a5a27a6.js"
+  "/poo-game/precache-manifest.4d539dd0fa74fcdf25c4de7c4ddee64d.js"
 );
 
 self.addEventListener('message', (event) => {
