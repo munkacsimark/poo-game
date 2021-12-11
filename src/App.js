@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { setItem, getItem } from "local-data-storage";
 import "./App.css";
 import Help from "./components/Help";
 import PooingEmoji from "./components/PooingEmoji";
@@ -65,14 +66,18 @@ const App = () => {
     logEmojis();
 
     setLimit(getPooLimit());
+
+    const savedCollectedEmojis = getItem(
+      config.COLLECTED_EMOJIS_STORAGE_KEY
+    )?.value;
+    const lastEmoji = getItem(config.LAST_EMOJI_STORAGE_KEY)?.value;
     const emoji = getRandomEmoji(rarities.COMMON);
-    setSelectedEmoji(emoji);
-    setCollectedEmojis([
-      {
-        emoji,
-        pcs: 1,
-      },
-    ]);
+
+    setCollectedEmojis(
+      savedCollectedEmojis ?? [{ emoji: lastEmoji ?? emoji, pcs: 1 }]
+    );
+    setSelectedEmoji(lastEmoji ?? emoji);
+    setItem(config.LAST_EMOJI_STORAGE_KEY, { value: lastEmoji ?? emoji }, true);
   }, []);
 
   useEffect(() => {
@@ -92,7 +97,15 @@ const App = () => {
               ...emojis.filter(({ emoji }) => emoji !== existingEmoji.emoji),
               { emoji: existingEmoji.emoji, pcs: existingEmoji.pcs + 1 },
             ];
-          return [...emojis, { emoji: newEmoji, pcs: 1 }];
+
+          const emojisToSave = [...emojis, { emoji: newEmoji, pcs: 1 }];
+          setItem(
+            config.COLLECTED_EMOJIS_STORAGE_KEY,
+            { value: emojisToSave },
+            true
+          );
+          setItem(config.LAST_EMOJI_STORAGE_KEY, { value: newEmoji }, true);
+          return emojisToSave;
         });
       }
       setIsUiFrozen(false);
@@ -114,7 +127,7 @@ const App = () => {
           .sort(emojiSorter)
           .sort(emojiRaritySorter)
           .map(({ emoji, pcs }) => (
-            <span className={`emoji ${getEmojiRarity(emoji)}`}>
+            <span key={emoji} className={`emoji ${getEmojiRarity(emoji)}`}>
               {emoji}
               <span className="emoji-pcs">{pcs}</span>
             </span>

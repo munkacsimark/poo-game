@@ -170,6 +170,8 @@ const config = Object.freeze({
     "🦞",
   ],
   POO_LIMIT: 100,
+  COLLECTED_EMOJIS_STORAGE_KEY: "collected_emojis",
+  LAST_EMOJI_STORAGE_KEY: "last_emoji",
 });
 
 export default config;
