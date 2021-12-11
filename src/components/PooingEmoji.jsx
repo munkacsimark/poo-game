@@ -5,10 +5,10 @@ const PooingEmoji = ({
   animatePushClass,
   animatePooClass,
   selectedEmoji,
-  doFart
+  doFart,
 }) => {
   return (
-    <div
+    <button
       className={`button ${animatePushClass ? "animate" : ""}`}
       onClick={doFart}
     >
@@ -22,7 +22,7 @@ const PooingEmoji = ({
       <span role="img" aria-label="Random animal emoji">
         {selectedEmoji}
       </span>
-    </div>
+    </button>
   );
 };
 
