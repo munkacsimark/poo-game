@@ -3,10 +3,14 @@
   flex-direction: column;
   background-image: url("./assets/images/courtney-kenady.jpg");
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   justify-content: center;
   align-items: center;
   background-size: cover;
+}
+
+.mainSection {
+  display: flex;
 }
 
 .collectedEmojis {
@@ -41,7 +45,7 @@
   background-color: rgba(49, 138, 255, 0.7);
 }
 
-.emoji-pcs {
+.emojiPcs {
   font-size: 0.8rem;
   display: flex;
   align-items: center;

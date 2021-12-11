@@ -10,6 +10,8 @@
   border: none;
   background-color: transparent;
   margin: 0;
+  height: 80vh;
+  width: 100vw;
 }
 
 .button.animate {

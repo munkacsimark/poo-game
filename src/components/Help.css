@@ -1,5 +1,6 @@
 .help {
   display: flex;
+  align-items: center;
   position: fixed;
   top: 10px;
   left: 10px;

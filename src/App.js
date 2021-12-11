@@ -117,13 +117,15 @@ const App = () => {
 
   return (
     <div className="App">
-      <Help openHelp={openHelp} animateHelpClass={animateHelpClass} />
-      <PooingEmoji
-        animatePushClass={animatePushClass}
-        animatePooClass={animatePooClass}
-        selectedEmoji={selectedEmoji}
-        doFart={doFart}
-      />
+      <div className="mainSection">
+        <Help openHelp={openHelp} animateHelpClass={animateHelpClass} />
+        <PooingEmoji
+          animatePushClass={animatePushClass}
+          animatePooClass={animatePooClass}
+          selectedEmoji={selectedEmoji}
+          doFart={doFart}
+        />
+      </div>
       <div className="collectedEmojis">
         {collectedEmojis
           .sort(emojiSorter)
@@ -131,7 +133,7 @@ const App = () => {
           .map(({ emoji, pcs }) => (
             <span key={emoji} className={`emoji ${getEmojiRarity(emoji)}`}>
               {emoji}
-              <span className="emoji-pcs">{pcs}</span>
+              <span className="emojiPcs">{pcs}</span>
             </span>
           ))}
       </div>
