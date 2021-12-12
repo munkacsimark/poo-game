@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ad8234159861a890849ab23341958943",
+    "revision": "0fb8491bbf4d8fc4b1f63f66fc6b10ed",
     "url": "/poo-game/index.html"
   },
   {
-    "revision": "8d4b37e0bbe6eb340909",
-    "url": "/poo-game/static/css/main.25576dce.chunk.css"
+    "revision": "b786da9062391aec9387",
+    "url": "/poo-game/static/css/main.388b1104.chunk.css"
   },
   {
     "revision": "12707b2eaeb4f1f00cf9",
@@ -16,7 +16,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/poo-game/static/js/2.92e98ba4.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "8d4b37e0bbe6eb340909",
+    "revision": "b786da9062391aec9387",
     "url": "/poo-game/static/js/main.29fcb849.chunk.js"
   },
   {
