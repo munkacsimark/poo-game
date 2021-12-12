@@ -1,0 +1,10 @@
+.info {
+  position: absolute;
+  bottom: 0;
+  font-weight: 700;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  list-style: none;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+}

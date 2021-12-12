@@ -3,6 +3,7 @@ import { setItem, getItem } from "local-data-storage";
 import "./App.css";
 import Help from "./components/Help";
 import PooingEmoji from "./components/PooingEmoji";
+import Info from "./components/Info";
 import Footer from "./components/Footer";
 import {
   rarities,
@@ -31,6 +32,7 @@ const App = () => {
   const [animatePushClass, setAnimatePushClass] = useState(false);
   const [animateHelpClass, setAnimateHelpClass] = useState(false);
   const [collectedEmojis, setCollectedEmojis] = useState([]);
+  const [clicks, setClicks] = useState(0);
 
   let fartSound = new Audio(getRandomFart());
 
@@ -46,14 +48,28 @@ const App = () => {
 
   const doFart = () => {
     if (isUiFrozen) return;
+
     setAnimatePushClass(true);
+
     const timeout = setTimeout(() => {
       setAnimatePushClass(false);
       clearTimeout(timeout);
     }, 200);
+
     setCounter(counter + 1);
+
     fartSound.play();
     fartSound = new Audio(getRandomFart());
+
+    const savedClicks = getItem(config.CLICKS_STORAGE_KEY)?.value;
+    setItem(
+      config.CLICKS_STORAGE_KEY,
+      {
+        value: savedClicks ? savedClicks + 1 : 1,
+      },
+      true
+    );
+    setClicks((currentClicks) => currentClicks + 1);
   };
 
   const openHelp = () => {
@@ -73,13 +89,15 @@ const App = () => {
       config.COLLECTED_EMOJIS_STORAGE_KEY
     )?.value;
     const lastEmoji = getItem(config.LAST_EMOJI_STORAGE_KEY)?.value;
+    const clicks = getItem(config.CLICKS_STORAGE_KEY)?.value;
     const emoji = getRandomEmoji(rarities.COMMON);
 
     setCollectedEmojis(
       savedCollectedEmojis ?? [{ emoji: lastEmoji ?? emoji, pcs: 1 }]
     );
     setSelectedEmoji(lastEmoji ?? emoji);
-    setItem(config.LAST_EMOJI_STORAGE_KEY, { value: lastEmoji ?? emoji }, true);
+    setClicks(clicks ?? 0);
+    //setItem(config.LAST_EMOJI_STORAGE_KEY, { value: lastEmoji ?? emoji }, true);
   }, []);
 
   useEffect(() => {
@@ -125,6 +143,7 @@ const App = () => {
           selectedEmoji={selectedEmoji}
           doFart={doFart}
         />
+        <Info collectedEmojis={collectedEmojis} clicks={clicks} />
       </div>
       <div className="collectedEmojis">
         {collectedEmojis
