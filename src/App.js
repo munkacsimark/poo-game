@@ -5,14 +5,8 @@ import Help from "./components/Help";
 import PooingEmoji from "./components/PooingEmoji";
 import Info from "./components/Info";
 import Footer from "./components/Footer";
-import {
-  rarities,
-  getPooLimit,
-  getRandomEmoji,
-  getEmojiRarity,
-  emojiSorter,
-  emojiRaritySorter,
-} from "./helpers";
+import CollectedEmojis from "./components/CollectedEmojis";
+import { rarities, getPooLimit, getRandomEmoji } from "./helpers";
 import { getRandomFart } from "./assets/farts/farts";
 import config from "./config";
 
@@ -145,17 +139,10 @@ const App = () => {
         />
         <Info collectedEmojis={collectedEmojis} clicks={clicks} />
       </div>
-      <div className="collectedEmojis">
-        {collectedEmojis
-          .sort(emojiSorter)
-          .sort(emojiRaritySorter)
-          .map(({ emoji, pcs }) => (
-            <span key={emoji} className={`emoji ${getEmojiRarity(emoji)}`}>
-              {emoji}
-              <span className="emojiPcs">{pcs}</span>
-            </span>
-          ))}
-      </div>
+      <CollectedEmojis
+        collectedEmojis={collectedEmojis}
+        onSelectEmoji={setSelectedEmoji}
+      />
       <Footer />
     </div>
   );
