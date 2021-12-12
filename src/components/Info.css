@@ -7,4 +7,5 @@
   list-style: none;
   color: #fff;
   border-radius: 0 5px 5px 0;
+  z-index: 1;
 }

@@ -10,8 +10,11 @@
   border: none;
   background-color: transparent;
   margin: 0;
-  height: 80vh;
+  padding: 20vh 0;
   width: 100vw;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  z-index: 0;
 }
 
 .button.animate {
