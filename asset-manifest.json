@@ -1,27 +1,18 @@
 {
   "files": {
-    "main.css": "/poo-game/static/css/main.dcb4b748.chunk.css",
-    "main.js": "/poo-game/static/js/main.afaf3dd4.chunk.js",
-    "main.js.map": "/poo-game/static/js/main.afaf3dd4.chunk.js.map",
-    "runtime-main.js": "/poo-game/static/js/runtime-main.e9eb01b3.js",
-    "runtime-main.js.map": "/poo-game/static/js/runtime-main.e9eb01b3.js.map",
-    "static/js/2.92e98ba4.chunk.js": "/poo-game/static/js/2.92e98ba4.chunk.js",
-    "static/js/2.92e98ba4.chunk.js.map": "/poo-game/static/js/2.92e98ba4.chunk.js.map",
+    "main.css": "/poo-game/static/css/main.53766687.css",
+    "main.js": "/poo-game/static/js/main.ff21384c.js",
+    "static/media/courtney-kenady.jpg": "/poo-game/static/media/courtney-kenady.523b2af5c0d458d12136.jpg",
+    "static/media/09037.mp3": "/poo-game/static/media/09037.f0cc954633b0d344481c.mp3",
+    "static/media/fart-sound.mp3": "/poo-game/static/media/fart-sound.e78f9c375d1731201b7f.mp3",
+    "static/media/perfect-fart.mp3": "/poo-game/static/media/perfect-fart.e4945696fc317129ec56.mp3",
+    "static/media/dry-fart.mp3": "/poo-game/static/media/dry-fart.a26510f2273dd86ae7c6.mp3",
     "index.html": "/poo-game/index.html",
-    "precache-manifest.b5db3ebb3582cf176c6efd3fcfd55d5a.js": "/poo-game/precache-manifest.b5db3ebb3582cf176c6efd3fcfd55d5a.js",
-    "service-worker.js": "/poo-game/service-worker.js",
-    "static/css/main.dcb4b748.chunk.css.map": "/poo-game/static/css/main.dcb4b748.chunk.css.map",
-    "static/js/2.92e98ba4.chunk.js.LICENSE.txt": "/poo-game/static/js/2.92e98ba4.chunk.js.LICENSE.txt",
-    "static/media/09037.mp3": "/poo-game/static/media/09037.c1b7fb75.mp3",
-    "static/media/App.css": "/poo-game/static/media/courtney-kenady.f74cd93b.jpg",
-    "static/media/dry-fart.mp3": "/poo-game/static/media/dry-fart.d28434f1.mp3",
-    "static/media/fart-sound.mp3": "/poo-game/static/media/fart-sound.84eaee60.mp3",
-    "static/media/perfect-fart.mp3": "/poo-game/static/media/perfect-fart.c6becc38.mp3"
+    "main.53766687.css.map": "/poo-game/static/css/main.53766687.css.map",
+    "main.ff21384c.js.map": "/poo-game/static/js/main.ff21384c.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.e9eb01b3.js",
-    "static/js/2.92e98ba4.chunk.js",
-    "static/css/main.dcb4b748.chunk.css",
-    "static/js/main.afaf3dd4.chunk.js"
+    "static/css/main.53766687.css",
+    "static/js/main.ff21384c.js"
   ]
 }
