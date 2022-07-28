@@ -1,19 +1,21 @@
-/*
-galaxyopal: 1
-legendary: 6
-epic: 16
-rare: 45
-uncommon: 80
-common: 150
-*/
+import {
+  galaxyOpalEmojis,
+  legendaryEmojis,
+  epicEmojis,
+  rareEmojis,
+  uncommonEmojis,
+  commonEmojis,
+} from "./emojis";
+
+// TODO refact emoji data handling
 
 const config = Object.freeze({
-  GALAXY_OPAL_EMOJIS: ["💩"],
-  LEGENDARY_EMOJIS: ["L"],
-  EPIC_EMOJIS: ["E"],
-  RARE_EMOJIS: ["R"],
-  UNCOMMON_EMOJIS: ["UC"],
-  COMMON_EMOJIS: ["C"],
+  GALAXY_OPAL_EMOJIS: galaxyOpalEmojis,
+  LEGENDARY_EMOJIS: legendaryEmojis,
+  EPIC_EMOJIS: epicEmojis,
+  RARE_EMOJIS: rareEmojis,
+  UNCOMMON_EMOJIS: uncommonEmojis,
+  COMMON_EMOJIS: commonEmojis,
   POO_LIMIT: 3,
   COLLECTED_EMOJIS_STORAGE_KEY: "collected_emojis",
   LAST_EMOJI_STORAGE_KEY: "last_emoji",
