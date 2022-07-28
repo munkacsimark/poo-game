@@ -1,12 +1,13 @@
-import React from "react";
-import "./Help.css";
+import styles from "./Help.module.css";
 
 const Help = ({ openHelp, animateHelpClass }) => (
-  <div className="help" onClick={openHelp}>
+  <div className={styles.help} onClick={openHelp}>
     <span role="img" aria-label="Question mark emoji">
       ❓
     </span>
-    <span className={`text ${animateHelpClass ? "animate" : ""}`}>
+    <span
+      className={`${styles.text} ${animateHelpClass ? styles.animateText : ""}`}
+    >
       Just push the emoji and collect them all
     </span>
   </div>

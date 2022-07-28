@@ -1,5 +1,4 @@
-import React from "react";
-import "./PooingEmoji.css";
+import styles from "./PooingEmoji.module.css";
 
 const PooingEmoji = ({
   animatePushClass,
@@ -9,11 +8,13 @@ const PooingEmoji = ({
 }) => {
   return (
     <button
-      className={`button ${animatePushClass ? "animate" : ""}`}
+      className={`${styles.button} ${
+        animatePushClass ? styles.animateButton : ""
+      }`}
       onClick={doFart}
     >
       <span
-        className={`poo ${animatePooClass ? "animate" : ""}`}
+        className={`${styles.poo} ${animatePooClass ? styles.animatePoo : ""}`}
         role="img"
         aria-label="Poo emoji"
       >

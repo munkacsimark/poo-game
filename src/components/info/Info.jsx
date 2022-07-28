@@ -1,9 +1,8 @@
-import React from "react";
-import { rarities, getEmojiRarity } from "../helpers";
-import "./Info.css";
+import { rarities, getEmojiRarity } from "../../helpers";
+import styles from "./Info.module.css";
 
 const Info = ({ collectedEmojis, clicks }) => (
-  <ul className="info">
+  <ul className={styles.info}>
     <li>{`Clicks: ${clicks}`}</li>
     <li>{`Legendary: ${
       collectedEmojis.filter(

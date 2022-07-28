@@ -12,10 +12,10 @@
   z-index: 1;
 }
 
-.help .text {
+.text {
   display: none;
 }
 
-.help .text.animate {
+.animateText {
   display: block;
 }

@@ -17,7 +17,7 @@
   z-index: 0;
 }
 
-.button.animate {
+.animateButton {
   animation: animalPushAnimation 0.2s;
 }
 
@@ -29,7 +29,7 @@
   opacity: 0;
 }
 
-.poo.animate {
+.animatePoo {
   animation: pooAnimation 2s;
 }
 

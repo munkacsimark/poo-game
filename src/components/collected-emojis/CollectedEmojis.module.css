@@ -27,13 +27,13 @@
   transform: rotateZ(10deg);
 }
 
-.emoji.legendary {
+.legendary {
   background-color: rgba(255, 187, 0, 0.7);
 }
-.emoji.epic {
+.epic {
   background-color: rgba(153, 0, 255, 0.7);
 }
-.emoji.rare {
+.rare {
   background-color: rgba(49, 138, 255, 0.7);
 }
 

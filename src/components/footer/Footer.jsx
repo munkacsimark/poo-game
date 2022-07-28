@@ -1,8 +1,7 @@
-import React from "react";
-import "./Footer.css";
+import styles from "./Footer.module.css";
 
 const Footer = () => (
-  <span className="footer">
+  <span className={styles.footer}>
     Background photo by Courtney Kenady on Unsplash
     <br />
     Farts from www.myinstants.com

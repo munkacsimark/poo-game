@@ -1,20 +1,19 @@
-import React from "react";
-import { getEmojiRarity, emojiSorter, emojiRaritySorter } from "../helpers";
-import "./CollectedEmojis.css";
+import { getEmojiRarity, emojiSorter, emojiRaritySorter } from "../../helpers";
+import styles from "./CollectedEmojis.module.css";
 
 const CollectedEmojis = ({ collectedEmojis, onSelectEmoji }) => (
-  <div className="collectedEmojis">
+  <div className={styles.collectedEmojis}>
     {collectedEmojis
       .sort(emojiSorter)
       .sort(emojiRaritySorter)
       .map(({ emoji, pcs }) => (
         <span
           key={emoji}
-          className={`emoji ${getEmojiRarity(emoji)}`}
+          className={`${styles.emoji} ${styles[getEmojiRarity(emoji)]}`}
           onClick={() => onSelectEmoji(emoji)}
         >
           {emoji}
-          <span className="emojiPcs">{pcs}</span>
+          <span className={styles.emojiPcs}>{pcs}</span>
         </span>
       ))}
   </div>

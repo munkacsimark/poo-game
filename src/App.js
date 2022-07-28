@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { setItem, getItem } from "local-data-storage";
-import "./App.css";
-import Help from "./components/Help";
-import PooingEmoji from "./components/PooingEmoji";
-import Info from "./components/Info";
-import Footer from "./components/Footer";
-import CollectedEmojis from "./components/CollectedEmojis";
+import Help from "./components/help/Help";
+import PooingEmoji from "./components/pooing-emoji/PooingEmoji";
+import Info from "./components/info/Info";
+import Footer from "./components/footer/Footer";
+import CollectedEmojis from "./components/collected-emojis/CollectedEmojis";
 import { rarities, getPooLimit, getRandomEmoji } from "./helpers";
 import { getRandomFart } from "./assets/farts/farts";
 import config from "./config";
+import "./App.css";
 
 const logEmojis = () => {
   console.log(`LEGENDARY:${config.LEGENDARY_EMOJIS.length}`);
