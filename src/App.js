@@ -121,13 +121,13 @@ const App = () => {
     <div className="App">
       <div className={styles.mainSection}>
         <Help openHelp={openHelp} animateHelpClass={animateHelpClass} />
+        <Info collectedEmojis={collectedEmojis} clicks={clicks} />
         <PooingEmoji
           animatePushClass={animatePushClass}
           animatePooClass={animatePooClass}
           selectedEmoji={selectedEmoji}
           doFart={doFart}
         />
-        <Info collectedEmojis={collectedEmojis} clicks={clicks} />
       </div>
       <CollectedEmojis
         collectedEmojis={collectedEmojis}

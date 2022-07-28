@@ -1,11 +1,33 @@
 .info {
-  position: absolute;
-  bottom: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
   font-weight: 700;
   background-color: rgba(0, 0, 0, 0.7);
   padding: 10px 20px;
   list-style: none;
   color: #fff;
   border-radius: 0 5px 5px 0;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
   z-index: 1;
+}
+
+.common {
+  color: rgb(var(--common-rgb));
+}
+.uncommon {
+  color: rgb(var(--uncommon-rgb));
+}
+.rare {
+  color: rgb(var(--rare-rgb));
+}
+.epic {
+  color: rgb(var(--epic-rgb));
+}
+.legendary {
+  color: rgb(var(--legendary-rgb));
+}
+.galaxyOpal {
+  color: rgb(var(--galaxy-opal-rgb));
+  text-shadow: 0 0 3px rgba(215, 90, 255, 0.7);
 }
