@@ -8,7 +8,7 @@ import CollectedEmojis from "./components/collected-emojis/CollectedEmojis";
 import { rarities, getPooLimit, getRandomEmoji } from "./helpers";
 import { getRandomFart } from "./assets/farts/farts";
 import config from "./config";
-import styles from "./App.css";
+import styles from "./App.module.css";
 
 const App = () => {
   const [isUiFrozen, setIsUiFrozen] = useState(false);
@@ -118,7 +118,8 @@ const App = () => {
   }, [counter, limit, selectedEmoji]);
 
   return (
-    <div className="App">
+    <div className={styles.app}>
+      <div className={styles.backgroundImage} />
       <div className={styles.mainSection}>
         <Help openHelp={openHelp} animateHelpClass={animateHelpClass} />
         <Info collectedEmojis={collectedEmojis} clicks={clicks} />
