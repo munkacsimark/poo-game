@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { setItem, getItem } from "local-data-storage";
 import "./App.css";
 import Help from "./components/Help";
