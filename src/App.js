@@ -8,7 +8,7 @@ import CollectedEmojis from "./components/collected-emojis/CollectedEmojis";
 import { rarities, getPooLimit, getRandomEmoji } from "./helpers";
 import { getRandomFart } from "./assets/farts/farts";
 import config from "./config";
-import "./App.css";
+import styles from "./App.css";
 
 const logEmojis = () => {
   console.log(`LEGENDARY:${config.LEGENDARY_EMOJIS.length}`);
@@ -129,7 +129,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <div className="mainSection">
+      <div className={styles.mainSection}>
         <Help openHelp={openHelp} animateHelpClass={animateHelpClass} />
         <PooingEmoji
           animatePushClass={animatePushClass}
