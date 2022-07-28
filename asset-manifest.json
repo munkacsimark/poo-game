@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/poo-game/static/css/main.6d76ec0d.css",
-    "main.js": "/poo-game/static/js/main.5827efd2.js",
+    "main.js": "/poo-game/static/js/main.f13b7869.js",
     "static/media/courtney-kenady.jpg": "/poo-game/static/media/courtney-kenady.523b2af5c0d458d12136.jpg",
     "static/media/09037.mp3": "/poo-game/static/media/09037.f0cc954633b0d344481c.mp3",
     "static/media/fart-sound.mp3": "/poo-game/static/media/fart-sound.e78f9c375d1731201b7f.mp3",
@@ -9,10 +9,10 @@
     "static/media/dry-fart.mp3": "/poo-game/static/media/dry-fart.a26510f2273dd86ae7c6.mp3",
     "index.html": "/poo-game/index.html",
     "main.6d76ec0d.css.map": "/poo-game/static/css/main.6d76ec0d.css.map",
-    "main.5827efd2.js.map": "/poo-game/static/js/main.5827efd2.js.map"
+    "main.f13b7869.js.map": "/poo-game/static/js/main.f13b7869.js.map"
   },
   "entrypoints": [
     "static/css/main.6d76ec0d.css",
-    "static/js/main.5827efd2.js"
+    "static/js/main.f13b7869.js"
   ]
 }
