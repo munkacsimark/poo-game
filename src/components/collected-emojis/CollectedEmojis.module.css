@@ -17,7 +17,6 @@
   padding: 5px;
   width: fit-content;
   margin: 5px;
-  background-color: rgba(83, 83, 83, 0.7);
   user-select: none;
   cursor: pointer;
   transition: 0.2s;
@@ -27,14 +26,29 @@
   transform: rotateZ(10deg);
 }
 
-.legendary {
-  background-color: rgba(255, 187, 0, 0.7);
+.common {
+  background-color: rgba(var(--common-rgb), 0.3);
+  box-shadow: inset 0 0 10px 2px rgb(var(--common-rgb));
 }
-.epic {
-  background-color: rgba(153, 0, 255, 0.7);
+.uncommon {
+  background-color: rgba(var(--uncommon-rgb), 0.3);
+  box-shadow: inset 0 0 10px 2px rgb(var(--uncommon-rgb));
 }
 .rare {
-  background-color: rgba(49, 138, 255, 0.7);
+  background-color: rgba(var(--rare-rgb), 0.3);
+  box-shadow: inset 0 0 10px 2px rgb(var(--rare-rgb));
+}
+.epic {
+  background-color: rgba(var(--epic-rgb), 0.3);
+  box-shadow: inset 0 0 10px 2px rgb(var(--epic-rgb));
+}
+.legendary {
+  background-color: rgba(var(--legendary-rgb), 0.3);
+  box-shadow: inset 0 0 10px 2px rgb(var(--legendary-rgb));
+}
+.galaxyOpal {
+  background-color: rgba(var(--galaxy-opal-rgb), 0.3);
+  box-shadow: inset 0 0 10px 2px rgb(var(--galaxy-opal-rgb));
 }
 
 .emojiPcs {

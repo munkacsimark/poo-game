@@ -10,13 +10,6 @@ import { getRandomFart } from "./assets/farts/farts";
 import config from "./config";
 import styles from "./App.css";
 
-const logEmojis = () => {
-  console.log(`LEGENDARY:${config.LEGENDARY_EMOJIS.length}`);
-  console.log(`EPIC:${config.EPIC_EMOJIS.length}`);
-  console.log(`RARE:${config.RARE_EMOJIS.length}`);
-  console.log(`COMMON:${config.COMMON_EMOJIS.length}`);
-};
-
 const App = () => {
   const [isUiFrozen, setIsUiFrozen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState(null);
@@ -75,8 +68,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    logEmojis();
-
     setLimit(getPooLimit());
 
     const savedCollectedEmojis = getItem(
@@ -91,7 +82,6 @@ const App = () => {
     );
     setSelectedEmoji(lastEmoji ?? emoji);
     setClicks(clicks ?? 0);
-    //setItem(config.LAST_EMOJI_STORAGE_KEY, { value: lastEmoji ?? emoji }, true);
   }, []);
 
   useEffect(() => {

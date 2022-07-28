@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { getEmojiRarity } from "../../helpers";
 import styles from "./PooingEmoji.module.css";
 
 const PooingEmoji = ({
@@ -6,6 +8,15 @@ const PooingEmoji = ({
   selectedEmoji,
   doFart,
 }) => {
+  const [reflectionAnimation, setReflectionAnimation] = useState(false);
+
+  useEffect(() => {
+    setReflectionAnimation(true);
+    setTimeout(() => {
+      setReflectionAnimation(false);
+    }, 700);
+  }, [selectedEmoji]);
+
   return (
     <button
       className={`${styles.button} ${
@@ -20,7 +31,13 @@ const PooingEmoji = ({
       >
         💩
       </span>
-      <span role="img" aria-label="Random animal emoji">
+      <span
+        className={`${styles.selectedEmoji} ${
+          styles[getEmojiRarity(selectedEmoji)]
+        } ${reflectionAnimation ? styles.animateBackground : ""}`}
+        role="img"
+        aria-label="Random emoji"
+      >
         {selectedEmoji}
       </span>
     </button>

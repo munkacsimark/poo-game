@@ -34,6 +34,89 @@
   animation: pooAnimation 2s;
 }
 
+.selectedEmoji {
+  background-size: 230% 230%;
+  background-position: 0% 100%;
+  border-radius: 20px;
+}
+.selectedEmoji:not(.animateBackground) {
+  background-image: none;
+}
+
+.animateBackground {
+  animation: reflectionAnimation 0.7s ease-in-out;
+}
+
+.common {
+  background-image: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(var(--common-rgb), 0.6) 50%,
+    transparent 52%,
+    rgba(var(--common-rgb), 0.6) 55%,
+    transparent 60%
+  );
+}
+.uncommon {
+  background-image: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(var(--uncommon-rgb), 0.6) 50%,
+    transparent 52%,
+    rgba(var(--uncommon-rgb), 0.6) 55%,
+    transparent 60%
+  );
+}
+.rare {
+  background-image: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(var(--rare-rgb), 0.6) 50%,
+    transparent 52%,
+    rgba(var(--rare-rgb), 0.6) 55%,
+    transparent 60%
+  );
+}
+.epic {
+  background-image: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(var(--epic-rgb), 0.6) 50%,
+    transparent 52%,
+    rgba(var(--epic-rgb), 0.6) 55%,
+    transparent 60%
+  );
+}
+.legendary {
+  background-image: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(var(--legendary-rgb), 0.6) 50%,
+    transparent 52%,
+    rgba(var(--legendary-rgb), 0.6) 55%,
+    transparent 60%
+  );
+}
+.galaxyOpal {
+  background-image: linear-gradient(
+    45deg,
+    transparent 45%,
+    rgba(var(--galaxy-opal-rgb), 0.6) 50%,
+    transparent 52%,
+    rgba(var(--galaxy-opal-rgb), 0.6) 55%,
+    transparent 60%
+  );
+}
+
+@keyframes reflectionAnimation {
+  0% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% -80%;
+  }
+}
+
 @keyframes pooAnimation {
   0% {
     opacity: 0;

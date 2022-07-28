@@ -1,24 +1,31 @@
 import config from "./config";
 
 const rarities = {
+  GALAXY_OPAL: "galaxyOpal",
   LEGENDARY: "legendary",
   EPIC: "epic",
   RARE: "rare",
+  UNCOMMON: "uncommon",
   COMMON: "common",
 };
 
 const getRarity = () => {
-  const randomNumber = Math.random() * 100;
-  if (randomNumber < 2) return rarities.LEGENDARY;
-  if (randomNumber >= 2 && randomNumber < 6) return rarities.EPIC;
-  if (randomNumber >= 6 && randomNumber < 21) return rarities.RARE;
+  const randomNumber = Math.random() * 233;
+
+  if (randomNumber <= 1) return rarities.GALAXY_OPAL;
+  if (randomNumber > 1 && randomNumber <= 5) return rarities.LEGENDARY;
+  if (randomNumber > 5 && randomNumber <= 13) return rarities.EPIC;
+  if (randomNumber > 13 && randomNumber <= 34) return rarities.RARE;
+  if (randomNumber >= 34 && randomNumber < 89) return rarities.UNCOMMON;
   else return rarities.COMMON;
 };
 
 const getEmojiRarity = (emoji) => {
+  if (config.GALAXY_OPAL_EMOJIS.includes(emoji)) return rarities.GALAXY_OPAL;
   if (config.LEGENDARY_EMOJIS.includes(emoji)) return rarities.LEGENDARY;
   if (config.EPIC_EMOJIS.includes(emoji)) return rarities.EPIC;
   if (config.RARE_EMOJIS.includes(emoji)) return rarities.RARE;
+  if (config.UNCOMMON_EMOJIS.includes(emoji)) return rarities.UNCOMMON;
   return rarities.COMMON;
 };
 
@@ -26,9 +33,11 @@ const getRandomEmoji = (rarity) => {
   const generatedRarity = rarity || getRarity();
 
   const configKeyMap = {
+    galaxyOpal: "GALAXY_OPAL_EMOJIS",
     legendary: "LEGENDARY_EMOJIS",
     epic: "EPIC_EMOJIS",
     rare: "RARE_EMOJIS",
+    uncommon: "UNCOMMON_EMOJIS",
     common: "COMMON_EMOJIS",
   };
 
@@ -52,9 +61,11 @@ const emojiRaritySorter = (a, b) => {
   const { emoji: emojiB } = b;
 
   const rarityMap = {
-    legendary: 3,
-    epic: 2,
-    rare: 1,
+    galaxyOpal: 5,
+    legendary: 4,
+    epic: 3,
+    rare: 2,
+    uncommon: 1,
     common: 0,
   };
 
