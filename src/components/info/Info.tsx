@@ -1,10 +1,17 @@
 import { rarities, getEmojiRarity } from "../../helpers";
 import styles from "./Info.module.css";
 
-const getEmojiNum = (emojis, rarity) =>
-  emojis.filter(({ emoji }) => getEmojiRarity(emoji) === rarity).length;
+const getEmojiNum = (emojis: any, rarity: any) =>
+  emojis.filter(({ emoji }: { emoji: any }) => getEmojiRarity(emoji) === rarity)
+    .length;
 
-const Info = ({ collectedEmojis, clicks }) => (
+const Info = ({
+  collectedEmojis,
+  clicks,
+}: {
+  collectedEmojis: any;
+  clicks: any;
+}) => (
   <ul className={styles.info}>
     <li>{`Clicks: ${clicks}`}</li>
     <hr />

@@ -13,18 +13,18 @@ import styles from "./App.module.css";
 const App = () => {
   const [isUiFrozen, setIsUiFrozen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState(null);
-  const [limit, setLimit] = useState(null);
+  const [limit, setLimit] = useState<null | number>(null);
   const [counter, setCounter] = useState(0);
   const [animatePooClass, setAnimatePooClass] = useState(false);
   const [animatePushClass, setAnimatePushClass] = useState(false);
   const [animateHelpClass, setAnimateHelpClass] = useState(false);
-  const [collectedEmojis, setCollectedEmojis] = useState([]);
+  const [collectedEmojis, setCollectedEmojis] = useState<any[]>([]);
   const [clicks, setClicks] = useState(0);
 
   let fartSound = new Audio(getRandomFart());
 
   const doPoo = () =>
-    new Promise((resolve) => {
+    new Promise<void>((resolve) => {
       setAnimatePooClass(true);
       const timeout = setTimeout(() => {
         setAnimatePooClass(false);

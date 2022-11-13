@@ -7,6 +7,11 @@ const PooingEmoji = ({
   animatePooClass,
   selectedEmoji,
   doFart,
+}: {
+  animatePushClass: any;
+  animatePooClass: any;
+  selectedEmoji: any;
+  doFart: any;
 }) => {
   const [reflectionAnimation, setReflectionAnimation] = useState(false);
 

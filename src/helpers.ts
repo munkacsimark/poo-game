@@ -20,7 +20,7 @@ const getRarity = () => {
   else return rarities.COMMON;
 };
 
-const getEmojiRarity = (emoji) => {
+const getEmojiRarity = (emoji: any) => {
   if (config.GALAXY_OPAL_EMOJIS.includes(emoji)) return rarities.GALAXY_OPAL;
   if (config.LEGENDARY_EMOJIS.includes(emoji)) return rarities.LEGENDARY;
   if (config.EPIC_EMOJIS.includes(emoji)) return rarities.EPIC;
@@ -29,7 +29,7 @@ const getEmojiRarity = (emoji) => {
   return rarities.COMMON;
 };
 
-const getRandomEmoji = (rarity) => {
+const getRandomEmoji = (rarity?: string) => {
   const generatedRarity = rarity || getRarity();
 
   const configKeyMap = {
@@ -41,14 +41,17 @@ const getRandomEmoji = (rarity) => {
     common: "COMMON_EMOJIS",
   };
 
+  // TODO: wtf is this?
+  // @ts-ignore
   return config[configKeyMap[generatedRarity]][
+    // @ts-ignore
     Math.floor(Math.random() * config[configKeyMap[generatedRarity]].length)
   ];
 };
 
 const getPooLimit = () => Math.floor(Math.random() * config.POO_LIMIT) + 1;
 
-const emojiSorter = (a, b) => {
+const emojiSorter = (a: any, b: any) => {
   const { emoji: emojiA } = a;
   const { emoji: emojiB } = b;
   if (emojiA === emojiB) return 0;
@@ -56,7 +59,7 @@ const emojiSorter = (a, b) => {
   return -1;
 };
 
-const emojiRaritySorter = (a, b) => {
+const emojiRaritySorter = (a: any, b: any) => {
   const { emoji: emojiA } = a;
   const { emoji: emojiB } = b;
 
@@ -69,7 +72,9 @@ const emojiRaritySorter = (a, b) => {
     common: 0,
   };
 
+  // @ts-ignore
   const emojiARarity = rarityMap[getEmojiRarity(emojiA)];
+  // @ts-ignore
   const emojiBRarity = rarityMap[getEmojiRarity(emojiB)];
 
   if (emojiARarity === emojiBRarity) return 0;

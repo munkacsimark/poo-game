@@ -1,6 +1,12 @@
 import styles from "./Help.module.css";
 
-const Help = ({ openHelp, animateHelpClass }) => (
+const Help = ({
+  openHelp,
+  animateHelpClass,
+}: {
+  openHelp: any;
+  animateHelpClass: any;
+}) => (
   <div className={styles.help} onClick={openHelp}>
     <span role="img" aria-label="Question mark emoji">
       ❓
