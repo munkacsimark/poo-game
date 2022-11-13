@@ -7,24 +7,28 @@ type CollectedEmoji = {
   pcs: number;
 };
 
-const collectedEmojiSorter = (
-  a: CollectedEmoji,
-  b: CollectedEmoji
+const emojiSorter = (
+  { emoji: emojiA }: CollectedEmoji,
+  { emoji: emojiB }: CollectedEmoji
 ): 0 | 1 | -1 => {
-  const { emoji: emojiA } = a;
-  const { emoji: emojiB } = b;
   if (emojiA === emojiB) return 0;
   if (emojiA > emojiB) return 1;
   return -1;
 };
 
-const collectedEmojiRaritySorter = (
-  a: CollectedEmoji,
-  b: CollectedEmoji
+const emojiPcsCollectedSorter = (
+  { pcs: pcsA }: CollectedEmoji,
+  { pcs: pcsB }: CollectedEmoji
 ): 0 | 1 | -1 => {
-  const { emoji: emojiA } = a;
-  const { emoji: emojiB } = b;
+  if (pcsA === pcsB) return 0;
+  if (pcsA < pcsB) return 1;
+  return -1;
+};
 
+const emojiRaritySorter = (
+  { emoji: emojiA }: CollectedEmoji,
+  { emoji: emojiB }: CollectedEmoji
+): 0 | 1 | -1 => {
   const rarityMap = {
     galaxyOpal: 5,
     legendary: 4,
@@ -51,8 +55,9 @@ const CollectedEmojis = ({
 }) => (
   <div className={styles.collectedEmojis}>
     {collectedEmojis
-      .sort(collectedEmojiSorter)
-      .sort(collectedEmojiRaritySorter)
+      .sort(emojiSorter)
+      .sort(emojiPcsCollectedSorter)
+      .sort(emojiRaritySorter)
       .map(({ emoji, pcs }: CollectedEmoji) => (
         <span
           key={emoji}
