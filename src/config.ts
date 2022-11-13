@@ -1,25 +1,9 @@
-import {
-  galaxyOpalEmojis,
-  legendaryEmojis,
-  epicEmojis,
-  rareEmojis,
-  uncommonEmojis,
-  commonEmojis,
-} from "./emojis";
-
-// TODO refact emoji data handling
-
-const config = Object.freeze({
-  GALAXY_OPAL_EMOJIS: galaxyOpalEmojis,
-  LEGENDARY_EMOJIS: legendaryEmojis,
-  EPIC_EMOJIS: epicEmojis,
-  RARE_EMOJIS: rareEmojis,
-  UNCOMMON_EMOJIS: uncommonEmojis,
-  COMMON_EMOJIS: commonEmojis,
+const config = {
   POO_LIMIT: 60,
   COLLECTED_EMOJIS_STORAGE_KEY: "collected_emojis",
   LAST_EMOJI_STORAGE_KEY: "last_emoji",
   CLICKS_STORAGE_KEY: "clicks",
-});
+  HELP_OPEN_TIMEOUT: 5000, //ms
+} as const;
 
 export default config;

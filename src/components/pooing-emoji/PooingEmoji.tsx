@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Emoji } from "../../emojis";
 import { getEmojiRarity } from "../../helpers";
 import styles from "./PooingEmoji.module.css";
 
@@ -8,12 +9,13 @@ const PooingEmoji = ({
   selectedEmoji,
   doFart,
 }: {
-  animatePushClass: any;
-  animatePooClass: any;
-  selectedEmoji: any;
-  doFart: any;
+  animatePushClass: boolean;
+  animatePooClass: boolean;
+  selectedEmoji: Emoji | null;
+  doFart: () => Promise<void>;
 }) => {
-  const [reflectionAnimation, setReflectionAnimation] = useState(false);
+  const [reflectionAnimation, setReflectionAnimation] =
+    useState<boolean>(false);
 
   useEffect(() => {
     setReflectionAnimation(true);
@@ -36,15 +38,18 @@ const PooingEmoji = ({
       >
         💩
       </span>
-      <span
-        className={`${styles.selectedEmoji} ${
-          styles[getEmojiRarity(selectedEmoji)]
-        } ${reflectionAnimation ? styles.animateBackground : ""}`}
-        role="img"
-        aria-label="Random emoji"
-      >
-        {selectedEmoji}
-      </span>
+      {selectedEmoji && (
+        <span
+          className={`${styles.selectedEmoji} ${
+            /* HACK: css depends on rarity names */
+            styles[getEmojiRarity(selectedEmoji)]
+          } ${reflectionAnimation ? styles.animateBackground : ""}`}
+          role="img"
+          aria-label="Random emoji"
+        >
+          {selectedEmoji}
+        </span>
+      )}
     </button>
   );
 };

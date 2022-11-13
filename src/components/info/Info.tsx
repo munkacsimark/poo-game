@@ -1,16 +1,18 @@
 import { rarities, getEmojiRarity } from "../../helpers";
+import { Rarity } from "../../rarities";
+import { CollectedEmoji } from "../collected-emojis/CollectedEmojis";
 import styles from "./Info.module.css";
 
-const getEmojiNum = (emojis: any, rarity: any) =>
-  emojis.filter(({ emoji }: { emoji: any }) => getEmojiRarity(emoji) === rarity)
+const getEmojiNum = (emojis: CollectedEmoji[], rarity: Rarity): number =>
+  emojis.filter(({ emoji }: CollectedEmoji) => getEmojiRarity(emoji) === rarity)
     .length;
 
 const Info = ({
   collectedEmojis,
   clicks,
 }: {
-  collectedEmojis: any;
-  clicks: any;
+  collectedEmojis: CollectedEmoji[];
+  clicks: number;
 }) => (
   <ul className={styles.info}>
     <li>{`Clicks: ${clicks}`}</li>

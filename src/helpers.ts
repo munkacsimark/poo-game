@@ -1,15 +1,27 @@
 import config from "./config";
+import {
+  CommonEmoji,
+  commonEmojis,
+  Emoji,
+  EpicEmoji,
+  epicEmojis,
+  GalaxyOpalEmoji,
+  galaxyOpalEmojis,
+  isEpicEmoji,
+  isGalaxyOpalEmoji,
+  isLegendaryEmoji,
+  isRareEmoji,
+  isUncommonEmoji,
+  LegendaryEmoji,
+  legendaryEmojis,
+  RareEmoji,
+  rareEmojis,
+  UncommonEmoji,
+  uncommonEmojis,
+} from "./emojis";
+import { rarities, Rarity } from "./rarities";
 
-const rarities = {
-  GALAXY_OPAL: "galaxyOpal",
-  LEGENDARY: "legendary",
-  EPIC: "epic",
-  RARE: "rare",
-  UNCOMMON: "uncommon",
-  COMMON: "common",
-};
-
-const getRarity = () => {
+const getRandomRarity = (): Rarity => {
   const randomNumber = Math.random() * 233;
 
   if (randomNumber <= 1) return rarities.GALAXY_OPAL;
@@ -20,73 +32,59 @@ const getRarity = () => {
   else return rarities.COMMON;
 };
 
-const getEmojiRarity = (emoji: any) => {
-  if (config.GALAXY_OPAL_EMOJIS.includes(emoji)) return rarities.GALAXY_OPAL;
-  if (config.LEGENDARY_EMOJIS.includes(emoji)) return rarities.LEGENDARY;
-  if (config.EPIC_EMOJIS.includes(emoji)) return rarities.EPIC;
-  if (config.RARE_EMOJIS.includes(emoji)) return rarities.RARE;
-  if (config.UNCOMMON_EMOJIS.includes(emoji)) return rarities.UNCOMMON;
+const getEmojiRarity = (emoji: Emoji): Rarity => {
+  if (isGalaxyOpalEmoji(emoji)) return rarities.GALAXY_OPAL;
+  if (isLegendaryEmoji(emoji)) return rarities.LEGENDARY;
+  if (isEpicEmoji(emoji)) return rarities.EPIC;
+  if (isRareEmoji(emoji)) return rarities.RARE;
+  if (isUncommonEmoji(emoji)) return rarities.UNCOMMON;
   return rarities.COMMON;
 };
 
-const getRandomEmoji = (rarity?: string) => {
-  const generatedRarity = rarity || getRarity();
+const getRandomCommonEmoji = (): CommonEmoji =>
+  commonEmojis[Math.floor(Math.random() * commonEmojis.length)];
 
-  const configKeyMap = {
-    galaxyOpal: "GALAXY_OPAL_EMOJIS",
-    legendary: "LEGENDARY_EMOJIS",
-    epic: "EPIC_EMOJIS",
-    rare: "RARE_EMOJIS",
-    uncommon: "UNCOMMON_EMOJIS",
-    common: "COMMON_EMOJIS",
-  };
+const getRandomUncommonEmoji = (): UncommonEmoji =>
+  uncommonEmojis[Math.floor(Math.random() * uncommonEmojis.length)];
 
-  // TODO: wtf is this?
-  // @ts-ignore
-  return config[configKeyMap[generatedRarity]][
-    // @ts-ignore
-    Math.floor(Math.random() * config[configKeyMap[generatedRarity]].length)
-  ];
+const getRandomRareEmoji = (): RareEmoji =>
+  rareEmojis[Math.floor(Math.random() * rareEmojis.length)];
+
+const getRandomEpicEmoji = (): EpicEmoji =>
+  epicEmojis[Math.floor(Math.random() * epicEmojis.length)];
+
+const getRandomLegendaryEmoji = (): LegendaryEmoji =>
+  legendaryEmojis[Math.floor(Math.random() * legendaryEmojis.length)];
+
+const getRandomGalaxyOpalEmoji = (): GalaxyOpalEmoji =>
+  galaxyOpalEmojis[Math.floor(Math.random() * galaxyOpalEmojis.length)];
+
+const getRandomEmoji = (): Emoji => {
+  const rarity: Rarity = getRandomRarity();
+
+  switch (rarity) {
+    case rarities.GALAXY_OPAL:
+      return getRandomGalaxyOpalEmoji();
+    case rarities.LEGENDARY:
+      return getRandomLegendaryEmoji();
+    case rarities.EPIC:
+      return getRandomEpicEmoji();
+    case rarities.RARE:
+      return getRandomRareEmoji();
+    case rarities.UNCOMMON:
+      return getRandomUncommonEmoji();
+    default:
+      return getRandomCommonEmoji();
+  }
 };
 
-const getPooLimit = () => Math.floor(Math.random() * config.POO_LIMIT) + 1;
-
-const emojiSorter = (a: any, b: any) => {
-  const { emoji: emojiA } = a;
-  const { emoji: emojiB } = b;
-  if (emojiA === emojiB) return 0;
-  if (emojiA > emojiB) return 1;
-  return -1;
-};
-
-const emojiRaritySorter = (a: any, b: any) => {
-  const { emoji: emojiA } = a;
-  const { emoji: emojiB } = b;
-
-  const rarityMap = {
-    galaxyOpal: 5,
-    legendary: 4,
-    epic: 3,
-    rare: 2,
-    uncommon: 1,
-    common: 0,
-  };
-
-  // @ts-ignore
-  const emojiARarity = rarityMap[getEmojiRarity(emojiA)];
-  // @ts-ignore
-  const emojiBRarity = rarityMap[getEmojiRarity(emojiB)];
-
-  if (emojiARarity === emojiBRarity) return 0;
-  if (emojiARarity < emojiBRarity) return 1;
-  return -1;
-};
+const getRandomPooLimit = (): number =>
+  Math.floor(Math.random() * config.POO_LIMIT) + 1;
 
 export {
   rarities,
-  getPooLimit,
+  getRandomPooLimit,
+  getRandomCommonEmoji,
   getRandomEmoji,
   getEmojiRarity,
-  emojiSorter,
-  emojiRaritySorter,
 };

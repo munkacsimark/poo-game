@@ -1,5 +1,5 @@
-const galaxyOpalEmojis = ["💩"];
-const legendaryEmojis = ["🪐", "🥷", "🦄", "🎮", "🏜", "📀"];
+const galaxyOpalEmojis = ["💩"] as const;
+const legendaryEmojis = ["🪐", "🥷", "🦄", "🎮", "🏜", "📀"] as const;
 const epicEmojis = [
   "🦩",
   "🙃",
@@ -17,7 +17,7 @@ const epicEmojis = [
   "❤️",
   "🔞",
   "🎓",
-];
+] as const;
 const rareEmojis = [
   "🐷",
   "🐒",
@@ -64,7 +64,7 @@ const rareEmojis = [
   "🦜",
   "🐉",
   "🍄",
-];
+] as const;
 const uncommonEmojis = [
   "🤬",
   "🦷",
@@ -146,7 +146,7 @@ const uncommonEmojis = [
   "🦠",
   "🃏",
   "🧻",
-];
+] as const;
 const commonEmojis = [
   "❤️‍🩹",
   "✏️",
@@ -298,7 +298,42 @@ const commonEmojis = [
   "🦙",
   "🦘",
   "🦒",
-];
+] as const;
+
+const emojis = [
+  ...commonEmojis,
+  ...uncommonEmojis,
+  ...rareEmojis,
+  ...epicEmojis,
+  ...legendaryEmojis,
+  ...galaxyOpalEmojis,
+] as const;
+
+type Emoji = typeof emojis[number];
+type CommonEmoji = typeof commonEmojis[number];
+type UncommonEmoji = typeof uncommonEmojis[number];
+type RareEmoji = typeof rareEmojis[number];
+type EpicEmoji = typeof epicEmojis[number];
+type LegendaryEmoji = typeof legendaryEmojis[number];
+type GalaxyOpalEmoji = typeof galaxyOpalEmojis[number];
+
+const isCommonEmoji = (emoji: Emoji): emoji is CommonEmoji =>
+  commonEmojis.includes(emoji as any);
+
+const isUncommonEmoji = (emoji: Emoji): emoji is UncommonEmoji =>
+  uncommonEmojis.includes(emoji as any);
+
+const isRareEmoji = (emoji: Emoji): emoji is RareEmoji =>
+  rareEmojis.includes(emoji as any);
+
+const isEpicEmoji = (emoji: Emoji): emoji is EpicEmoji =>
+  epicEmojis.includes(emoji as any);
+
+const isLegendaryEmoji = (emoji: Emoji): emoji is LegendaryEmoji =>
+  legendaryEmojis.includes(emoji as any);
+
+const isGalaxyOpalEmoji = (emoji: Emoji): emoji is GalaxyOpalEmoji =>
+  galaxyOpalEmojis.includes(emoji as any);
 
 export {
   galaxyOpalEmojis,
@@ -307,4 +342,19 @@ export {
   rareEmojis,
   uncommonEmojis,
   commonEmojis,
+  isCommonEmoji,
+  isUncommonEmoji,
+  isRareEmoji,
+  isEpicEmoji,
+  isLegendaryEmoji,
+  isGalaxyOpalEmoji,
+};
+export type {
+  Emoji,
+  CommonEmoji,
+  UncommonEmoji,
+  RareEmoji,
+  EpicEmoji,
+  LegendaryEmoji,
+  GalaxyOpalEmoji,
 };
