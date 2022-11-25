@@ -7,7 +7,7 @@ const Help = ({
   openHelp: () => void;
   animateHelpClass: boolean;
 }) => (
-  <div className={styles.help} onClick={openHelp}>
+  <div className={styles.help} onClick={openHelp} onKeyDown={openHelp}>
     <span role="img" aria-label="Question mark emoji">
       ❓
     </span>

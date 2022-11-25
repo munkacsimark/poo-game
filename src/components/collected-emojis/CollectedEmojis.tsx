@@ -75,6 +75,7 @@ const CollectedEmojis = ({
           key={emoji}
           className={`${styles.emoji} ${styles[getEmojiRarity(emoji)]}`}
           onClick={() => onSelectEmoji(emoji)}
+          onKeyDown={() => onSelectEmoji(emoji)}
         >
           {emoji}
           <span className={styles.emojiPcs}>{pcs}</span>
