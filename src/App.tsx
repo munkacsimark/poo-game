@@ -14,8 +14,8 @@ import {
 } from "./helpers";
 import { getRandomFart } from "./assets/farts/farts";
 import config from "./config";
-import styles from "./App.module.css";
 import { Emoji } from "./emojis";
+import * as styles from "./App.module.css";
 
 const App = () => {
   const [isUiFrozen, setIsUiFrozen] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const App = () => {
       {
         value: savedClicks ? savedClicks + 1 : 1,
       },
-      true
+      true,
     );
     setClicks((currentClicks) => currentClicks + 1);
   };
@@ -78,16 +78,16 @@ const App = () => {
     setLimit(getRandomPooLimit());
 
     const savedCollectedEmojis: CollectedEmoji[] | null = getItem(
-      config.COLLECTED_EMOJIS_STORAGE_KEY
+      config.COLLECTED_EMOJIS_STORAGE_KEY,
     )?.value;
     const lastEmoji: Emoji | null = getItem(
-      config.LAST_EMOJI_STORAGE_KEY
+      config.LAST_EMOJI_STORAGE_KEY,
     )?.value;
     const clicks: number | null = getItem(config.CLICKS_STORAGE_KEY)?.value;
     const emoji = getRandomCommonEmoji();
 
     setCollectedEmojis(
-      savedCollectedEmojis ?? [{ emoji: lastEmoji ?? emoji, pcs: 1 }]
+      savedCollectedEmojis ?? [{ emoji: lastEmoji ?? emoji, pcs: 1 }],
     );
     setSelectedEmoji(lastEmoji ?? emoji);
     setClicks(clicks ?? 0);
@@ -117,7 +117,7 @@ const App = () => {
         setItem(
           config.COLLECTED_EMOJIS_STORAGE_KEY,
           { value: emojisToSave },
-          true
+          true,
         );
         setItem(config.LAST_EMOJI_STORAGE_KEY, { value: newEmoji }, true);
 

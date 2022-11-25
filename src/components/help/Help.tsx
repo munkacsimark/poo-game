@@ -1,4 +1,4 @@
-import styles from "./Help.module.css";
+import * as styles from "./Help.module.css";
 
 const Help = ({
   openHelp,

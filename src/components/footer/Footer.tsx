@@ -1,4 +1,4 @@
-import styles from "./Footer.module.css";
+import * as styles from "./Footer.module.css";
 
 const Footer = () => (
   <span className={styles.footer}>

@@ -1,6 +1,6 @@
 import { Emoji } from "../../emojis";
 import { getEmojiRarity } from "../../helpers";
-import styles from "./CollectedEmojis.module.css";
+import * as styles from "./CollectedEmojis.module.css";
 
 type CollectedEmoji = {
   emoji: Emoji;
@@ -9,7 +9,7 @@ type CollectedEmoji = {
 
 const emojiSorter = (
   { emoji: emojiA }: CollectedEmoji,
-  { emoji: emojiB }: CollectedEmoji
+  { emoji: emojiB }: CollectedEmoji,
 ): 0 | 1 | -1 => {
   if (emojiA === emojiB) return 0;
   if (emojiA > emojiB) return 1;
@@ -18,7 +18,7 @@ const emojiSorter = (
 
 const emojiPcsCollectedSorter = (
   { pcs: pcsA }: CollectedEmoji,
-  { pcs: pcsB }: CollectedEmoji
+  { pcs: pcsB }: CollectedEmoji,
 ): 0 | 1 | -1 => {
   if (pcsA === pcsB) return 0;
   if (pcsA < pcsB) return 1;
@@ -27,7 +27,7 @@ const emojiPcsCollectedSorter = (
 
 const emojiRaritySorter = (
   { emoji: emojiA }: CollectedEmoji,
-  { emoji: emojiB }: CollectedEmoji
+  { emoji: emojiB }: CollectedEmoji,
 ): 0 | 1 | -1 => {
   const rarityMap = {
     galaxyOpal: 5,
