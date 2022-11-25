@@ -12,7 +12,9 @@
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
-    "format": "rome format --write ."
+    "format": "rome format --write .",
+    "lint": "rome check --apply-suggested .",
+    "lint-and-format": "pnpm lint & pnpm format"
   },
   "eslintConfig": {
     "extends": "react-app"

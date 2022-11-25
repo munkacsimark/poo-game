@@ -24,20 +24,41 @@ import { rarities, Rarity } from "./rarities";
 const getRandomRarity = (): Rarity => {
   const randomNumber = Math.random() * 233;
 
-  if (randomNumber <= 1) return rarities.GALAXY_OPAL;
-  if (randomNumber > 1 && randomNumber <= 5) return rarities.LEGENDARY;
-  if (randomNumber > 5 && randomNumber <= 13) return rarities.EPIC;
-  if (randomNumber > 13 && randomNumber <= 34) return rarities.RARE;
-  if (randomNumber >= 34 && randomNumber < 89) return rarities.UNCOMMON;
-  else return rarities.COMMON;
+  if (randomNumber <= 1) {
+    return rarities.GALAXY_OPAL;
+  }
+  if (randomNumber > 1 && randomNumber <= 5) {
+    return rarities.LEGENDARY;
+  }
+  if (randomNumber > 5 && randomNumber <= 13) {
+    return rarities.EPIC;
+  }
+  if (randomNumber > 13 && randomNumber <= 34) {
+    return rarities.RARE;
+  }
+  if (randomNumber >= 34 && randomNumber < 89) {
+    return rarities.UNCOMMON;
+  } else {
+    return rarities.COMMON;
+  }
 };
 
 const getEmojiRarity = (emoji: Emoji): Rarity => {
-  if (isGalaxyOpalEmoji(emoji)) return rarities.GALAXY_OPAL;
-  if (isLegendaryEmoji(emoji)) return rarities.LEGENDARY;
-  if (isEpicEmoji(emoji)) return rarities.EPIC;
-  if (isRareEmoji(emoji)) return rarities.RARE;
-  if (isUncommonEmoji(emoji)) return rarities.UNCOMMON;
+  if (isGalaxyOpalEmoji(emoji)) {
+    return rarities.GALAXY_OPAL;
+  }
+  if (isLegendaryEmoji(emoji)) {
+    return rarities.LEGENDARY;
+  }
+  if (isEpicEmoji(emoji)) {
+    return rarities.EPIC;
+  }
+  if (isRareEmoji(emoji)) {
+    return rarities.RARE;
+  }
+  if (isUncommonEmoji(emoji)) {
+    return rarities.UNCOMMON;
+  }
   return rarities.COMMON;
 };
 

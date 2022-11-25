@@ -13,7 +13,7 @@ const Help = ({
     </span>
     <span
       className={`${styles.text}${
-        animateHelpClass ? " " + styles.animateText : ""
+        animateHelpClass ? ` ${styles.animateText}` : ""
       }`}
     >
       Just push the emoji repeatedly and collect them all!

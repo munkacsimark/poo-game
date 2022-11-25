@@ -11,8 +11,12 @@ const emojiSorter = (
   { emoji: emojiA }: CollectedEmoji,
   { emoji: emojiB }: CollectedEmoji,
 ): 0 | 1 | -1 => {
-  if (emojiA === emojiB) return 0;
-  if (emojiA > emojiB) return 1;
+  if (emojiA === emojiB) {
+    return 0;
+  }
+  if (emojiA > emojiB) {
+    return 1;
+  }
   return -1;
 };
 
@@ -20,8 +24,12 @@ const emojiPcsCollectedSorter = (
   { pcs: pcsA }: CollectedEmoji,
   { pcs: pcsB }: CollectedEmoji,
 ): 0 | 1 | -1 => {
-  if (pcsA === pcsB) return 0;
-  if (pcsA < pcsB) return 1;
+  if (pcsA === pcsB) {
+    return 0;
+  }
+  if (pcsA < pcsB) {
+    return 1;
+  }
   return -1;
 };
 
@@ -41,8 +49,12 @@ const emojiRaritySorter = (
   const emojiARarity = rarityMap[getEmojiRarity(emojiA)];
   const emojiBRarity = rarityMap[getEmojiRarity(emojiB)];
 
-  if (emojiARarity === emojiBRarity) return 0;
-  if (emojiARarity < emojiBRarity) return 1;
+  if (emojiARarity === emojiBRarity) {
+    return 0;
+  }
+  if (emojiARarity < emojiBRarity) {
+    return 1;
+  }
   return -1;
 };
 

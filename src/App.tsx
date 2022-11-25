@@ -41,7 +41,9 @@ const App = () => {
     });
 
   const doFart = async (): Promise<void> => {
-    if (isUiFrozen) return;
+    if (isUiFrozen) {
+      return;
+    }
 
     setAnimatePushClass(true);
 
@@ -95,7 +97,9 @@ const App = () => {
 
   useEffect(() => {
     const counterCheck = async (): Promise<void> => {
-      if (counter !== limit) return;
+      if (counter !== limit) {
+        return;
+      }
 
       setIsUiFrozen(true);
 
@@ -103,15 +107,18 @@ const App = () => {
       await doPoo();
       setCounter(0);
       setLimit(getRandomPooLimit());
-      while (newEmoji === selectedEmoji) newEmoji = getRandomEmoji();
+      while (newEmoji === selectedEmoji) {
+        newEmoji = getRandomEmoji();
+      }
       setSelectedEmoji(newEmoji);
       setCollectedEmojis((emojis) => {
         const existingEmoji = emojis.find(({ emoji }) => newEmoji === emoji);
-        if (existingEmoji)
+        if (existingEmoji) {
           return [
             ...emojis.filter(({ emoji }) => emoji !== existingEmoji.emoji),
             { emoji: existingEmoji.emoji, pcs: existingEmoji.pcs + 1 },
           ];
+        }
 
         const emojisToSave = [...emojis, { emoji: newEmoji, pcs: 1 }];
         setItem(
