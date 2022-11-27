@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/react': ^18.0.25
   '@types/react-dom': ^18.0.8
+  husky: ^8.0.2
   local-data-storage: ^0.4.1
   parcel: ^2.8.0
   react: ^18.2.0
@@ -18,6 +19,7 @@ dependencies:
 devDependencies:
   '@types/react': 18.0.25
   '@types/react-dom': 18.0.9
+  husky: 8.0.2
   parcel: 2.8.0
   rome: 10.0.1
   typescript: 4.9.3
@@ -1246,6 +1248,12 @@ packages:
       domhandler: 4.3.1
       domutils: 2.8.0
       entities: 3.0.1
+    dev: true
+
+  /husky/8.0.2:
+    resolution: {integrity: sha512-Tkv80jtvbnkK3mYWxPZePGFpQ/tT3HNSs/sasF9P2YfkMezDl3ON37YN6jUUI4eTg5LcyVynlb6r4eyvOmspvg==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /import-fresh/3.3.0:
