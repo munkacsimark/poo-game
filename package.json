@@ -4,14 +4,13 @@
   "private": true,
   "homepage": "https://munkacsimark.github.io/poo-game",
   "source": "public/index.html",
-  "publicUrl": "poo-game",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "alias": {
     "process": false
   },
   "scripts": {
     "start": "parcel",
-    "build": "parcel build",
+    "build": "parcel build --public-url=/poo-game",
     "format": "rome check --apply-suggested src & rome format --write src",
     "lint": "rome check src",
     "prepare": "husky install"
