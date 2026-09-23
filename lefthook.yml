@@ -1,0 +1,16 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: format
+      glob: "*.{js,ts,tsx,json,jsonc,css,md,yml,yaml,html}"
+      run: pnpm exec oxfmt --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true
+    - name: oxlint
+      glob: "*.{js,ts,tsx}"
+      run: pnpm exec oxlint --type-aware {staged_files}
+    - name: eslint
+      glob: "*.{ts,tsx}"
+      run: pnpm exec eslint {staged_files}
+    - name: typecheck
+      glob: "*.{ts,tsx}"
+      run: pnpm typecheck
