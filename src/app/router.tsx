@@ -90,6 +90,9 @@ const routeTree = rootRoute.addChildren([
   ]),
 ]);
 
+/** Which top-level screen a path shows; dialog routes belong to the screen behind them. */
+const screenOf = (pathname: string) => (/\/profiles(\/|$)/.test(pathname) ? "profiles" : "game");
+
 /** `history` defaults to the browser's; tests pass a memory history. */
 export const createAppRouter = (history?: RouterHistory) =>
   createRouter({
@@ -98,6 +101,13 @@ export const createAppRouter = (history?: RouterHistory) =>
     basepath: import.meta.env.BASE_URL,
     scrollRestoration: true,
     defaultPreload: "intent",
+    // Blur-fade between screens (the game, the profile screens); dialogs animate themselves.
+    defaultViewTransition: {
+      types: ({ fromLocation, toLocation }) =>
+        fromLocation && screenOf(fromLocation.pathname) !== screenOf(toLocation.pathname)
+          ? ["screen"]
+          : false,
+    },
   });
 
 declare module "@tanstack/react-router" {

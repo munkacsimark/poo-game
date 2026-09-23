@@ -197,6 +197,41 @@
   }
 }
 
+/*
+ * View transition between screens (router: types ["screen"]). Only the screen area (RootLayout)
+ * moves; the root, with the live aurora behind it, swaps instantly.
+ */
+html:active-view-transition-type(screen) {
+  &::view-transition-old(root) {
+    display: none;
+  }
+  &::view-transition-new(root) {
+    animation: none;
+  }
+  &::view-transition-old(screen) {
+    animation: screen-out 0.2s var(--ease-out-expo) both;
+  }
+  &::view-transition-new(screen) {
+    animation: screen-in 0.5s var(--ease-out-expo) both;
+  }
+}
+
+@keyframes screen-out {
+  to {
+    opacity: 0;
+    scale: 0.97;
+    filter: blur(6px);
+  }
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    scale: 1.03;
+    filter: blur(6px);
+  }
+}
+
 /* Animated iridescent border for Galaxy Opal tiles. */
 @utility opal-border {
   border-color: transparent;
@@ -232,6 +267,12 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+    }
+
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
     }
   }
 }

@@ -9,7 +9,10 @@ export const RootLayout = () => (
     <div className="relative isolate min-h-dvh">
       <Aurora />
       <div className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-4 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6">
-        <Outlet />
+        {/* Named for view transitions between screens (see "screen" in index.css). */}
+        <div className="flex flex-1 flex-col gap-4 [view-transition-name:screen]">
+          <Outlet />
+        </div>
         <footer className="flex items-center justify-center gap-1">
           <Link
             to="/faq"
