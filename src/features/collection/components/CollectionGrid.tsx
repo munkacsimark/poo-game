@@ -1,12 +1,13 @@
 import type { Emoji } from "../../game/emojis";
+import type { Drop } from "../../game/gameReducer";
 import { RARITY_CLASS } from "../../game/rarity";
 import type { CollectionEntry } from "../collection";
 
 type Props = {
   entries: CollectionEntry[];
   selected: Emoji;
-  /** A first-time drop matching this emoji gets a "new" badge. */
-  lastDrop: Emoji | null;
+  /** A first-time drop gets a "new" badge. */
+  lastDrop: Drop | null;
   onSelect: (emoji: Emoji) => void;
 };
 
@@ -16,7 +17,7 @@ export const CollectionGrid = ({ entries, selected, lastDrop, onSelect }: Props)
     className="grid grid-cols-[repeat(auto-fill,minmax(3.5rem,1fr))] gap-2.5 p-1"
   >
     {entries.map(({ emoji, count, rarity }) => {
-      const isNew = emoji === lastDrop && count === 1;
+      const isNew = lastDrop?.isNew === true && lastDrop.emoji === emoji;
       return (
         <li key={emoji} className={RARITY_CLASS[rarity]}>
           <button

@@ -1,6 +1,8 @@
 import type { Emoji } from "./emojis";
 import type { Collection, SaveData } from "./save";
 
+export type Drop = { id: number; emoji: Emoji; isNew: boolean };
+
 export type GameState = SaveData & {
   /** Pushes since the last drop. */
   pushes: number;
@@ -8,8 +10,8 @@ export type GameState = SaveData & {
   pushesNeeded: number;
   /** `dropping` while the poo animation plays; pushes are ignored meanwhile. */
   phase: "idle" | "dropping";
-  /** The emoji from the most recent drop, for highlighting. */
-  lastDrop: Emoji | null;
+  /** The most recent drop this session; `id` increases with every drop. */
+  lastDrop: Drop | null;
 };
 
 export type GameAction =
@@ -49,7 +51,11 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
         pushes: 0,
         pushesNeeded: action.pushesNeeded,
         selected: action.emoji,
-        lastDrop: action.emoji,
+        lastDrop: {
+          id: (state.lastDrop?.id ?? 0) + 1,
+          emoji: action.emoji,
+          isNew: !state.collection[action.emoji],
+        },
         collection: addToCollection(state.collection, action.emoji),
       };
     case "select":

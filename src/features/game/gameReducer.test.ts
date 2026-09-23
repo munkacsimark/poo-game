@@ -27,7 +27,7 @@ describe("gameReducer", () => {
       pushes: 0,
       pushesNeeded: 5,
       selected: "🦄",
-      lastDrop: "🦄",
+      lastDrop: { id: 1, emoji: "🦄", isNew: true },
       collection: { "🍟": 1, "🦄": 1 },
     });
   });
@@ -35,6 +35,7 @@ describe("gameReducer", () => {
   it("increments duplicates", () => {
     const state = gameReducer(initial, { type: "drop", emoji: "🍟", pushesNeeded: 5 });
     expect(state.collection).toEqual({ "🍟": 2 });
+    expect(state.lastDrop).toEqual({ id: 1, emoji: "🍟", isNew: false });
   });
 
   it("only selects owned emojis", () => {

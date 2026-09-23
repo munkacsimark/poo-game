@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Emoji } from "../../game/emojis";
+import type { Drop } from "../../game/gameReducer";
 import { RARITIES, type Rarity } from "../../game/rarity";
 import { rarityStats, TOTAL_EMOJIS, totalDrops, type CollectionEntry } from "../collection";
 import { CollectionGrid } from "./CollectionGrid";
@@ -8,7 +9,7 @@ import { RarityFilter } from "./RarityFilter";
 type Props = {
   entries: CollectionEntry[];
   selected: Emoji;
-  lastDrop: Emoji | null;
+  lastDrop: Drop | null;
   onSelect: (emoji: Emoji) => void;
 };
 
@@ -17,6 +18,7 @@ const numberFormat = new Intl.NumberFormat();
 export const CollectionPanel = ({ entries, selected, lastDrop, onSelect }: Props) => {
   const [filter, setFilter] = useState<Rarity | null>(null);
   const visible = filter ? entries.filter(({ rarity }) => rarity === filter) : entries;
+  const drops = totalDrops(entries);
   const filterLabel = RARITIES.find(({ id }) => id === filter)?.label;
 
   return (
@@ -31,7 +33,7 @@ export const CollectionPanel = ({ entries, selected, lastDrop, onSelect }: Props
           </h2>
           <p className="text-sm text-white/60 tabular-nums">
             <span className="font-semibold text-white">{entries.length}</span> / {TOTAL_EMOJIS}{" "}
-            found · {numberFormat.format(totalDrops(entries))} drops
+            found · {numberFormat.format(drops)} {drops === 1 ? "drop" : "drops"}
           </p>
         </div>
         <progress

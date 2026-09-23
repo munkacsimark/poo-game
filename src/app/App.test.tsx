@@ -5,6 +5,7 @@ import { App } from "./App";
 
 const grid = () => screen.queryByRole("list", { name: "Your collection" });
 
+// jsdom drops the whitespace between inline children when computing names, browsers keep it.
 describe("App", () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -30,6 +31,7 @@ describe("App", () => {
     });
 
     expect(screen.getByRole("button", { name: "Push the 💩" })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("💩New Galaxy Opal!");
     expect(screen.getByRole("button", { name: "💩, 1 collected, new" })).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem("poo-game:save") ?? "{}")).toMatchObject({
       selected: "💩",
@@ -72,10 +74,10 @@ describe("App", () => {
     );
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: "Legendary: 1 of 6" }));
+    await user.click(screen.getByRole("button", { name: /^Legendary\s*1\s*of\s*6$/ }));
     expect(within(grid()!).getAllByRole("button")).toHaveLength(1);
 
-    await user.click(screen.getByRole("button", { name: /^Epic: 0 of/ }));
+    await user.click(screen.getByRole("button", { name: /^Epic\s*0\s*of/ }));
     expect(grid()).not.toBeInTheDocument();
     expect(screen.getByText("No Epic emojis yet. Keep pushing!")).toBeInTheDocument();
   });
