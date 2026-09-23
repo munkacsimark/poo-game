@@ -3,6 +3,22 @@
 All notable changes to Poo Game. Generated from the commit history by
 [git-cliff](https://git-cliff.org); release with `pnpm release`.
 
+## [0.1.2] - 2026-09-23
+
+### Features
+
+- Seal saved progress in localStorage against casual edits
+- Stable ids for every emoji
+- Schema-defined, versioned save format (v2)
+
+### Refactoring
+
+- Share the obfuscation helpers used by profile files
+
+### Maintenance
+
+- Dev-only console helpers for sealed storage
+
 ## [0.1.1] - 2026-09-23
 
 ### Features
