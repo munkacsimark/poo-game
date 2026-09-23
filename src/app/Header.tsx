@@ -21,7 +21,10 @@ export const Header = ({ clicks, muted, onToggleMuted, profileButton }: Props) =
     <div className="flex items-center gap-2">
       <p className="flex h-10 items-center gap-1.5 rounded-full glass px-3.5 text-sm">
         <span className="sr-only text-white/60 min-[400px]:not-sr-only">Taps</span>
-        <span className="font-bold tabular-nums">{numberFormat.format(clicks)}</span>
+        {/* Keyed so each tap replays the bump. */}
+        <span key={clicks} className="inline-block animate-bump font-bold tabular-nums">
+          {numberFormat.format(clicks)}
+        </span>
       </p>
       <MuteButton muted={muted} onToggle={onToggleMuted} />
       {profileButton}
