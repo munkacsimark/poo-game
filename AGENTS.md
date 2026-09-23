@@ -51,7 +51,7 @@ src/
       emojis.ts             EMOJIS_BY_RARITY data, Emoji type, getRarity/isEmoji
       roll.ts               pure RNG-injectable rolls (rarity, emoji, pushes needed)
       gameReducer.ts        pure state machine: push / drop / select
-      save.ts               versioned localStorage save + legacy migration
+      save.ts               versioned localStorage save (backward compatible from v1)
       useGame.ts            wires reducer + side effects (sound, timer, persistence, haptics)
       sounds/               mp3s + useFartSound
       assets/               stage background photo (source; optimized at build time)
@@ -81,7 +81,7 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
   names from strings at runtime (Tailwind can't see them). New tokens/keyframes go in the
   `@theme` block of `src/app/index.css`.
 - **Persisted data is versioned.** If `SaveData` changes shape, bump `SAVE_VERSION` in `save.ts`,
-  migrate the previous version, and add a test. Players must never lose progress.
+  migrate every older version, and add a test. Players must never lose progress.
 - **Accessibility:** real `<button>`s, accessible names that contain the visible text,
   `aria-pressed` for toggles, decorative emoji `aria-hidden`, motion respects
   `prefers-reduced-motion`. Lighthouse accessibility must stay at 100.

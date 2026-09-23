@@ -18,11 +18,3 @@ export const writeJson = (key: string, value: unknown): void => {
     // Progress simply isn't persisted when storage is unavailable.
   }
 };
-
-export const removeKeys = (...keys: string[]): void => {
-  try {
-    for (const key of keys) localStorage.removeItem(key);
-  } catch {
-    // Nothing to clean up if storage is unavailable.
-  }
-};

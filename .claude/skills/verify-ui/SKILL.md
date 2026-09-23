@@ -14,7 +14,7 @@ description: Verify a UI change of Poo Game in a real browser via chrome-devtool
    localStorage.setItem(
      "poo-game:save",
      JSON.stringify({
-       version: 2,
+       version: 1,
        selected: "🦄",
        clicks: 120,
        collection: { "🦄": 2, "💩": 1, "🍟": 5 },

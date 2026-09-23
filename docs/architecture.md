@@ -97,7 +97,7 @@ Progress lives in `localStorage` under one key and is validated on every load:
 ```jsonc
 // "poo-game:save"
 {
-  "version": 2,
+  "version": 1,
   "selected": "🦄", // must be a known emoji, otherwise the save is ignored
   "clicks": 1234, // non-negative integer
   "collection": { "🦄": 2 }, // unknown emojis / non-positive counts are dropped
@@ -106,12 +106,10 @@ Progress lives in `localStorage` under one key and is validated on every load:
 ```
 
 - `"poo-game:muted"` stores the sound toggle (boolean).
-- **Legacy migration:** the 2022 version stored `collected_emojis`, `last_emoji` and `clicks`
-  as `{ value, createdDate }` entries via `local-data-storage`. `loadSave()` converts them once
-  into the current format and deletes the old keys.
-- **v1 → v2:** v1 saves had no `pity`; they load with both counters at 0.
-- To change the format, bump `SAVE_VERSION`, migrate the previous version inside `loadSave()`,
-  and cover it in `save.test.ts`.
+- **Compatibility:** v1 (released with v0.1.1) is the first format of the modernized app; saves
+  from the 2022 version aren't migrated. From v1 on, every format change must stay backward
+  compatible: bump `SAVE_VERSION`, migrate each older version inside `parseSave()`, and cover
+  it in `save.test.ts`.
 
 ## Styling system
 
