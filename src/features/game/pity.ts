@@ -4,7 +4,7 @@ import { rarityRank, type Rarity } from "./rarity";
  * Bad-luck protection, rarest rule first: a player who went `within - 1` drops without `rarity`
  * or better is guaranteed that rarity or better on the next drop.
  */
-const PITY_RULES = [
+export const PITY_RULES = [
   { rarity: "legendary", within: 150 },
   { rarity: "epic", within: 30 },
 ] as const satisfies readonly { rarity: Rarity; within: number }[];
