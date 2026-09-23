@@ -7,8 +7,8 @@ type Props = {
   profile?: Profile;
   canDelete: boolean;
   onSubmit: (values: { name: string; avatar: Avatar }) => void;
-  onDelete: () => void;
-  onExport: () => void;
+  onDelete?: () => void;
+  onExport?: () => void;
   onClose: () => void;
 };
 
@@ -55,7 +55,7 @@ export const ProfileEditor = ({
         ) : (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex gap-1">
-              {profile && canDelete && (
+              {profile && canDelete && onDelete && (
                 <button
                   type="button"
                   onClick={() => setConfirmingDelete(true)}
@@ -64,7 +64,7 @@ export const ProfileEditor = ({
                   Delete profile
                 </button>
               )}
-              {profile && (
+              {profile && onExport && (
                 <button
                   type="button"
                   onClick={onExport}

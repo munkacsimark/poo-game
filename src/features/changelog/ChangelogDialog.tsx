@@ -1,4 +1,5 @@
 import changelog from "virtual:changelog";
+import { useCloseRoute } from "../../shared/lib/useCloseRoute";
 import { Modal } from "../../shared/ui/Modal";
 import { parseChangelog } from "./changelog";
 
@@ -6,9 +7,9 @@ const releases = parseChangelog(changelog);
 
 const dateFormat = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
 
-/** Modal list of releases, newest first. Loaded lazily by `VersionButton`. */
-export const ChangelogDialog = ({ onClose }: { onClose: () => void }) => (
-  <Modal title="What's new" onClose={onClose}>
+/** /changelog: every release, newest first, over the game. */
+export const ChangelogDialog = () => (
+  <Modal title="What's new" onClose={useCloseRoute("/")}>
     {releases.map(({ version, date, groups }, index) => (
       <details
         key={version}

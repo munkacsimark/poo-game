@@ -15,6 +15,7 @@ This file is the single source of truth. `CLAUDE.md` imports it; deeper material
 | UI              | React 19 with the React Compiler (automatic memoization)              |
 | Language        | TypeScript 7 (native `tsc`), strict + `noUncheckedIndexedAccess`      |
 | Build / dev     | Vite 8, served under the `/poo-game/` base path                       |
+| Routing         | TanStack Router (code-based, typed), clean paths + 404.html fallback  |
 | Styling         | Tailwind CSS v4; design tokens in `src/app/index.css`                 |
 | PWA             | vite-plugin-pwa (Workbox, auto-update) + generated icons              |
 | Unit/component  | Vitest 5 + Testing Library (jsdom)                                    |
@@ -45,7 +46,8 @@ pnpm lint:fix         # auto-fix lint issues
 ```
 src/
   main.tsx                  entry: mounts <App/> in StrictMode
-  app/                      shell: App layout, Header, Aurora background, index.css (Tailwind + tokens)
+  app/                      router.tsx (route tree), RootLayout, GameLayout/GameScreen, Header,
+                            NotFound, Aurora background, index.css (Tailwind + tokens)
   features/
     game/                   core loop
       rarity.ts             RARITIES table (id, label, weight) + RARITY_CLASS
@@ -60,8 +62,8 @@ src/
     profiles/               multiple profiles: reducer, versioned storage, picker + editor
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
-    faq/                    footer FAQ link (#faq) + lazy FaqDialog with the drop-rate table
-    changelog/              footer VersionButton + lazy ChangelogDialog (parses virtual:changelog)
+    faq/                    /faq route: lazy FaqDialog with the drop-rate table
+    changelog/              footer VersionLink + /changelog route (lazy, parses virtual:changelog)
   shared/lib/               storage (never-throwing localStorage), haptics, random (crypto RNG)
   test/                     jsdom shims (setup.ts) and stubRandomWords
 e2e/                        Playwright specs
@@ -71,6 +73,11 @@ docs/                       architecture and agent workflow docs
 See [`docs/architecture.md`](docs/architecture.md) for data flow, the state machine and the save format.
 
 ## Conventions
+
+- **Every screen and dialog is a route** (see the table in `src/app/router.tsx`), so Back,
+  Forward, reload and deep links work. Navigate with `<Link>`/`useNavigate`, never local
+  "open" state; dialog routes close with `useCloseRoute(fallback)`. Shared state that must
+  survive route changes lives in providers under `RootLayout` (e.g. `ProfilesProvider`).
 
 - **Keep game logic pure.** Randomness is injected (`Rng`) or rolled in `useGame` and passed
   into reducer actions; the reducer never touches randomness, timers or storage. Rolls use `secureRandom`

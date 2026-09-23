@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useCloseRoute } from "../../shared/lib/useCloseRoute";
 import { Modal } from "../../shared/ui/Modal";
 import { MAX_PROFILES } from "../profiles/profiles";
 import { RARITIES, RARITY_CLASS } from "../game/rarity";
@@ -24,9 +25,9 @@ const Question = ({
   </details>
 );
 
-/** Frequently asked questions, opened from the footer's FAQ link. */
-export const FaqDialog = ({ onClose }: { onClose: () => void }) => (
-  <Modal title="FAQ" onClose={onClose}>
+/** /faq: frequently asked questions, over the game. */
+export const FaqDialog = () => (
+  <Modal title="FAQ" onClose={useCloseRoute("/")}>
     <Question title="How do I play?" open>
       <p>
         Tap the emoji over and over. Every so often it poops out a new one: collect all 298, from

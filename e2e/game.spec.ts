@@ -54,7 +54,7 @@ test("filters the collection by rarity", async ({ page }) => {
   await expect(page.getByText("No Epic emojis yet. Keep pushing!")).toBeVisible();
 });
 
-test("the FAQ link in the footer opens the FAQ", async ({ page }) => {
+test("the FAQ is a route: it opens over the game and Back closes it", async ({ page }) => {
   await page.goto("./");
   await page.getByRole("link", { name: "FAQ" }).click();
 
@@ -62,16 +62,28 @@ test("the FAQ link in the footer opens the FAQ", async ({ page }) => {
   await expect(dialog.getByText("How do I play?")).toBeVisible();
   await dialog.getByText("What are the drop rates?").click();
   await expect(dialog.getByRole("rowheader", { name: "Galaxy Opal" })).toBeVisible();
-  await expect(page).toHaveURL(/#faq$/);
+  await expect(page).toHaveURL(/\/poo-game\/faq$/);
 
-  await page.keyboard.press("Escape");
+  await page.goBack();
   await expect(dialog).toBeHidden();
-  await expect(page).not.toHaveURL(/#faq$/);
+  await expect(page).toHaveURL(/\/poo-game\/$/);
+  await page.goForward();
+  await expect(dialog).toBeVisible();
 });
 
-test("#faq opens the FAQ directly", async ({ page }) => {
-  await page.goto("./#faq");
+test("deep links load directly and survive a reload", async ({ page }) => {
+  await page.goto("./profiles/manage");
+  await expect(page.getByRole("heading", { name: "Manage profiles" })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Manage profiles" })).toBeVisible();
+
+  await page.goto("./faq");
   await expect(page.getByRole("dialog", { name: "FAQ" })).toBeVisible();
+  await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
+  await expect(page).toHaveURL(/\/poo-game\/$/);
+
+  await page.goto("./nope");
+  await expect(page.getByRole("heading", { name: "Nothing to see here" })).toBeVisible();
 });
 
 test("does not scroll horizontally", async ({ page }) => {
@@ -90,19 +102,25 @@ test("keeps working offline once installed", async ({ page, context }) => {
 
   await context.setOffline(true);
   await page.reload();
-
   await expect(pushButton(page)).toBeVisible();
+
+  // Deep links are served the app shell too.
+  await page.goto("./profiles/manage");
+  await expect(page.getByRole("heading", { name: "Manage profiles" })).toBeVisible();
   await context.setOffline(false);
 });
 
 test("the version in the footer opens the changelog", async ({ page }) => {
   await page.goto("./");
 
-  await page.getByRole("button", { name: /^What's new in v\d+\.\d+\.\d+$/ }).click();
+  await page.getByRole("link", { name: /^What's new in v\d+\.\d+\.\d+$/ }).click();
   const dialog = page.getByRole("dialog", { name: "What's new" });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText("v0.1.0")).toBeVisible();
 
+  await expect(page).toHaveURL(/\/poo-game\/changelog$/);
+
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
+  await expect(page).toHaveURL(/\/poo-game\/$/);
 });

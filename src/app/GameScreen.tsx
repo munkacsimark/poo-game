@@ -12,11 +12,10 @@ type Props = {
   onSave: (save: SaveData) => void;
   muted: boolean;
   onToggleMuted: () => void;
-  onSwitchProfile: () => void;
 };
 
 /** The game for one profile. Render it with `key={profile.id}` so switching reloads the save. */
-export const GameScreen = ({ profile, onSave, muted, onToggleMuted, onSwitchProfile }: Props) => {
+export const GameScreen = ({ profile, onSave, muted, onToggleMuted }: Props) => {
   const { state, push, select } = useGame({ save: profile.save, onSave, muted });
   const entries = sortCollection(state.collection);
 
@@ -26,7 +25,7 @@ export const GameScreen = ({ profile, onSave, muted, onToggleMuted, onSwitchProf
         clicks={state.clicks}
         muted={muted}
         onToggleMuted={onToggleMuted}
-        profileButton={<ProfileButton profile={profile} onClick={onSwitchProfile} />}
+        profileButton={<ProfileButton profile={profile} />}
       />
       {/* The stage comes first in the DOM (top on phones); on large screens the collection sits left. */}
       <main className="grid flex-1 content-start gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start lg:gap-10 lg:pt-6">

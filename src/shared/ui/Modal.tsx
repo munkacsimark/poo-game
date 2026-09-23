@@ -40,15 +40,14 @@ export const Modal = ({ title, onClose, children, footer }: Props) => {
           <h2 id={titleId} className="text-lg font-bold text-white">
             {title}
           </h2>
-          <form method="dialog">
-            <button
-              type="submit"
-              aria-label="Close"
-              className="grid size-9 cursor-pointer place-items-center rounded-full glass text-lg transition outline-none hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white"
-            >
-              <span aria-hidden>×</span>
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={() => dialogRef.current?.close()}
+            aria-label="Close"
+            className="grid size-9 cursor-pointer place-items-center rounded-full glass text-lg transition outline-none hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white"
+          >
+            <span aria-hidden>×</span>
+          </button>
         </header>
         <div className="overflow-y-auto px-5 pb-5">{children}</div>
         {footer && <div className="border-t border-white/10 px-5 py-4">{footer}</div>}

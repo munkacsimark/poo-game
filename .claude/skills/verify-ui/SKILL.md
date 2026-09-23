@@ -7,7 +7,9 @@ description: Verify a UI change of Poo Game in a real browser via chrome-devtool
 
 1. **Start the dev server** if it isn't running: `pnpm dev --port 5173 --strictPort` in the
    background. The app lives at `http://localhost:5173/poo-game/` (note the base path).
-2. **Open it** with `new_page` (or `navigate_page` if a tab exists).
+2. **Open it** with `new_page` (or `navigate_page` if a tab exists). Every screen has a URL
+   (`/poo-game/profiles`, `/poo-game/profiles/manage`, `/poo-game/faq`, …; see
+   `src/app/router.tsx`), so open the one you changed directly, and check Back/Forward.
 3. **Seed state when the change needs it**, via `evaluate_script`. The save format is:
 
    ```js

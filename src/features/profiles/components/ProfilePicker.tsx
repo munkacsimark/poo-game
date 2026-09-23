@@ -1,31 +1,47 @@
-import { useRef, useState } from "react";
-import { downloadText } from "../../../shared/lib/download";
+import { Link, Outlet, useMatchRoute, useNavigate } from "@tanstack/react-router";
+import { useRef, useState, type ReactNode } from "react";
 import { TOTAL_EMOJIS } from "../../collection/collection";
-import { MAX_PROFILES, type Avatar, type Profile, type ProfilesAction } from "../profiles";
-import { decodeProfile, encodeProfile, ProfileFileError, profileFileName } from "../profileFile";
+import { MAX_PROFILES } from "../profiles";
+import { decodeProfile, ProfileFileError } from "../profileFile";
+import { useProfiles } from "../ProfilesProvider";
 import { createProfile } from "../storage";
-import { ProfileEditor } from "./ProfileEditor";
 
-type Props = {
-  profiles: Profile[];
-  dispatch: (action: ProfilesAction) => void;
-  onPick: (id: string) => void;
-};
-
-type Editing = { mode: "add" } | { mode: "edit"; profile: Profile } | null;
 type Notice = { kind: "success" | "error"; text: string } | null;
 
 const tileClass =
   "group flex w-28 cursor-pointer flex-col items-center gap-2 rounded-2xl p-1 outline-none focus-visible:ring-2 focus-visible:ring-white sm:w-32";
 const outlineButtonClass =
-  "cursor-pointer rounded-full border border-white/30 px-5 py-2 text-sm font-semibold tracking-wide text-white/80 uppercase transition outline-none enabled:hover:border-white enabled:hover:text-white focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-40";
+  "cursor-pointer rounded-full border border-white/30 px-5 py-2 text-sm font-semibold tracking-wide text-white/80 uppercase transition outline-none hover:not-disabled:border-white hover:not-disabled:text-white focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-40";
 const avatarClass =
   "relative grid aspect-square w-full place-items-center rounded-3xl glass font-emoji text-5xl transition group-hover:scale-105 group-hover:bg-white/15 sm:text-6xl";
 
-/** Full-screen "Who's playing?" chooser with profile management. */
-export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
-  const [managing, setManaging] = useState(false);
-  const [editing, setEditing] = useState<Editing>(null);
+type TileActionProps = {
+  managing: boolean;
+  profileId: string;
+  onPick: () => void;
+  children: ReactNode;
+};
+
+/** Picking plays as the profile; in manage mode the tile links to its edit dialog. */
+const TileAction = ({ managing, profileId, onPick, children }: TileActionProps) =>
+  managing ? (
+    <Link to="/profiles/manage/$profileId" params={{ profileId }} className={tileClass}>
+      {children}
+    </Link>
+  ) : (
+    <button type="button" onClick={onPick} className={tileClass}>
+      {children}
+    </button>
+  );
+
+/**
+ * "Who's playing?" (/profiles) and "Manage profiles" (/profiles/manage). The add and edit
+ * dialogs are child routes rendered through the `<Outlet />`.
+ */
+export const ProfilePicker = () => {
+  const { profiles, dispatch, pick } = useProfiles();
+  const navigate = useNavigate();
+  const managing = Boolean(useMatchRoute()({ to: "/profiles/manage", fuzzy: true }));
   const [notice, setNotice] = useState<Notice>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const full = profiles.length >= MAX_PROFILES;
@@ -42,20 +58,6 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
     }
   };
 
-  const exportProfile = async (profile: Profile) => {
-    downloadText(profileFileName(profile.name), await encodeProfile(profile));
-    setNotice({ kind: "success", text: `Exported ${profile.name}.` });
-  };
-
-  const submit = ({ name, avatar }: { name: string; avatar: Avatar }) => {
-    if (editing?.mode === "edit") {
-      dispatch({ type: "edit", id: editing.profile.id, name, avatar });
-    } else {
-      dispatch({ type: "add", profile: createProfile(name, avatar) });
-    }
-    setEditing(null);
-  };
-
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-10 py-10">
       <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">
@@ -67,12 +69,13 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
           const found = Object.keys(profile.save.collection).length;
           return (
             <li key={profile.id}>
-              <button
-                type="button"
-                onClick={() =>
-                  managing ? setEditing({ mode: "edit", profile }) : onPick(profile.id)
-                }
-                className={tileClass}
+              <TileAction
+                managing={managing}
+                profileId={profile.id}
+                onPick={() => {
+                  pick(profile.id);
+                  void navigate({ to: "/" });
+                }}
               >
                 <span aria-hidden className={avatarClass}>
                   {profile.avatar}
@@ -91,13 +94,13 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
                   {found} / {TOTAL_EMOJIS}
                   <span className="sr-only"> found</span>
                 </span>
-              </button>
+              </TileAction>
             </li>
           );
         })}
         {!full && (
           <li>
-            <button type="button" onClick={() => setEditing({ mode: "add" })} className={tileClass}>
+            <Link to="/profiles/new" className={tileClass}>
               <span
                 aria-hidden
                 className={`${avatarClass} border-dashed font-display text-4xl text-white/60`}
@@ -105,19 +108,15 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
                 +
               </span>
               <span className="font-semibold text-white/80">Add profile</span>
-            </button>
+            </Link>
           </li>
         )}
       </ul>
 
       <div className="flex flex-wrap justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => setManaging((value) => !value)}
-          className={outlineButtonClass}
-        >
+        <Link to={managing ? "/profiles" : "/profiles/manage"} className={outlineButtonClass}>
           {managing ? "Done" : "Manage profiles"}
-        </button>
+        </Link>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -147,21 +146,7 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
         {notice?.text}
       </p>
 
-      {editing && (
-        <ProfileEditor
-          profile={editing.mode === "edit" ? editing.profile : undefined}
-          canDelete={profiles.length > 1}
-          onSubmit={submit}
-          onDelete={() => {
-            if (editing.mode === "edit") dispatch({ type: "remove", id: editing.profile.id });
-            setEditing(null);
-          }}
-          onExport={() => {
-            if (editing.mode === "edit") void exportProfile(editing.profile);
-          }}
-          onClose={() => setEditing(null)}
-        />
-      )}
+      <Outlet />
     </main>
   );
 };

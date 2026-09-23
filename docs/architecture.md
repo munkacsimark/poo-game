@@ -32,8 +32,8 @@ stateDiagram-v2
                                    dispatch({ type: "drop", emoji, pushesNeeded }) + vibrate,
                                    then after 0.8 s dispatch({ type: "revealed" })
 
- App ─ useProfiles (profilesReducer, persisted) ─▶ ProfilePicker | GameScreen key={profile.id}
- GameScreen ─ useGame({ save: profile.save, onSave }) ─▶ PooButton / DropToast / CollectionPanel
+ RootLayout ─ ProfilesProvider (profilesReducer, persisted) ─▶ <Outlet/> (route)
+ GameLayout ─ GameScreen key={active.id} ─ useGame({ save: profile.save, onSave }) ─▶ PooButton / DropToast / CollectionPanel
  state.{selected, clicks, collection, pity} ─▶ useEffect ─▶ onSave ─▶ dispatch({ type: "save" })
                                                                    ─▶ writeProfiles (localStorage)
 ```
@@ -45,6 +45,31 @@ stateDiagram-v2
   the other save. Progress flows back through `onSave` (a `useEffectEvent`).
 - Collection views are derived on each render with `sortCollection` / `rarityStats`. The React
   Compiler memoizes components, so there's no manual caching.
+
+## Routing
+
+TanStack Router (code-based, fully typed; `src/app/router.tsx`) under the `/poo-game/` base:
+
+| Path                          | Screen                                                      |
+| ----------------------------- | ----------------------------------------------------------- |
+| `/`                           | the game; redirects to `/profiles` until someone has picked |
+| `/faq`, `/changelog`          | dialogs over the game (lazy-loaded)                         |
+| `/profiles`                   | "Who's playing?"                                            |
+| `/profiles/new`               | "Add profile" dialog over the picker                        |
+| `/profiles/manage`            | "Manage profiles"                                           |
+| `/profiles/manage/$profileId` | "Edit profile" dialog (unknown ids go back to manage mode)  |
+| anything else                 | `NotFound`                                                  |
+
+- Dialogs are child routes rendered through an `<Outlet />` over their parent screen. They close
+  with `useCloseRoute(fallback)`: history back when opened in the app, otherwise a replace to the
+  fallback, so the Back button never reopens a closed dialog or leaves the app.
+- "Who's playing?" on launch: `ProfilesProvider.picked` starts false when there's more than one
+  profile, and `/` redirects to `/profiles` until a profile is picked.
+- **GitHub Pages** has no rewrites, so `scripts/spaFallbackPlugin.ts` copies `index.html` to
+  `404.html` at build time and deep links load the app (with an HTTP 404 status). Offline, the
+  service worker's navigation fallback serves `index.html` for every path.
+- Tests render `<App history={createMemoryHistory({ initialEntries: ["/faq"] })} />`; memory
+  history paths have no base prefix.
 
 ## Rarity and odds
 

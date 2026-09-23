@@ -1,3 +1,4 @@
+import { createMemoryHistory } from "@tanstack/react-router";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -9,14 +10,22 @@ const grid = () => screen.queryByRole("list", { name: "Your collection" });
 const stage = () => screen.getByRole("button", { name: /^Push the/ });
 const savedClicks = () => storedSave().clicks;
 
+/** Renders the app at `path` (without the /poo-game/ base) and waits for the route to render. */
+const renderApp = async (path = "/") => {
+  const history = createMemoryHistory({ initialEntries: [path] });
+  const result = render(<App history={history} />);
+  await screen.findByRole("main");
+  return { ...result, history };
+};
+
 // jsdom drops the whitespace between inline children when computing names, browsers keep it.
 describe("App", () => {
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("starts a new player with one common emoji", () => {
-    render(<App />);
+  it("starts a new player with one common emoji", async () => {
+    await renderApp();
     expect(
       within(screen.getByRole("list", { name: "Your collection" })).getAllByRole("button"),
     ).toHaveLength(1);
@@ -27,7 +36,7 @@ describe("App", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     // Zero rolls: one push is enough and the drop is always 💩.
     stubRandomWords(0);
-    render(<App />);
+    await renderApp();
 
     await user.click(screen.getByRole("button", { name: /^Push the/ }));
     act(() => {
@@ -48,7 +57,7 @@ describe("App", () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const zeroRolls = stubRandomWords(0);
-    render(<App />);
+    await renderApp();
 
     await user.click(stage());
     expect(stage()).toHaveAttribute("aria-disabled", "true");
@@ -74,7 +83,7 @@ describe("App", () => {
   it("selects an emoji from the collection", async () => {
     const user = userEvent.setup();
     seedProfiles({ name: "Ann", save: { collection: { "🍟": 1, "🦄": 2 } } });
-    render(<App />);
+    await renderApp();
 
     await user.click(screen.getByRole("button", { name: "🦄, 2 collected" }));
     expect(screen.getByRole("button", { name: "Push the 🦄" })).toBeInTheDocument();
@@ -83,7 +92,7 @@ describe("App", () => {
   it("stays silent when muted and remembers the setting", async () => {
     const user = userEvent.setup();
     const play = vi.spyOn(HTMLMediaElement.prototype, "play");
-    const { unmount } = render(<App />);
+    const { unmount } = await renderApp();
 
     await user.click(screen.getByRole("button", { name: "Sound", pressed: true }));
     play.mockClear();
@@ -91,14 +100,16 @@ describe("App", () => {
     expect(play).not.toHaveBeenCalled();
 
     unmount();
-    render(<App />);
-    expect(screen.getByRole("button", { name: "Sound", pressed: false })).toBeInTheDocument();
+    await renderApp();
+    expect(
+      await screen.findByRole("button", { name: "Sound", pressed: false }),
+    ).toBeInTheDocument();
   });
 
   it("filters the collection by rarity", async () => {
     const user = userEvent.setup();
     seedProfiles({ name: "Ann", save: { collection: { "🍟": 1, "🦄": 2 } } });
-    render(<App />);
+    await renderApp();
 
     await user.click(screen.getByRole("button", { name: /^Mythic\s*1\s*of\s*4$/ }));
     expect(within(grid()!).getAllByRole("button")).toHaveLength(1);
@@ -114,39 +125,94 @@ describe("App", () => {
       { name: "Ann", save: { selected: "🦄", clicks: 5, collection: { "🦄": 1 } } },
       { name: "Bo", save: { selected: "🍟", clicks: 9 } },
     );
-    render(<App />);
+    const { history } = await renderApp();
 
-    expect(screen.getByRole("heading", { name: "Who's playing?" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Who's playing?" })).toBeInTheDocument();
+    expect(history.location.pathname).toBe("/profiles");
     await user.click(screen.getByRole("button", { name: /^Play\s*as\s*Bo\s*,/ }));
-    expect(stage()).toHaveAccessibleName("Push the 🍟");
+    expect(await screen.findByRole("button", { name: "Push the 🍟" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Switch profile (Bo)" }));
-    await user.click(screen.getByRole("button", { name: /^Play\s*as\s*Ann\s*,/ }));
-    expect(stage()).toHaveAccessibleName("Push the 🦄");
+    await user.click(screen.getByRole("link", { name: "Switch profile (Bo)" }));
+    await user.click(await screen.findByRole("button", { name: /^Play\s*as\s*Ann\s*,/ }));
+    expect(await screen.findByRole("button", { name: "Push the 🦄" })).toBeInTheDocument();
     expect(storedSave().clicks).toBe(5);
   });
 
   it("adds, renames and deletes profiles", async () => {
     const user = userEvent.setup();
-    render(<App />);
+    await renderApp("/profiles");
 
-    await user.click(screen.getByRole("button", { name: "Switch profile (Player 1)" }));
-    await user.click(screen.getByRole("button", { name: "Add profile" }));
-    const dialog = screen.getByRole("dialog", { name: "Add profile" });
+    await user.click(screen.getByRole("link", { name: "Add profile" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add profile" });
     await user.type(within(dialog).getByRole("textbox", { name: "Name" }), "Cy");
     await user.click(within(dialog).getByRole("radio", { name: "🤖" }));
     await user.click(within(dialog).getByRole("button", { name: "Add profile" }));
-    expect(screen.getByRole("button", { name: /^Play\s*as\s*Cy\s*,/ })).toHaveTextContent("🤖");
+    expect(await screen.findByRole("button", { name: /^Play\s*as\s*Cy\s*,/ })).toHaveTextContent(
+      "🤖",
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Manage profiles" }));
-    await user.click(screen.getByRole("button", { name: /^Edit\s*Cy\s*,/ }));
-    const editor = screen.getByRole("dialog", { name: "Edit profile" });
+    await user.click(screen.getByRole("link", { name: "Manage profiles" }));
+    await user.click(await screen.findByRole("link", { name: /^Edit\s*Cy\s*,/ }));
+    const editor = await screen.findByRole("dialog", { name: "Edit profile" });
     await user.click(within(editor).getByRole("button", { name: "Delete profile" }));
     await user.click(within(editor).getByRole("button", { name: "Delete" }));
-    expect(screen.queryByRole("button", { name: /^Edit\s*Cy\s*,/ })).not.toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Manage profiles" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /^Edit\s*Cy\s*,/ })).not.toBeInTheDocument();
 
     // The last profile can't be deleted.
-    await user.click(screen.getByRole("button", { name: /^Edit\s*Player\s*1\s*,/ }));
+    await user.click(screen.getByRole("link", { name: /^Edit\s*Player\s*1\s*,/ }));
+    await screen.findByRole("dialog", { name: "Edit profile" });
     expect(screen.queryByRole("button", { name: "Delete profile" })).not.toBeInTheDocument();
+  });
+
+  describe("routing", () => {
+    it("opens the FAQ over the game and closes it with Back", async () => {
+      const user = userEvent.setup();
+      const { history } = await renderApp();
+
+      await user.click(screen.getByRole("link", { name: "FAQ" }));
+      expect(await screen.findByRole("dialog", { name: "FAQ" })).toBeInTheDocument();
+      expect(history.location.pathname).toBe("/faq");
+      expect(stage()).toBeInTheDocument();
+
+      act(() => history.back());
+      await vi.waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+      expect(history.location.pathname).toBe("/");
+    });
+
+    it("closing a deep-linked dialog replaces it instead of leaving the app", async () => {
+      const user = userEvent.setup();
+      const { history } = await renderApp("/changelog");
+
+      const dialog = await screen.findByRole("dialog", { name: "What's new" });
+      await user.click(within(dialog).getByRole("button", { name: "Close" }));
+      await vi.waitFor(() => expect(history.location.pathname).toBe("/"));
+      expect(history.length).toBe(1);
+    });
+
+    it("opens manage mode and profile dialogs from their URLs", async () => {
+      const [ann] = seedProfiles({ name: "Ann" }, { name: "Bo" });
+      await renderApp(`/profiles/manage/${ann?.id}`);
+
+      expect(await screen.findByRole("dialog", { name: "Edit profile" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "Manage profiles" })).toBeInTheDocument();
+      expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue("Ann");
+    });
+
+    it("sends stale profile links back to manage mode", async () => {
+      const { history } = await renderApp("/profiles/manage/gone");
+      await vi.waitFor(() => expect(history.location.pathname).toBe("/profiles/manage"));
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("shows a not-found page for unknown URLs", async () => {
+      const user = userEvent.setup();
+      await renderApp("/nope");
+
+      expect(await screen.findByRole("heading", { name: "Nothing to see here" })).toBeVisible();
+      await user.click(screen.getByRole("link", { name: "Back to the game" }));
+      expect(await screen.findByRole("button", { name: /^Push the/ })).toBeInTheDocument();
+    });
   });
 });

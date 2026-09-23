@@ -6,7 +6,8 @@ import { defineConfig } from "vite";
 import pkg from "./package.json" with { type: "json" };
 import { imagetools } from "vite-imagetools";
 import { VitePWA } from "vite-plugin-pwa";
-import { changelogPlugin } from "./scripts/changelogPlugin";
+import { changelogPlugin } from "./scripts/changelogPlugin.ts";
+import { spaFallbackPlugin } from "./scripts/spaFallbackPlugin.ts";
 
 export default defineConfig({
   base: "/poo-game/",
@@ -17,6 +18,7 @@ export default defineConfig({
     tailwindcss(),
     imagetools(),
     changelogPlugin(),
+    spaFallbackPlugin(),
     VitePWA({
       registerType: "autoUpdate",
       pwaAssets: { config: true, overrideManifestIcons: true },
@@ -31,6 +33,9 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2,mp3}"],
+        // 404.html is only GitHub Pages' deep-link fallback; offline, every navigation is served
+        // index.html by Workbox's navigateFallback (the plugin's default).
+        globIgnores: ["404.html"],
         // Only the stage photo size a device actually loads gets cached, not every variant.
         runtimeCaching: [
           {
