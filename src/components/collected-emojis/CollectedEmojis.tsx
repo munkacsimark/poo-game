@@ -1,6 +1,6 @@
-import { Emoji } from "../../emojis";
+import { type Emoji } from "../../emojis";
 import { getEmojiRarity } from "../../helpers";
-import * as styles from "./CollectedEmojis.module.css";
+import styles from "./CollectedEmojis.module.css";
 
 type CollectedEmoji = {
   emoji: Emoji;

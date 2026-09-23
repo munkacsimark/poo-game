@@ -1,7 +1,7 @@
 import { rarities, getEmojiRarity } from "../../helpers";
-import { Rarity } from "../../rarities";
-import { CollectedEmoji } from "../collected-emojis/CollectedEmojis";
-import * as styles from "./Info.module.css";
+import { type Rarity } from "../../rarities";
+import { type CollectedEmoji } from "../collected-emojis/CollectedEmojis";
+import styles from "./Info.module.css";
 
 const getEmojiNum = (emojis: CollectedEmoji[], rarity: Rarity): number =>
   emojis.filter(({ emoji }: CollectedEmoji) => getEmojiRarity(emoji) === rarity)

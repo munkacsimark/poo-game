@@ -1,25 +1,25 @@
 import config from "./config";
 import {
-  CommonEmoji,
+  type CommonEmoji,
   commonEmojis,
-  Emoji,
-  EpicEmoji,
+  type Emoji,
+  type EpicEmoji,
   epicEmojis,
-  GalaxyOpalEmoji,
+  type GalaxyOpalEmoji,
   galaxyOpalEmojis,
   isEpicEmoji,
   isGalaxyOpalEmoji,
   isLegendaryEmoji,
   isRareEmoji,
   isUncommonEmoji,
-  LegendaryEmoji,
+  type LegendaryEmoji,
   legendaryEmojis,
-  RareEmoji,
+  type RareEmoji,
   rareEmojis,
-  UncommonEmoji,
+  type UncommonEmoji,
   uncommonEmojis,
 } from "./emojis";
-import { rarities, Rarity } from "./rarities";
+import { rarities, type Rarity } from "./rarities";
 
 const getRandomRarity = (): Rarity => {
   const randomNumber = Math.random() * 233;

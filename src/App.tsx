@@ -5,7 +5,7 @@ import PooingEmoji from "./components/pooing-emoji/PooingEmoji";
 import Info from "./components/info/Info";
 import Footer from "./components/footer/Footer";
 import CollectedEmojis, {
-  CollectedEmoji,
+  type CollectedEmoji,
 } from "./components/collected-emojis/CollectedEmojis";
 import {
   getRandomPooLimit,
@@ -14,8 +14,8 @@ import {
 } from "./helpers";
 import { getRandomFart } from "./assets/farts/farts";
 import config from "./config";
-import { Emoji } from "./emojis";
-import * as styles from "./App.module.css";
+import { type Emoji } from "./emojis";
+import styles from "./App.module.css";
 
 const App = () => {
   const [isUiFrozen, setIsUiFrozen] = useState<boolean>(false);

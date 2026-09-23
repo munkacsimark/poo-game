@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
+    "target": "es2024",
+    "lib": ["es2024", "dom", "dom.iterable"],
     "module": "esnext",
-    "moduleResolution": "node",
-    "target": "es2015",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "strict": true
+    "types": ["vite/client"],
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["src/**/*"]
+  "include": ["src", "vite.config.ts"]
 }

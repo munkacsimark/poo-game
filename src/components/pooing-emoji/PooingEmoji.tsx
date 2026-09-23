@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Emoji } from "../../emojis";
+import { type Emoji } from "../../emojis";
 import { getEmojiRarity } from "../../helpers";
-import * as styles from "./PooingEmoji.module.css";
+import styles from "./PooingEmoji.module.css";
 
 const PooingEmoji = ({
   animatePushClass,
