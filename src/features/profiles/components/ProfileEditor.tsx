@@ -13,7 +13,7 @@ type Props = {
 };
 
 const buttonClass =
-  "cursor-pointer rounded-full px-4 py-2 text-sm font-semibold transition outline-none focus-visible:ring-2 focus-visible:ring-white";
+  "cursor-pointer rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-white active:scale-95";
 
 /** Create or edit a profile: name, avatar, and (when editing) deletion. */
 export const ProfileEditor = ({
@@ -33,7 +33,7 @@ export const ProfileEditor = ({
       onClose={onClose}
       footer={
         confirmingDelete ? (
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex animate-rise-in flex-wrap items-center justify-between gap-3">
             <p className="text-sm">Delete {profile?.name} and all their progress?</p>
             <div className="flex gap-2">
               <button
@@ -116,7 +116,7 @@ export const ProfileEditor = ({
             {AVATARS.map((avatar, index) => (
               <label
                 key={avatar}
-                className="grid aspect-square cursor-pointer place-items-center rounded-xl border border-white/10 bg-white/5 font-emoji text-2xl transition has-checked:border-white has-checked:bg-white/20 has-focus-visible:ring-2 has-focus-visible:ring-white"
+                className="grid aspect-square cursor-pointer place-items-center rounded-xl border border-white/10 bg-white/5 font-emoji text-2xl transition duration-300 ease-spring hover:scale-105 hover:bg-white/10 active:scale-90 has-checked:scale-110 has-checked:border-white has-checked:bg-white/20 has-checked:shadow-[0_0_20px_-4px_white] has-focus-visible:ring-2 has-focus-visible:ring-white"
               >
                 <input
                   type="radio"

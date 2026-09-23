@@ -190,8 +190,14 @@ scrambled = deflate-raw(JSON { name, avatar, save }) XOR xorshift32 stream(secre
   immediately, blurred and scaled (blur-up), and the full image fades in on `load`. When the
   emoji changes, the photo layer blurs out (blur 20 px → 0 via the Web Animations API). A rarity
   tint and a dark gradient on top keep the emoji readable.
-- Reduced motion is handled globally in the base layer; the push squash (Web Animations API)
-  checks `prefers-reduced-motion` itself.
+- **Motion system** (`index.css`): easing tokens `--ease-spring` / `--ease-out-expo` and
+  `animate-*` tokens (float, ripple, bump, rise-in, burst, shockwave, tile-in, sheen, …);
+  `modal-motion` (dialog enter/exit via `@starting-style` and `data-closing`), `accordion`
+  (`::details-content` height with `interpolate-size`), and view transitions typed `screen`
+  for route changes between screens.
+- Reduced motion is handled globally in the base layer (animations, transitions and view
+  transitions); the push squash (Web Animations API) and Modal's exit check
+  `prefers-reduced-motion` themselves.
 
 ## PWA
 

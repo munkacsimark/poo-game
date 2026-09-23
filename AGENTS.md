@@ -96,6 +96,12 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
 - **Accessibility:** real `<button>`s, accessible names that contain the visible text,
   `aria-pressed` for toggles, decorative emoji `aria-hidden`, motion respects
   `prefers-reduced-motion`. Lighthouse accessibility must stay at 100.
+- **Motion:** use the theme's easings (`ease-spring` for things that pop, `ease-out-expo` for
+  things that glide) and `animate-*` tokens in `src/app/index.css`. Prefer CSS (transitions,
+  `@starting-style`, keyframes) over JS, animate `transform`/`opacity`/`scale`/`translate`, give
+  pressables an `active:` squish, and keep everything off under reduced motion (the base layer
+  does this for CSS; WAAPI calls check `prefersReducedMotion()`). Anything that scales or pokes
+  out (badges, rings) needs room inside `overflow` containers, or it gets clipped.
 - **Mobile first:** design at 360–390 px wide first, then `sm:`/`lg:`. Use `dvh` and
   `env(safe-area-inset-*)`; no horizontal scrolling (an e2e test enforces this).
 - Named exports only; files named after their main export; tests sit next to the code

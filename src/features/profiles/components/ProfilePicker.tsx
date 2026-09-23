@@ -9,11 +9,11 @@ import { createProfile } from "../storage";
 type Notice = { kind: "success" | "error"; text: string } | null;
 
 const tileClass =
-  "group flex w-28 cursor-pointer flex-col items-center gap-2 rounded-2xl p-1 outline-none focus-visible:ring-2 focus-visible:ring-white sm:w-32";
+  "group flex w-28 cursor-pointer flex-col items-center gap-2 rounded-2xl p-1 transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-white active:scale-95 sm:w-32";
 const outlineButtonClass =
-  "cursor-pointer rounded-full border border-white/30 px-5 py-2 text-sm font-semibold tracking-wide text-white/80 uppercase transition outline-none hover:not-disabled:border-white hover:not-disabled:text-white focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-40";
+  "cursor-pointer rounded-full border border-white/30 px-5 py-2 text-sm font-semibold tracking-wide text-white/80 uppercase transition duration-300 ease-spring outline-none not-disabled:active:scale-95 hover:not-disabled:border-white hover:not-disabled:text-white focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-40";
 const avatarClass =
-  "relative grid aspect-square w-full place-items-center rounded-3xl glass font-emoji text-5xl transition group-hover:scale-105 group-hover:bg-white/15 sm:text-6xl";
+  "relative grid aspect-square w-full place-items-center rounded-3xl glass font-emoji text-5xl transition duration-300 ease-spring group-hover:-translate-y-1 group-hover:scale-105 group-hover:bg-white/15 group-hover:shadow-[0_16px_40px_-12px_oklch(0.6_0.2_300/0.6)] sm:text-6xl";
 
 type TileActionProps = {
   managing: boolean;
@@ -60,15 +60,23 @@ export const ProfilePicker = () => {
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-10 py-10">
-      <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">
+      {/* Keyed so the title rises in when switching between picking and managing. */}
+      <h1
+        key={String(managing)}
+        className="animate-rise-in text-center text-3xl font-extrabold tracking-tight sm:text-4xl"
+      >
         {managing ? "Manage profiles" : "Who's playing?"}
       </h1>
 
       <ul className="flex max-w-3xl flex-wrap justify-center gap-4 sm:gap-6">
-        {profiles.map((profile) => {
+        {profiles.map((profile, index) => {
           const found = Object.keys(profile.save.collection).length;
           return (
-            <li key={profile.id}>
+            <li
+              key={profile.id}
+              style={{ animationDelay: `${index * 60}ms` }}
+              className="animate-tile-in"
+            >
               <TileAction
                 managing={managing}
                 profileId={profile.id}
@@ -78,9 +86,11 @@ export const ProfilePicker = () => {
                 }}
               >
                 <span aria-hidden className={avatarClass}>
-                  {profile.avatar}
+                  <span className="transition duration-500 ease-spring group-hover:scale-110 group-hover:-rotate-8">
+                    {profile.avatar}
+                  </span>
                   {managing && (
-                    <span className="absolute inset-0 grid place-items-center rounded-3xl bg-ink/55 font-display text-2xl">
+                    <span className="absolute inset-0 grid animate-rise-in place-items-center rounded-3xl bg-ink/55 font-display text-2xl">
                       ✎
                     </span>
                   )}
@@ -99,7 +109,7 @@ export const ProfilePicker = () => {
           );
         })}
         {!full && (
-          <li>
+          <li style={{ animationDelay: `${profiles.length * 60}ms` }} className="animate-tile-in">
             <Link to="/profiles/new" className={tileClass}>
               <span
                 aria-hidden
