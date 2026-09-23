@@ -14,7 +14,10 @@
     "typescript/no-misused-promises": "error",
     "typescript/switch-exhaustiveness-check": "error",
     "typescript/consistent-return": "off",
-    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }]
+    "import/no-unassigned-import": [
+      "error",
+      { "allow": ["**/*.css", "@testing-library/jest-dom/vitest"] }
+    ]
   },
   "ignorePatterns": ["dist/**", "coverage/**", "playwright-report/**", "test-results/**"]
 }
