@@ -3,6 +3,7 @@ import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { imagetools } from "vite-imagetools";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
+    imagetools(),
     VitePWA({
       registerType: "autoUpdate",
       pwaAssets: { config: true, overrideManifestIcons: true },
@@ -25,6 +27,17 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2,mp3}"],
+        // Only the stage photo size a device actually loads gets cached, not every variant.
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === "image",
+            handler: "CacheFirst",
+            options: {
+              cacheName: "images",
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
+        ],
       },
     }),
   ],

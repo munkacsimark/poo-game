@@ -82,6 +82,12 @@ Progress lives in `localStorage` under one key and is validated on every load:
   `opal-border` (animated iridescent border using a registered `@property`).
 - Components pick up rarity colors via `RARITY_CLASS[rarity]` and then use
   `text-(--rarity)`, `bg-(--rarity)/12`, `shadow-[…var(--rarity)]`.
+- **Stage photo** (`StageBackground`): the original meadow photo sits behind the clickable
+  emoji. vite-imagetools turns the 1800 px source into AVIF and WebP srcsets (480–1600 w, about
+  25–210 KB), a JPEG fallback and a 32 px WebP inlined as a data URL. The placeholder shows
+  immediately, blurred and scaled (blur-up), and the full image fades in on `load`. When the
+  emoji changes, the photo layer blurs out (blur 20 px → 0 via the Web Animations API). A rarity
+  tint and a dark gradient on top keep the emoji readable.
 - Reduced motion is handled globally in the base layer; the push squash (Web Animations API)
   checks `prefers-reduced-motion` itself.
 
@@ -89,7 +95,8 @@ Progress lives in `localStorage` under one key and is validated on every load:
 
 `vite-plugin-pwa` generates a Workbox service worker (`registerType: "autoUpdate"`) that
 precaches HTML, JS, CSS, fonts, icons and sounds, so the game works fully offline after the
-first visit. `pwa-assets.config.ts` generates favicon, Apple touch, maskable and manifest icons
+first visit. Images are cached at runtime (cache-first), so each device stores only the stage
+photo size it actually loaded. `pwa-assets.config.ts` generates favicon, Apple touch, maskable and manifest icons
 from `public/icon.svg` at build time.
 
 ## Testing strategy

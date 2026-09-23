@@ -44,7 +44,7 @@ pnpm lint:fix         # auto-fix lint issues
 ```
 src/
   main.tsx                  entry: mounts <App/> in StrictMode
-  app/                      shell: App layout, Header, Footer, Aurora background, index.css (Tailwind + tokens)
+  app/                      shell: App layout, Header, Aurora background, index.css (Tailwind + tokens)
   features/
     game/                   core loop
       rarity.ts             RARITIES table (id, label, weight) + RARITY_CLASS
@@ -54,7 +54,8 @@ src/
       save.ts               versioned localStorage save + legacy migration
       useGame.ts            wires reducer + side effects (sound, timer, persistence, haptics)
       sounds/               mp3s + useFartSound
-      components/           PooButton (stage), DropToast (live region)
+      assets/               stage background photo (source; optimized at build time)
+      components/           PooButton (stage), StageBackground, DropToast (live region)
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
     help/                   HelpButton (native Popover API)
@@ -97,6 +98,10 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
   runs the React Compiler/Hooks rules; `eslint-plugin-oxlint` switches off everything oxlint
   already covers. Configure rules in `.oxlintrc.json` first.
 - `@vite-pwa/assets-generator` is pinned to 1.x because vite-plugin-pwa's peer range stops there.
+- Images are optimized at build time by **vite-imagetools** via import queries
+  (`photo.jpg?w=480;800&format=avif&as=srcset`, `…&inline` for data URLs); their module types
+  live in `src/types/imagetools.d.ts`. Commit source photos at ≤ 1800 px wide, never the
+  generated variants.
 - Icons are generated at build time from `public/icon.svg` (`pwa-assets.config.ts`); don't
   commit PNG icons.
 - The service worker only exists in production builds, so test offline behaviour with

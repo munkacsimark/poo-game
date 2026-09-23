@@ -1,8 +1,10 @@
 import { useRef } from "react";
+import { prefersReducedMotion } from "../../../shared/lib/motion";
 import { getRarity, type Emoji } from "../emojis";
 import type { Drop } from "../gameReducer";
 import { RARITIES, RARITY_CLASS } from "../rarity";
 import { DropToast } from "./DropToast";
+import { StageBackground } from "./StageBackground";
 
 type Props = {
   emoji: Emoji;
@@ -11,8 +13,6 @@ type Props = {
   showHint: boolean;
   onPush: () => void;
 };
-
-const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export const PooButton = ({ emoji, dropping, lastDrop, showHint, onPush }: Props) => {
   const emojiRef = useRef<HTMLSpanElement>(null);
@@ -40,8 +40,9 @@ export const PooButton = ({ emoji, dropping, lastDrop, showHint, onPush }: Props
           type="button"
           onClick={handleClick}
           aria-label={`Push the ${emoji}`}
-          className="group relative grid aspect-[1/0.85] w-[min(100%,26rem,56dvh)] cursor-pointer touch-manipulation place-items-center overflow-hidden rounded-[2.5rem] glass bg-[radial-gradient(circle_at_50%_45%,color-mix(in_oklch,var(--rarity)_30%,transparent),transparent_65%)] outline-none select-none focus-visible:ring-4 focus-visible:ring-(--rarity)/60 sm:aspect-square lg:w-[min(100%,32rem,70dvh)]"
+          className="group relative isolate grid aspect-[1/0.85] w-[min(100%,26rem,56dvh)] cursor-pointer touch-manipulation place-items-center overflow-hidden rounded-[2.5rem] glass outline-none select-none focus-visible:ring-4 focus-visible:ring-(--rarity)/60 sm:aspect-square lg:w-[min(100%,32rem,70dvh)]"
         >
+          <StageBackground emoji={emoji} />
           {/* Keyed so the pop-in and shine animations replay whenever the emoji changes. */}
           <span
             key={emoji}
