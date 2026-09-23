@@ -32,6 +32,27 @@
   --animate-rise-in: rise-in 0.5s var(--ease-out-expo) both;
   --animate-burst: burst 1.1s var(--ease-out-expo) both;
   --animate-shockwave: shockwave 0.9s var(--ease-out-expo) forwards;
+  --animate-tile-in: tile-in 0.45s var(--ease-spring) both;
+  --animate-sheen: sheen 3s linear infinite;
+
+  /* Collection tiles entering, staggered by --i. */
+  @keyframes tile-in {
+    from {
+      opacity: 0;
+      scale: 0.7;
+      translate: 0 0.5rem;
+    }
+  }
+
+  /* Light sweeping along the progress bar. */
+  @keyframes sheen {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
 
   /* Idle bob of the stage emoji, inviting a tap. */
   @keyframes float {

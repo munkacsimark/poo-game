@@ -40,7 +40,7 @@ export const CollectionPanel = ({ entries, selected, lastDrop, onSelect }: Props
           aria-label="Collection progress"
           value={entries.length}
           max={TOTAL_EMOJIS}
-          className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-white/10 [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-epic [&::-moz-progress-bar]:to-legendary [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-epic [&::-webkit-progress-value]:via-galaxy-opal [&::-webkit-progress-value]:to-legendary [&::-webkit-progress-value]:transition-[width] [&::-webkit-progress-value]:duration-700"
+          className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-white/10 [&::-moz-progress-bar]:animate-sheen [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-epic [&::-moz-progress-bar]:to-legendary [&::-moz-progress-bar]:bg-size-[200%_100%] [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:animate-sheen [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-epic [&::-webkit-progress-value]:via-galaxy-opal [&::-webkit-progress-value]:to-legendary [&::-webkit-progress-value]:bg-size-[200%_100%] [&::-webkit-progress-value]:transition-[width] [&::-webkit-progress-value]:duration-700"
         />
       </header>
 
@@ -54,13 +54,15 @@ export const CollectionPanel = ({ entries, selected, lastDrop, onSelect }: Props
       <div className="-mx-3 -mb-3 overflow-y-auto overscroll-contain mask-b-from-[calc(100%-0.75rem)] px-3 pt-2.5 pb-3">
         {visible.length > 0 ? (
           <CollectionGrid
+            // Remount per filter so the tiles replay their staggered entrance.
+            key={filter ?? "all"}
             entries={visible}
             selected={selected}
             lastDrop={lastDrop}
             onSelect={onSelect}
           />
         ) : (
-          <p className="py-6 text-center text-sm text-white/50">
+          <p key={filter} className="animate-rise-in py-6 text-center text-sm text-white/50">
             No {filterLabel} emojis yet. Keep pushing!
           </p>
         )}
