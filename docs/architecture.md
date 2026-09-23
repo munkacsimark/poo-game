@@ -32,13 +32,17 @@ stateDiagram-v2
                                    dispatch({ type: "drop", emoji, pushesNeeded }) + vibrate,
                                    then after 0.8 s dispatch({ type: "revealed" })
 
- state ─▶ App ─▶ PooButton / DropToast / CollectionPanel (derived: sortCollection, rarityStats)
- state.{selected, clicks, collection} ─▶ useEffect ─▶ writeSave (localStorage)
+ App ─ useProfiles (profilesReducer, persisted) ─▶ ProfilePicker | GameScreen key={profile.id}
+ GameScreen ─ useGame({ save: profile.save, onSave }) ─▶ PooButton / DropToast / CollectionPanel
+ state.{selected, clicks, collection, pity} ─▶ useEffect ─▶ onSave ─▶ dispatch({ type: "save" })
+                                                                   ─▶ writeProfiles (localStorage)
 ```
 
 - `gameReducer.ts` is pure and fully unit-tested. Randomness enters only through action
   payloads.
-- `useGame.ts` owns every side effect: sound, the drop timer, persistence and haptics.
+- `useGame.ts` owns the game's side effects: sound, the drop timer and haptics. It reads its
+  save once, so `GameScreen` is keyed by profile id: switching profiles remounts the game with
+  the other save. Progress flows back through `onSave` (a `useEffectEvent`).
 - Collection views are derived on each render with `sortCollection` / `rarityStats`. The React
   Compiler memoizes components, so there's no manual caching.
 
@@ -90,26 +94,43 @@ that floor, keeping their relative weights (an Epic-floor roll is Legendary 20 %
 is the rate of a single, unprotected roll. The counters are saved, so reloading doesn't reset
 them.
 
-## Persistence
+## Profiles and persistence
 
-Progress lives in `localStorage` under one key and is validated on every load:
+A device can hold up to 5 **profiles** (`features/profiles`), each with a name, an avatar and its
+own progress. With more than one, the app opens on a "Who's playing?" picker; the header avatar
+button returns to it, and "Manage profiles" edits, adds or deletes them (never the last one).
+`profilesReducer` is pure; `useProfiles` persists every change.
+
+Everything lives in `localStorage` under one key and is validated on every load:
 
 ```jsonc
-// "poo-game:save"
+// "poo-game:profiles"
 {
   "version": 1,
-  "selected": "🦄", // must be a known emoji, otherwise the save is ignored
-  "clicks": 1234, // non-negative integer
-  "collection": { "🦄": 2 }, // unknown emojis / non-positive counts are dropped
-  "pity": { "legendary": 40, "epic": 7 }, // drops since that rarity or better; invalid → 0
+  "activeId": "5b0c…", // falls back to the first profile
+  "profiles": [
+    {
+      "id": "5b0c…", // crypto.randomUUID()
+      "name": "Mark", // trimmed, max 20 chars, unique per device
+      "avatar": "🦊", // one of AVATARS
+      "save": {
+        "selected": "🦄", // must be a known emoji, otherwise the profile is dropped
+        "clicks": 1234, // non-negative integer
+        "collection": { "🦄": 2 }, // unknown emojis / non-positive counts are dropped
+        "pity": { "legendary": 40, "epic": 7 }, // drops since that rarity or better; invalid → 0
+      },
+    },
+  ],
 }
 ```
 
-- `"poo-game:muted"` stores the sound toggle (boolean).
-- **Compatibility:** v1 (released with v0.1.1) is the first format of the modernized app; saves
-  from the 2022 version aren't migrated. From v1 on, every format change must stay backward
-  compatible: bump `SAVE_VERSION`, migrate each older version inside `parseSave()`, and cover
-  it in `save.test.ts`.
+- `"poo-game:muted"` stores the sound toggle (boolean) for the whole device.
+- `parseSaveData` (game/save.ts) and `parseProfile` (profiles/storage.ts) validate untrusted
+  data, whether it comes from storage or from an imported file.
+- **Compatibility:** v1 (released with v0.1.1) is the first format of the modernized app; data
+  from the 2022 version isn't migrated. From v1 on, every change to the stored shape must stay
+  backward compatible: bump `PROFILES_VERSION`, migrate each older version inside
+  `parseProfiles()`, and cover it in `storage.test.ts`.
 
 ## Styling system
 

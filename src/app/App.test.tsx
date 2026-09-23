@@ -1,12 +1,13 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { seedProfiles, storedSave } from "../test/profileStorage";
 import { stubRandomWords } from "../test/stubRandomWords";
 import { App } from "./App";
 
 const grid = () => screen.queryByRole("list", { name: "Your collection" });
 const stage = () => screen.getByRole("button", { name: /^Push the/ });
-const savedClicks = () => JSON.parse(localStorage.getItem("poo-game:save") ?? "{}").clicks;
+const savedClicks = () => storedSave().clicks;
 
 // jsdom drops the whitespace between inline children when computing names, browsers keep it.
 describe("App", () => {
@@ -40,10 +41,7 @@ describe("App", () => {
     );
     expect(screen.getByRole("status")).toHaveTextContent("💩New Galaxy Opal!");
     expect(screen.getByRole("button", { name: "💩, 1 collected, new" })).toBeInTheDocument();
-    expect(JSON.parse(localStorage.getItem("poo-game:save") ?? "{}")).toMatchObject({
-      selected: "💩",
-      clicks: 1,
-    });
+    expect(storedSave()).toMatchObject({ selected: "💩", clicks: 1 });
   });
 
   it("ignores taps until the poo has dropped and the new emoji is revealed", async () => {
@@ -75,10 +73,7 @@ describe("App", () => {
 
   it("selects an emoji from the collection", async () => {
     const user = userEvent.setup();
-    localStorage.setItem(
-      "poo-game:save",
-      JSON.stringify({ version: 1, selected: "🍟", clicks: 0, collection: { "🍟": 1, "🦄": 2 } }),
-    );
+    seedProfiles({ name: "Ann", save: { collection: { "🍟": 1, "🦄": 2 } } });
     render(<App />);
 
     await user.click(screen.getByRole("button", { name: "🦄, 2 collected" }));
@@ -102,10 +97,7 @@ describe("App", () => {
 
   it("filters the collection by rarity", async () => {
     const user = userEvent.setup();
-    localStorage.setItem(
-      "poo-game:save",
-      JSON.stringify({ version: 1, selected: "🍟", clicks: 0, collection: { "🍟": 1, "🦄": 2 } }),
-    );
+    seedProfiles({ name: "Ann", save: { collection: { "🍟": 1, "🦄": 2 } } });
     render(<App />);
 
     await user.click(screen.getByRole("button", { name: /^Mythic\s*1\s*of\s*4$/ }));
@@ -114,5 +106,47 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: /^Epic\s*0\s*of/ }));
     expect(grid()).not.toBeInTheDocument();
     expect(screen.getByText("No Epic emojis yet. Keep pushing!")).toBeInTheDocument();
+  });
+
+  it("asks who's playing when there are several profiles, each with its own progress", async () => {
+    const user = userEvent.setup();
+    seedProfiles(
+      { name: "Ann", save: { selected: "🦄", clicks: 5, collection: { "🦄": 1 } } },
+      { name: "Bo", save: { selected: "🍟", clicks: 9 } },
+    );
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "Who's playing?" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Play as Bo" }));
+    expect(stage()).toHaveAccessibleName("Push the 🍟");
+
+    await user.click(screen.getByRole("button", { name: "Switch profile (Bo)" }));
+    await user.click(screen.getByRole("button", { name: "Play as Ann" }));
+    expect(stage()).toHaveAccessibleName("Push the 🦄");
+    expect(storedSave().clicks).toBe(5);
+  });
+
+  it("adds, renames and deletes profiles", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Switch profile (Player 1)" }));
+    await user.click(screen.getByRole("button", { name: "Add profile" }));
+    const dialog = screen.getByRole("dialog", { name: "Add profile" });
+    await user.type(within(dialog).getByRole("textbox", { name: "Name" }), "Cy");
+    await user.click(within(dialog).getByRole("radio", { name: "🤖" }));
+    await user.click(within(dialog).getByRole("button", { name: "Add profile" }));
+    expect(screen.getByRole("button", { name: "Play as Cy" })).toHaveTextContent("🤖");
+
+    await user.click(screen.getByRole("button", { name: "Manage profiles" }));
+    await user.click(screen.getByRole("button", { name: "Edit Cy" }));
+    const editor = screen.getByRole("dialog", { name: "Edit profile" });
+    await user.click(within(editor).getByRole("button", { name: "Delete profile" }));
+    await user.click(within(editor).getByRole("button", { name: "Delete" }));
+    expect(screen.queryByRole("button", { name: "Edit Cy" })).not.toBeInTheDocument();
+
+    // The last profile can't be deleted.
+    await user.click(screen.getByRole("button", { name: "Edit Player 1" }));
+    expect(screen.queryByRole("button", { name: "Delete profile" })).not.toBeInTheDocument();
   });
 });

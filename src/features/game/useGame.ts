@@ -1,10 +1,10 @@
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useEffectEvent, useReducer, useRef } from "react";
 import { vibrate } from "../../shared/lib/haptics";
 import type { Emoji } from "./emojis";
-import { INITIAL_PITY, pityFloor } from "./pity";
+import { pityFloor } from "./pity";
 import { createInitialState, gameReducer, type GameState } from "./gameReducer";
-import { rollCommonEmoji, rollEmoji, rollPushesNeeded } from "./roll";
-import { loadSave, writeSave } from "./save";
+import { rollEmoji, rollPushesNeeded } from "./roll";
+import type { SaveData } from "./save";
 import { useFartSound } from "./sounds";
 
 /** Must match the length of the poo drop animation. */
@@ -12,25 +12,25 @@ const DROP_DURATION_MS = 2000;
 /** Covers the new emoji's pop-in and the stage photo's blur-out (StageBackground). */
 const REVEAL_DURATION_MS = 800;
 
-const init = (): GameState => {
-  const starter = rollCommonEmoji();
-  const save = loadSave() ?? {
-    selected: starter,
-    clicks: 0,
-    collection: { [starter]: 1 },
-    pity: INITIAL_PITY,
-  };
-  return createInitialState(save, rollPushesNeeded());
+type Options = {
+  /** Progress to start from; read once, so remount (e.g. with a `key`) to load another save. */
+  save: SaveData;
+  /** Called whenever the progress to persist changes. */
+  onSave: (save: SaveData) => void;
+  muted: boolean;
 };
 
-export const useGame = ({ muted }: { muted: boolean }) => {
-  const [state, dispatch] = useReducer(gameReducer, undefined, init);
+export const useGame = ({ save, onSave, muted }: Options) => {
+  const [state, dispatch] = useReducer(gameReducer, save, (initial: SaveData): GameState =>
+    createInitialState(initial, rollPushesNeeded()),
+  );
   const playFart = useFartSound();
   const timer = useRef<number>(undefined);
 
+  const persist = useEffectEvent(onSave);
   const { selected, clicks, collection, pity } = state;
   useEffect(() => {
-    writeSave({ selected, clicks, collection, pity });
+    persist({ selected, clicks, collection, pity });
   }, [selected, clicks, collection, pity]);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);

@@ -11,20 +11,28 @@ description: Verify a UI change of Poo Game in a real browser via chrome-devtool
 3. **Seed state when the change needs it**, via `evaluate_script`. The save format is:
 
    ```js
+   const save = (selected, collection, clicks = 0) => ({
+     selected,
+     clicks,
+     collection,
+     pity: { legendary: 0, epic: 29 }, // the next drop is guaranteed Epic or better
+   });
    localStorage.setItem(
-     "poo-game:save",
+     "poo-game:profiles",
      JSON.stringify({
        version: 1,
-       selected: "🦄",
-       clicks: 120,
-       collection: { "🦄": 2, "💩": 1, "🍟": 5 },
-       pity: { legendary: 0, epic: 29 }, // the next drop is guaranteed Epic or better
+       activeId: "a",
+       profiles: [
+         { id: "a", name: "Mark", avatar: "🦊", save: save("🦄", { "🦄": 2, "💩": 1 }, 120) },
+         { id: "b", name: "Anna", avatar: "🐼", save: save("🍟", { "🍟": 5 }) },
+       ],
      }),
    );
    location.reload();
    ```
 
-   Call `localStorage.clear()` and reload to see the first-run experience.
+   With two or more profiles the app opens on the profile picker. Call `localStorage.clear()`
+   and reload to see the first-run experience (a single "Player 1" profile).
 
 4. **Mobile first:** `emulate` with viewport `390x844x2,mobile,touch`, then `take_screenshot`.
    Also check `360x740x2,mobile,touch` when header or chip layout changed.

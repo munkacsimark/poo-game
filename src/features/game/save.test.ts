@@ -1,34 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { loadSave, writeSave } from "./save";
+import { getRarity } from "./emojis";
+import { createStarterSave, parseSaveData } from "./save";
 
-describe("save", () => {
-  it("returns undefined when nothing is stored", () => {
-    expect(loadSave()).toBeUndefined();
-  });
-
-  it("round-trips", () => {
+describe("parseSaveData", () => {
+  it("accepts a valid save", () => {
     const save = {
       selected: "🦄",
       clicks: 3,
       collection: { "🦄": 2 },
       pity: { legendary: 40, epic: 7 },
     } as const;
-    writeSave(save);
-    expect(loadSave()).toEqual(save);
+    expect(parseSaveData(save)).toEqual(save);
   });
 
   it("drops unknown emojis and invalid counts", () => {
-    localStorage.setItem(
-      "poo-game:save",
-      JSON.stringify({
-        version: 1,
+    expect(
+      parseSaveData({
         selected: "🦄",
         clicks: -4,
         collection: { "🦄": 1, bogus: 3, "🍟": 0 },
         pity: { legendary: -1, epic: "3" },
       }),
-    );
-    expect(loadSave()).toEqual({
+    ).toEqual({
       selected: "🦄",
       clicks: 0,
       collection: { "🦄": 1 },
@@ -36,16 +29,21 @@ describe("save", () => {
     });
   });
 
-  it("ignores unknown versions", () => {
-    localStorage.setItem(
-      "poo-game:save",
-      JSON.stringify({ version: 99, selected: "🦄", clicks: 5, collection: {} }),
-    );
-    expect(loadSave()).toBeUndefined();
+  it("always owns the selected emoji", () => {
+    expect(parseSaveData({ selected: "🦄" })?.collection).toEqual({ "🦄": 1 });
   });
 
-  it("ignores corrupt data", () => {
-    localStorage.setItem("poo-game:save", "{not json");
-    expect(loadSave()).toBeUndefined();
+  it("rejects saves without a known selected emoji", () => {
+    expect(parseSaveData({ selected: "nope", collection: {} })).toBeUndefined();
+    expect(parseSaveData("junk")).toBeUndefined();
+  });
+});
+
+describe("createStarterSave", () => {
+  it("starts with one common emoji", () => {
+    const save = createStarterSave();
+    expect(getRarity(save.selected)).toBe("common");
+    expect(save.collection).toEqual({ [save.selected]: 1 });
+    expect(save.clicks).toBe(0);
   });
 });

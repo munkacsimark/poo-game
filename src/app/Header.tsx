@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { HelpButton } from "../features/help/HelpButton";
 import { MuteButton } from "../features/settings/MuteButton";
 
@@ -7,9 +8,10 @@ type Props = {
   clicks: number;
   muted: boolean;
   onToggleMuted: () => void;
+  profileButton: ReactNode;
 };
 
-export const Header = ({ clicks, muted, onToggleMuted }: Props) => (
+export const Header = ({ clicks, muted, onToggleMuted, profileButton }: Props) => (
   <header className="flex items-center justify-between gap-3">
     <h1 className="flex items-center gap-2 text-lg font-extrabold tracking-tight whitespace-nowrap sm:text-xl">
       <span aria-hidden className="font-emoji">
@@ -24,6 +26,7 @@ export const Header = ({ clicks, muted, onToggleMuted }: Props) => (
       </p>
       <MuteButton muted={muted} onToggle={onToggleMuted} />
       <HelpButton />
+      {profileButton}
     </div>
   </header>
 );

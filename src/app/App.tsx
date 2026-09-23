@@ -1,40 +1,41 @@
-import { sortCollection } from "../features/collection/collection";
+import { useState } from "react";
 import { VersionButton } from "../features/changelog/VersionButton";
-import { CollectionPanel } from "../features/collection/components/CollectionPanel";
-import { PooButton } from "../features/game/components/PooButton";
-import { useGame } from "../features/game/useGame";
+import { ProfilePicker } from "../features/profiles/components/ProfilePicker";
+import { useProfiles } from "../features/profiles/useProfiles";
 import { useMuted } from "../features/settings/useMuted";
 import { Aurora } from "./Aurora";
-import { Header } from "./Header";
+import { GameScreen } from "./GameScreen";
 
 export const App = () => {
   const [muted, toggleMuted] = useMuted();
-  const { state, push, select } = useGame({ muted });
-  const entries = sortCollection(state.collection);
+  const [{ activeId, profiles }, dispatch] = useProfiles();
+  // Like a streaming service: ask who's playing on launch when there's more than one profile.
+  const [picking, setPicking] = useState(() => profiles.length > 1);
+  const active = profiles.find(({ id }) => id === activeId);
 
   return (
     <div className="relative isolate min-h-dvh">
       <Aurora />
       <div className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-4 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6">
-        <Header clicks={state.clicks} muted={muted} onToggleMuted={toggleMuted} />
-        <main className="grid flex-1 content-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start lg:gap-10 lg:pt-6">
-          <div className="lg:sticky lg:top-6">
-            <PooButton
-              emoji={state.selected}
-              dropping={state.phase === "dropping"}
-              locked={state.phase !== "idle"}
-              lastDrop={state.lastDrop}
-              showHint={state.clicks < 10}
-              onPush={push}
-            />
-          </div>
-          <CollectionPanel
-            entries={entries}
-            selected={state.selected}
-            lastDrop={state.lastDrop}
-            onSelect={select}
+        {picking || !active ? (
+          <ProfilePicker
+            profiles={profiles}
+            dispatch={dispatch}
+            onPick={(id) => {
+              dispatch({ type: "switch", id });
+              setPicking(false);
+            }}
           />
-        </main>
+        ) : (
+          <GameScreen
+            key={active.id}
+            profile={active}
+            onSave={(save) => dispatch({ type: "save", id: active.id, save })}
+            muted={muted}
+            onToggleMuted={toggleMuted}
+            onSwitchProfile={() => setPicking(true)}
+          />
+        )}
         <footer className="flex justify-center">
           <VersionButton />
         </footer>

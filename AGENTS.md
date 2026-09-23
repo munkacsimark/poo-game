@@ -52,11 +52,12 @@ src/
       emojis.ts             EMOJIS_BY_RARITY data, Emoji type, getRarity/isEmoji
       roll.ts               pure RNG-injectable rolls (rarity, emoji, pushes needed)
       gameReducer.ts        pure state machine: push / drop / select
-      save.ts               versioned localStorage save (backward compatible from v1)
+      save.ts               SaveData (one player's progress): validation + starter save
       useGame.ts            wires reducer + side effects (sound, timer, persistence, haptics)
       sounds/               mp3s + useFartSound
       assets/               stage background photo (source; optimized at build time)
       components/           PooButton (stage), StageBackground, DropToast (live region)
+    profiles/               multiple profiles: reducer, versioned storage, picker + editor
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
     help/                   HelpButton (native Popover API) + drop-rate table
@@ -82,8 +83,9 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
   set by `RARITY_CLASS[rarity]`; use `text-(--rarity)`, `bg-(--rarity)/10`, etc. Never build class
   names from strings at runtime (Tailwind can't see them). New tokens/keyframes go in the
   `@theme` block of `src/app/index.css`.
-- **Persisted data is versioned.** If `SaveData` changes shape, bump `SAVE_VERSION` in `save.ts`,
-  migrate every older version, and add a test. Players must never lose progress.
+- **Persisted data is versioned.** If the stored profiles or `SaveData` change shape, bump
+  `PROFILES_VERSION` in `profiles/storage.ts`, migrate every older version, and add a test.
+  Players must never lose progress.
 - **Accessibility:** real `<button>`s, accessible names that contain the visible text,
   `aria-pressed` for toggles, decorative emoji `aria-hidden`, motion respects
   `prefers-reduced-motion`. Lighthouse accessibility must stay at 100.
