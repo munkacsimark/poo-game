@@ -9,17 +9,20 @@ import { StageBackground } from "./StageBackground";
 type Props = {
   emoji: Emoji;
   dropping: boolean;
+  /** True while the poo drops and the new emoji animates in; taps are ignored meanwhile. */
+  locked: boolean;
   lastDrop: Drop | null;
   showHint: boolean;
   onPush: () => void;
 };
 
-export const PooButton = ({ emoji, dropping, lastDrop, showHint, onPush }: Props) => {
+export const PooButton = ({ emoji, dropping, locked, lastDrop, showHint, onPush }: Props) => {
   const emojiRef = useRef<HTMLSpanElement>(null);
   const rarity = getRarity(emoji);
   const label = RARITIES.find(({ id }) => id === rarity)?.label;
 
   const handleClick = () => {
+    if (locked) return;
     onPush();
     if (prefersReducedMotion()) return;
     emojiRef.current?.animate(
@@ -39,8 +42,10 @@ export const PooButton = ({ emoji, dropping, lastDrop, showHint, onPush }: Props
         <button
           type="button"
           onClick={handleClick}
+          // aria-disabled instead of disabled so keyboard focus stays on the button.
+          aria-disabled={locked}
           aria-label={`Push the ${emoji}`}
-          className="group relative isolate grid aspect-[1/0.85] w-[min(100%,26rem,56dvh)] cursor-pointer touch-manipulation place-items-center overflow-hidden rounded-[2.5rem] glass outline-none select-none focus-visible:ring-4 focus-visible:ring-(--rarity)/60 sm:aspect-square lg:w-[min(100%,32rem,70dvh)]"
+          className="group relative isolate grid aspect-[1/0.85] w-[min(100%,26rem,56dvh)] cursor-pointer touch-manipulation place-items-center overflow-hidden rounded-[2.5rem] glass outline-none select-none focus-visible:ring-4 focus-visible:ring-(--rarity)/60 aria-disabled:cursor-default sm:aspect-square lg:w-[min(100%,32rem,70dvh)]"
         >
           <StageBackground emoji={emoji} />
           {/* Keyed so the pop-in and shine animations replay whenever the emoji changes. */}
@@ -48,7 +53,7 @@ export const PooButton = ({ emoji, dropping, lastDrop, showHint, onPush }: Props
             key={emoji}
             ref={emojiRef}
             aria-hidden
-            className="[animation:var(--animate-pop-in),var(--animate-shine)] rounded-[2rem] bg-[linear-gradient(45deg,transparent_45%,color-mix(in_oklch,var(--rarity)_60%,transparent)_50%,transparent_52%,color-mix(in_oklch,var(--rarity)_60%,transparent)_55%,transparent_60%)] bg-size-[230%_230%] bg-position-[0%_100%] px-4 font-emoji text-[clamp(7rem,40vw,13rem)] leading-none drop-shadow-[0_12px_32px_color-mix(in_oklch,var(--rarity)_45%,transparent)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95"
+            className="[animation:var(--animate-pop-in),var(--animate-shine)] rounded-[2rem] bg-[linear-gradient(45deg,transparent_45%,color-mix(in_oklch,var(--rarity)_60%,transparent)_50%,transparent_52%,color-mix(in_oklch,var(--rarity)_60%,transparent)_55%,transparent_60%)] bg-size-[230%_230%] bg-position-[0%_100%] px-4 font-emoji text-[clamp(7rem,40vw,13rem)] leading-none drop-shadow-[0_12px_32px_color-mix(in_oklch,var(--rarity)_45%,transparent)] transition-transform duration-300 group-aria-[disabled=false]:group-hover:scale-105 group-aria-[disabled=false]:group-active:scale-95"
           >
             {emoji}
           </span>
@@ -63,7 +68,7 @@ export const PooButton = ({ emoji, dropping, lastDrop, showHint, onPush }: Props
         </button>
         <span
           aria-hidden
-          className={`pointer-events-none absolute bottom-5 text-sm text-white/60 transition-opacity duration-500 ${showHint && !dropping ? "opacity-100" : "opacity-0"}`}
+          className={`pointer-events-none absolute bottom-5 text-sm text-white/60 transition-opacity duration-500 ${showHint && !locked ? "opacity-100" : "opacity-0"}`}
         >
           Keep tapping to make it poop!
         </span>

@@ -8,8 +8,11 @@ export type GameState = SaveData & {
   pushes: number;
   /** Pushes required for the next drop. */
   pushesNeeded: number;
-  /** `dropping` while the poo animation plays; pushes are ignored meanwhile. */
-  phase: "idle" | "dropping";
+  /**
+   * `dropping` while the poo animation plays, then `revealing` while the new emoji animates in.
+   * Pushes are only accepted when `idle`.
+   */
+  phase: "idle" | "dropping" | "revealing";
   /** The most recent drop this session; `id` increases with every drop. */
   lastDrop: Drop | null;
 };
@@ -17,6 +20,7 @@ export type GameState = SaveData & {
 export type GameAction =
   | { type: "push" }
   | { type: "drop"; emoji: Emoji; pushesNeeded: number }
+  | { type: "revealed" }
   | { type: "select"; emoji: Emoji };
 
 export const createInitialState = (save: SaveData, pushesNeeded: number): GameState => ({
@@ -35,7 +39,7 @@ const addToCollection = (collection: Collection, emoji: Emoji): Collection => ({
 export const gameReducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
     case "push": {
-      if (state.phase === "dropping") return state;
+      if (state.phase !== "idle") return state;
       const pushes = state.pushes + 1;
       return {
         ...state,
@@ -47,7 +51,7 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
     case "drop":
       return {
         ...state,
-        phase: "idle",
+        phase: "revealing",
         pushes: 0,
         pushesNeeded: action.pushesNeeded,
         selected: action.emoji,
@@ -58,6 +62,8 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
         },
         collection: addToCollection(state.collection, action.emoji),
       };
+    case "revealed":
+      return state.phase === "revealing" ? { ...state, phase: "idle" } : state;
     case "select":
       if (!state.collection[action.emoji]) return state;
       return { ...state, selected: action.emoji };

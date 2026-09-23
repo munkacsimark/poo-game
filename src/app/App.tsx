@@ -21,6 +21,7 @@ export const App = () => {
             <PooButton
               emoji={state.selected}
               dropping={state.phase === "dropping"}
+              locked={state.phase !== "idle"}
               lastDrop={state.lastDrop}
               showHint={state.clicks < 10}
               onPush={push}

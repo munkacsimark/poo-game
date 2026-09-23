@@ -4,7 +4,10 @@
 
 Each tap is a **push**. After a random number of pushes (1–60, rolled per drop) the emoji
 **drops** a new one: the 💩 animation plays for 2 s, then the rolled emoji is added to the
-collection and becomes the selected emoji. Pushes during the animation are ignored.
+collection and becomes the selected emoji. The new emoji then animates in for 0.8 s (pop-in
+plus the stage photo's blur-out). The stage ignores taps from the drop until the reveal ends:
+the reducer drops the pushes, and the button is `aria-disabled` with no hover or press
+feedback.
 
 ```mermaid
 stateDiagram-v2
@@ -12,7 +15,9 @@ stateDiagram-v2
     idle --> idle: push (pushes < pushesNeeded)
     idle --> dropping: push (pushes reaches pushesNeeded)
     dropping --> dropping: push (ignored)
-    dropping --> idle: drop after 2 s (emoji added, counter reset, new pushesNeeded)
+    dropping --> revealing: drop after 2 s (emoji added, counter reset, new pushesNeeded)
+    revealing --> revealing: push (ignored)
+    revealing --> idle: revealed after 0.8 s
     idle --> idle: select (owned emoji only)
 ```
 
@@ -24,7 +29,8 @@ stateDiagram-v2
                               ├─ dispatch({ type: "push" })            ─▶ gameReducer (pure)
                               └─ if this push completes the drop:
                                    roll emoji now, then after 2 s
-                                   dispatch({ type: "drop", emoji, pushesNeeded }) + vibrate
+                                   dispatch({ type: "drop", emoji, pushesNeeded }) + vibrate,
+                                   then after 0.8 s dispatch({ type: "revealed" })
 
  state ─▶ App ─▶ PooButton / DropToast / CollectionPanel (derived: sortCollection, rarityStats)
  state.{selected, clicks, collection} ─▶ useEffect ─▶ writeSave (localStorage)

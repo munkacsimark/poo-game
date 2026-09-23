@@ -14,16 +14,22 @@ describe("gameReducer", () => {
     expect(state).toMatchObject({ pushes: 2, phase: "dropping" });
   });
 
-  it("ignores pushes while dropping", () => {
-    const dropping = { ...initial, phase: "dropping" as const };
-    expect(gameReducer(dropping, { type: "push" })).toBe(dropping);
+  it.each(["dropping", "revealing"] as const)("ignores pushes while %s", (phase) => {
+    const busy = { ...initial, phase };
+    expect(gameReducer(busy, { type: "push" })).toBe(busy);
+  });
+
+  it("becomes pushable again once the new emoji is revealed", () => {
+    const revealing = { ...initial, phase: "revealing" as const };
+    expect(gameReducer(revealing, { type: "revealed" }).phase).toBe("idle");
+    expect(gameReducer(initial, { type: "revealed" })).toBe(initial);
   });
 
   it("adds the dropped emoji, selects it and resets the counter", () => {
     const dropping = { ...initial, pushes: 2, phase: "dropping" as const };
     const state = gameReducer(dropping, { type: "drop", emoji: "🦄", pushesNeeded: 5 });
     expect(state).toMatchObject({
-      phase: "idle",
+      phase: "revealing",
       pushes: 0,
       pushesNeeded: 5,
       selected: "🦄",
