@@ -18,6 +18,8 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "knip": "knip",
+    "changelog": "git-cliff --output CHANGELOG.md && oxfmt CHANGELOG.md",
+    "release": "node scripts/release.ts",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip && pnpm test",
     "prepare": "lefthook install"
   },
@@ -46,6 +48,7 @@
     "eslint": "^10.11.0",
     "eslint-plugin-oxlint": "^1.85.0",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "git-cliff": "^2.14.2",
     "globals": "^17.12.0",
     "jsdom": "^30.1.1",
     "knip": "^6.38.0",

@@ -36,6 +36,7 @@ pnpm coverage         # unit tests with v8 coverage
 pnpm e2e              # Playwright; builds and serves on :4174 automatically
 pnpm build && pnpm preview   # production build incl. service worker
 pnpm format           # fix formatting
+pnpm release [patch|minor|major|x.y.z]   # bump, regenerate CHANGELOG.md, commit + tag (no push)
 pnpm lint:fix         # auto-fix lint issues
 ```
 
@@ -107,6 +108,17 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
   commit PNG icons.
 - The service worker only exists in production builds, so test offline behaviour with
   `pnpm build && pnpm preview` or `pnpm e2e`.
+
+## Versioning and releases
+
+- Versions are semver git tags (`v0.1.0` is the original 2022 app). `package.json` holds the
+  current version, and the app shows it in the footer.
+- `CHANGELOG.md` is generated from Conventional Commit subjects by git-cliff (`cliff.toml`), so
+  write subjects for players and maintainers: they become changelog lines. Don't edit the
+  changelog by hand; regenerate it.
+- Release with `pnpm release` (defaults to a patch bump). It commits `chore(release): vX.Y.Z` and
+  creates the tag. `git push --follow-tags` publishes it, and the Release workflow creates a
+  GitHub Release from that version's changelog section.
 
 ## Definition of done
 
