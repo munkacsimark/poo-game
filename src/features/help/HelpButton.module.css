@@ -1,0 +1,24 @@
+.help {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 50px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  z-index: 1;
+  anchor-name: --help;
+}
+
+.popover {
+  position-anchor: --help;
+  inset: auto;
+  top: anchor(bottom);
+  right: anchor(right);
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  max-width: min(280px, calc(100vw - 20px));
+}

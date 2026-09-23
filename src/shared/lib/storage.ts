@@ -1,0 +1,28 @@
+/**
+ * localStorage access that never throws: storage can be disabled, full, or
+ * hold data written by an older version of the app.
+ */
+export const readJson = (key: string): unknown => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw === null ? undefined : JSON.parse(raw);
+  } catch {
+    return undefined;
+  }
+};
+
+export const writeJson = (key: string, value: unknown): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Progress simply isn't persisted when storage is unavailable.
+  }
+};
+
+export const removeKeys = (...keys: string[]): void => {
+  try {
+    for (const key of keys) localStorage.removeItem(key);
+  } catch {
+    // Nothing to clean up if storage is unavailable.
+  }
+};

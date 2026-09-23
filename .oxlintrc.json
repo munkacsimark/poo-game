@@ -12,7 +12,9 @@
     "typescript/consistent-type-imports": "error",
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",
-    "typescript/switch-exhaustiveness-check": "error"
+    "typescript/switch-exhaustiveness-check": "error",
+    "typescript/consistent-return": "off",
+    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }]
   },
   "ignorePatterns": ["dist/**", "coverage/**", "playwright-report/**", "test-results/**"]
 }

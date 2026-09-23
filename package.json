@@ -18,7 +18,6 @@
     "prepare": "lefthook install"
   },
   "dependencies": {
-    "local-data-storage": "^0.4.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

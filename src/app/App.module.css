@@ -11,7 +11,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  background-image: url("./assets/images/courtney-kenady.jpg");
+  background-image: url("./background.jpg");
   background-size: cover;
   z-index: -1;
 }
