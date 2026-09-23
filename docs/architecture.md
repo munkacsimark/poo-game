@@ -128,47 +128,80 @@ button returns to it, and "Manage profiles" edits, adds or deletes them (never t
 
 Everything lives in `localStorage` under one key, **sealed** so players can't casually read or
 edit it (`shared/lib/sealedStorage.ts`): `"PGS1" + base64url(salt ‖ checksum ‖ XOR-scrambled
-JSON)`. An edited value fails its keyed checksum and the game starts fresh. Like profile files,
-this deters casual cheating; it isn't security. Once opened, the JSON is validated on every
-load:
+JSON)`. Like profile files, this deters casual cheating; it isn't security. The sound toggle
+(`"poo-game:muted"`) is a plain boolean for the device.
+
+### Data format (schema v2)
+
+`features/profiles/schema.ts` defines the stored data with **Valibot**; the TypeScript types
+are inferred from it, and the same schema validates storage and imported profile files.
 
 ```jsonc
 // "poo-game:profiles", after unsealing
 {
-  "version": 1,
-  "activeId": "5b0c…", // falls back to the first profile
+  "format": "poo-game/save", // document kind; profile files use "poo-game/profile"
+  "version": 2, // SAVE_VERSION
+  "updatedAt": "2026-09-24T08:00:00.000Z",
+  "appVersion": "0.1.2", // who wrote it (debugging only)
+  "activeProfileId": "7c9e…",
   "profiles": [
     {
-      "id": "5b0c…", // crypto.randomUUID()
-      "name": "Mark", // trimmed, max 20 chars, unique per device
-      "avatar": "🦊", // one of AVATARS
-      "save": {
-        "selected": "🦄", // must be a known emoji, otherwise the profile is dropped
-        "clicks": 1234, // non-negative integer
-        "collection": { "🦄": 2 }, // unknown emojis / non-positive counts are dropped
-        "pity": { "legendary": 40, "epic": 7 }, // drops since that rarity or better; invalid → 0
+      "id": "7c9e…", // crypto.randomUUID()
+      "name": "Mark", // 1–20 chars
+      "avatar": "fox", // avatar id (AVATAR_IDS)
+      "createdAt": "2026-09-20T12:00:00.000Z",
+      "progress": {
+        "selected": "unicorn", // emoji id
+        "taps": 420,
+        "collection": {
+          // keyed by emoji id (game/emojiIds.ts), values are objects so they can grow
+          "unicorn": { "count": 2, "firstFoundAt": "2026-09-21T09:30:00.000Z" },
+        },
+        "pity": { "sinceEpic": 3, "sinceLegendary": 40 },
       },
     },
   ],
 }
 ```
 
-- `"poo-game:muted"` stores the sound toggle (plain boolean, nothing to cheat) for the device.
-- `"poo-game:sealed"` marks that profiles have been written sealed. v0.1.1 stored plain JSON,
-  which is read (and resealed on the next write) only while this marker is absent.
-- The seal format is versioned by its prefix: a new format gets `PGS2`, and `PGS1` must stay
-  readable.
-- `parseSaveData` (game/save.ts) and `parseProfile` (profiles/storage.ts) validate untrusted
-  data, whether it comes from storage or from an imported file.
-- **Compatibility:** v1 (released with v0.1.1) is the first format of the modernized app; data
-  from the 2022 version isn't migrated. From v1 on, every change to the stored shape must stay
-  backward compatible: bump `PROFILES_VERSION`, migrate each older version inside
-  `parseProfiles()`, and cover it in `storage.test.ts`.
+Design choices that keep it easy to evolve:
+
+- **Stable ids, not characters.** Emojis and avatars are stored by kebab-case ids (the emoji's
+  Unicode CLDR name, e.g. `pile-of-poo`), so invisible variation selectors don't matter and a
+  glyph can change. Ids never change or get reused; renamed emojis keep old ids working through
+  `EMOJI_ID_ALIASES`.
+- **Objects everywhere.** Collection entries are `{ count, firstFoundAt }`, not bare numbers,
+  so new per-emoji data (e.g. `shiny`) is an additive field.
+- **Unknown data survives.** Every schema object is a `looseObject`, and writes deep-merge over
+  the document as loaded (`mergeKeepingUnknown` in `saveFile.ts`). An older app therefore keeps
+  fields and emoji ids a newer one added, instead of deleting them.
+- **Explicit versions and migrations.** Loading goes header → version check → `migrate()` →
+  full schema (`readDocument`). `MIGRATIONS[n]` (in `migrations.ts`) turns version n into n + 1.
+  There are none yet: v2 is the first versioned format.
+
+How to change the format:
+
+| Change                                               | What to do                                                                                                      |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Add an optional field or a new emoji                 | Just add it. No version bump; older apps keep it untouched.                                                     |
+| Rename, remove, retype, change meaning, add required | Bump `SAVE_VERSION`, add `MIGRATIONS[old]`, keep the old version's pinned fixture loading (`saveFile.test.ts`). |
+| Rename or replace an emoji                           | Keep its id, or add the old id to `EMOJI_ID_ALIASES`. Never reuse an id.                                        |
+
+**Unusable data never gets overwritten.** `loadProfiles()` returns an error instead of state:
+`outdated` (older than `OLDEST_READABLE_VERSION`, including v0.1.1's format), `newer` (from a
+newer app; the player is told to reload) or `damaged` (edited, corrupt or invalid). The app
+then shows `SaveErrorScreen` in place of the routes and writes nothing until the player chooses
+**Remove saved data**, which deletes the save (not the sound setting) and starts fresh.
+
+In development, `window.pooGameDev.writeSave(document)` / `.readSave()` seal and unseal the
+stored document from the console (dev server only; see `src/dev/devTools.ts`).
 
 ### Profile files (import/export)
 
 "Manage profiles" → a profile → **Export** downloads `poo-game-<name>.poo`. **Import profile** on
-the picker adds a file as a new profile (fresh id, name made unique). `profileFile.ts`:
+the picker adds a file as a new profile (fresh id, name made unique). The payload is a
+`ProfileFileSchema` document (`format: "poo-game/profile"`, same version and migrations as
+saves); v0.1.1 files are rejected as outdated. `profileFile.ts`:
 
 ```
 "POO1" + base64url( salt[4] ‖ HMAC-SHA-256(salt ‖ scrambled)[16] ‖ scrambled )
@@ -179,7 +212,7 @@ scrambled = deflate-raw(JSON { name, avatar, save }) XOR xorshift32 stream(secre
   HMAC check: "This profile file was modified or is damaged."
 - It's **obfuscation, not security**: the key ships in the bundle, so a determined player could
   forge a file. That's acceptable for a local, single-player game.
-- Decoded data goes through the same `parseSaveData` validation as storage.
+- Decoded data goes through the same schema, version check and migrations as storage.
 - The `POO1` prefix versions the format. A new format gets a new prefix, and `decodeProfile`
   must keep accepting every older one.
 

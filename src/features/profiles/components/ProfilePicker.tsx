@@ -4,7 +4,6 @@ import { TOTAL_EMOJIS } from "../../collection/collection";
 import { MAX_PROFILES } from "../profiles";
 import { decodeProfile, ProfileFileError } from "../profileFile";
 import { useProfiles } from "../ProfilesProvider";
-import { createProfile } from "../storage";
 
 type Notice = { kind: "success" | "error"; text: string } | null;
 
@@ -48,8 +47,9 @@ export const ProfilePicker = () => {
 
   const importFile = async (file: File) => {
     try {
-      const { name, avatar, save } = await decodeProfile(await file.text());
-      dispatch({ type: "add", profile: { ...createProfile(name, avatar), save } });
+      const imported = await decodeProfile(await file.text());
+      const name = imported.name;
+      dispatch({ type: "add", profile: { ...imported, id: crypto.randomUUID() } });
       setNotice({ kind: "success", text: `Imported ${name}.` });
     } catch (error) {
       const text =

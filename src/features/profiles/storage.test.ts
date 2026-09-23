@@ -1,90 +1,94 @@
 import { describe, expect, it } from "vitest";
-import type { SaveData } from "../game/save";
+import { sealValue } from "../../shared/lib/sealedStorage";
+import { flipBase64Char } from "../../test/flipBase64Char";
+import { owned, T0 } from "../../test/profileStorage";
 import type { ProfilesState } from "./profiles";
-import { loadProfiles, parseProfile, writeProfiles } from "./storage";
+import { SAVE_FORMAT, SAVE_VERSION } from "./schema";
+import { clearSavedData, loadProfiles, writeProfiles } from "./storage";
 
-const save: SaveData = {
-  selected: "🦄",
-  clicks: 3,
-  collection: { "🦄": 2 },
-  pity: { legendary: 1, epic: 1 },
+const state: ProfilesState = {
+  activeId: "b",
+  profiles: [
+    {
+      id: "a",
+      name: "Ann",
+      avatar: "🐱",
+      createdAt: T0,
+      save: {
+        selected: "🦄",
+        clicks: 3,
+        collection: owned({ "🦄": 2 }),
+        pity: { legendary: 1, epic: 1 },
+      },
+    },
+    {
+      id: "b",
+      name: "Bo",
+      avatar: "🤖",
+      createdAt: T0,
+      save: {
+        selected: "🍟",
+        clicks: 0,
+        collection: owned({ "🍟": 1 }),
+        pity: { legendary: 0, epic: 0 },
+      },
+    },
+  ],
 };
-const stored = (value: unknown) => localStorage.setItem("poo-game:profiles", JSON.stringify(value));
+
+const raw = () => localStorage.getItem("poo-game:profiles") ?? "";
+const storeSealed = (document: unknown) =>
+  localStorage.setItem("poo-game:profiles", sealValue(document));
 
 describe("profile storage", () => {
   it("creates a single starter profile on first run", () => {
-    const { activeId, profiles } = loadProfiles();
-    expect(profiles).toHaveLength(1);
-    expect(profiles[0]).toMatchObject({ id: activeId, name: "Player 1" });
-    expect(profiles[0]?.save.clicks).toBe(0);
+    const loaded = loadProfiles();
+    expect(loaded.status).toBe("ok");
+    if (loaded.status !== "ok") return;
+    expect(loaded.state.profiles).toHaveLength(1);
+    expect(loaded.state.profiles[0]).toMatchObject({ name: "Player 1" });
   });
 
-  it("round-trips", () => {
-    const state: ProfilesState = {
-      activeId: "b",
-      profiles: [
-        { id: "a", name: "Ann", avatar: "🐱", save },
-        { id: "b", name: "Bo", avatar: "🤖", save },
-      ],
-    };
+  it("round-trips, sealed", () => {
     writeProfiles(state);
-    expect(loadProfiles()).toEqual(state);
+    expect(raw()).toMatch(/^PGS1/);
+    expect(raw()).not.toContain("Ann");
+    expect(loadProfiles()).toMatchObject({ status: "ok", state });
   });
 
-  it("drops invalid and duplicate profiles and repairs the active id", () => {
-    stored({
-      version: 1,
-      activeId: "gone",
-      profiles: [
-        { id: "a", name: "Ann", avatar: "🐱", save },
-        { id: "a", name: "Dup", avatar: "🐱", save },
-        { id: "b", name: "Bad", avatar: "🐱", save: { selected: "nope" } },
-        "junk",
-      ],
-    });
-    expect(loadProfiles()).toEqual({
-      activeId: "a",
-      profiles: [{ id: "a", name: "Ann", avatar: "🐱", save }],
-    });
+  it("reports v0.1.1 data as outdated, plain or sealed", () => {
+    const v1 = { version: 1, activeId: "a", profiles: [] };
+    localStorage.setItem("poo-game:profiles", JSON.stringify(v1));
+    expect(loadProfiles()).toEqual({ status: "error", reason: "outdated" });
+    storeSealed(v1);
+    expect(loadProfiles()).toEqual({ status: "error", reason: "outdated" });
   });
 
-  it("starts fresh on unknown versions or corrupt data", () => {
-    stored({ version: 99, activeId: "a", profiles: [{ id: "a", name: "Ann", save }] });
-    expect(loadProfiles().profiles[0]?.name).toBe("Player 1");
-    localStorage.setItem("poo-game:profiles", "{not json");
-    expect(loadProfiles().profiles[0]?.name).toBe("Player 1");
+  it("reports data from a newer version", () => {
+    storeSealed({ format: SAVE_FORMAT, version: SAVE_VERSION + 1 });
+    expect(loadProfiles()).toEqual({ status: "error", reason: "newer" });
   });
 
-  it("stores profiles sealed, not as readable JSON", () => {
-    writeProfiles({ activeId: "a", profiles: [{ id: "a", name: "Ann", avatar: "🐱", save }] });
-    const raw = localStorage.getItem("poo-game:profiles") ?? "";
-    expect(raw).toMatch(/^PGS1/);
-    expect(raw).not.toContain("Ann");
+  it("reports edited or invalid data as damaged", () => {
+    writeProfiles(state);
+    localStorage.setItem("poo-game:profiles", flipBase64Char(raw(), raw().length - 1));
+    expect(loadProfiles()).toEqual({ status: "error", reason: "damaged" });
+
+    storeSealed({ format: SAVE_FORMAT, version: SAVE_VERSION, profiles: "nope" });
+    expect(loadProfiles()).toEqual({ status: "error", reason: "damaged" });
+
+    // Hand-typed plain JSON in the current format isn't accepted either.
+    localStorage.setItem("poo-game:profiles", JSON.stringify({ format: SAVE_FORMAT, version: 2 }));
+    expect(loadProfiles()).toEqual({ status: "error", reason: "damaged" });
   });
 
-  it("starts fresh when the sealed data was edited", () => {
-    writeProfiles({ activeId: "a", profiles: [{ id: "a", name: "Ann", avatar: "🐱", save }] });
-    const raw = localStorage.getItem("poo-game:profiles") ?? "";
-    localStorage.setItem("poo-game:profiles", `${raw.slice(0, -2)}AA`);
-    expect(loadProfiles().profiles[0]?.name).toBe("Player 1");
-  });
-
-  it("migrates v0.1.1's plain JSON once, then refuses plain JSON", () => {
-    const plain = {
-      version: 1,
-      activeId: "a",
-      profiles: [{ id: "a", name: "Ann", avatar: "🐱", save }],
-    };
-    stored(plain);
-    const migrated = loadProfiles();
-    expect(migrated.profiles[0]?.name).toBe("Ann");
-
-    writeProfiles(migrated);
-    stored({ ...plain, profiles: [{ id: "a", name: "Cheater", avatar: "🐱", save }] });
-    expect(loadProfiles().profiles[0]?.name).toBe("Player 1");
-  });
-
-  it("falls back to a default avatar", () => {
-    expect(parseProfile({ id: "a", name: "Ann", avatar: "💩", save })?.avatar).toBe("🐱");
+  it("clears saved data but keeps the sound setting", () => {
+    writeProfiles(state);
+    localStorage.setItem("poo-game:sealed", "1");
+    localStorage.setItem("poo-game:muted", "true");
+    clearSavedData();
+    expect(localStorage.getItem("poo-game:profiles")).toBeNull();
+    expect(localStorage.getItem("poo-game:sealed")).toBeNull();
+    expect(localStorage.getItem("poo-game:muted")).toBe("true");
   });
 });

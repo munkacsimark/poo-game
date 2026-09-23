@@ -1,23 +1,29 @@
 import { describe, expect, it } from "vitest";
-import { decodeProfile, encodeProfile, profileFileName, type ExportedProfile } from "./profileFile";
+import { flipBase64Char } from "../../test/flipBase64Char";
+import { decodeProfile, encodeProfile, profileFileName } from "./profileFile";
+import type { Profile } from "./profiles";
 
-const profile: ExportedProfile = {
+const profile: Profile = {
+  id: "profile-1",
   name: "Mark",
   avatar: "🦊",
+  createdAt: "2026-09-20T12:00:00.000Z",
   save: {
     selected: "🦄",
     clicks: 420,
-    collection: { "🦄": 1, "🍟": 3 },
+    collection: {
+      "🦄": { count: 1, firstFoundAt: "2026-09-21T09:30:00.000Z" },
+      "🍟": { count: 3, firstFoundAt: "2026-09-20T12:00:00.000Z" },
+    },
     pity: { legendary: 12, epic: 4 },
   },
 };
-
-const flipCharAt = (text: string, index: number) =>
-  text.slice(0, index) + (text[index] === "A" ? "B" : "A") + text.slice(index + 1);
+/** Importing drops the id (the importer assigns a fresh one). */
+const { id: _id, ...imported } = profile;
 
 describe("profile files", () => {
   it("round-trips a profile", async () => {
-    expect(await decodeProfile(await encodeProfile(profile))).toEqual(profile);
+    expect(await decodeProfile(await encodeProfile(profile))).toEqual(imported);
   });
 
   it("is unreadable and differs on every export", async () => {
@@ -32,7 +38,7 @@ describe("profile files", () => {
     const file = await encodeProfile(profile);
     await Promise.all(
       [4, 12, 30, file.length - 2].map((index) =>
-        expect(decodeProfile(flipCharAt(file, index))).rejects.toMatchObject({
+        expect(decodeProfile(flipBase64Char(file, index))).rejects.toMatchObject({
           reason: "tampered",
         }),
       ),
@@ -48,16 +54,15 @@ describe("profile files", () => {
     });
   });
 
-  it("still imports files exported by v0.1.1 (POO1)", async () => {
-    // Exported with the POO1 format as released. Never regenerate this: it guards
-    // compatibility with files players already have.
+  it("rejects files exported by v0.1.1 as outdated", async () => {
+    // A real v0.1.1 export (unversioned JSON inside the POO1 container).
     const file =
       "POO1ZcvxPLcAzYABLMUA1ZA8Zw0VzOl9-8PH2GLuQQIac1cq7T9_f3MY094ypcuSmNSqjXgUAMrzSa8mXQQvYLSW3dce5a8R_v03IlJdp1Aw3LbV6cX8Wx_tJAdHpVLjQiuS-pSifiv8QDGSFrNj6TEYbUtj4JAFWvV-5ezKHkPfkc0XQH2Ipudc";
-    expect(await decodeProfile(file)).toEqual(profile);
+    await expect(decodeProfile(file)).rejects.toMatchObject({ reason: "outdated" });
   });
 
   it("tolerates surrounding whitespace", async () => {
-    expect(await decodeProfile(`\n ${await encodeProfile(profile)}\n`)).toEqual(profile);
+    expect(await decodeProfile(`\n ${await encodeProfile(profile)}\n`)).toEqual(imported);
   });
 });
 

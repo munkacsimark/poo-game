@@ -34,3 +34,11 @@ export const writeText = (key: string, value: string): void => {
     // Progress simply isn't persisted when storage is unavailable.
   }
 };
+
+export const removeKeys = (...keys: string[]): void => {
+  try {
+    for (const key of keys) localStorage.removeItem(key);
+  } catch {
+    // Nothing to remove if storage is unavailable.
+  }
+};

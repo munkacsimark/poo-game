@@ -215,4 +215,30 @@ describe("App", () => {
       expect(await screen.findByRole("button", { name: /^Push the/ })).toBeInTheDocument();
     });
   });
+
+  it("explains unusable saved data and lets the player remove it", async () => {
+    const user = userEvent.setup();
+    // What v0.1.1 stored: plain, unversioned-schema JSON.
+    localStorage.setItem(
+      "poo-game:profiles",
+      JSON.stringify({ version: 1, activeId: "a", profiles: [{ id: "a", name: "Old" }] }),
+    );
+    localStorage.setItem("poo-game:muted", "true");
+    const { history } = await renderApp("/faq");
+
+    expect(
+      screen.getByRole("heading", { name: "Your saved progress is from an older version" }),
+    ).toBeInTheDocument();
+    expect(history.location.pathname).toBe("/faq");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    // Nothing is overwritten until the player decides.
+    expect(localStorage.getItem("poo-game:profiles")).toContain('"Old"');
+
+    await user.click(screen.getByRole("button", { name: "Remove saved data" }));
+    await user.click(screen.getByRole("button", { name: "Remove and start over" }));
+
+    expect(await screen.findByRole("button", { name: /^Push the/ })).toBeInTheDocument();
+    expect(localStorage.getItem("poo-game:profiles")).toMatch(/^PGS1/);
+    expect(localStorage.getItem("poo-game:muted")).toBe("true");
+  });
 });

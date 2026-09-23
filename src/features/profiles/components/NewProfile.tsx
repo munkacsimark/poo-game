@@ -1,6 +1,6 @@
 import { useCloseRoute } from "../../../shared/lib/useCloseRoute";
 import { useProfiles } from "../ProfilesProvider";
-import { createProfile } from "../storage";
+import { createProfile } from "../profiles";
 import { ProfileEditor } from "./ProfileEditor";
 
 /** /profiles/new: the "Add profile" dialog over the picker. */

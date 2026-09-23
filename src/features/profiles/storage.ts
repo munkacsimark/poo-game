@@ -1,95 +1,66 @@
 import { isSealed, openValue, sealValue } from "../../shared/lib/sealedStorage";
-import { readText, writeText } from "../../shared/lib/storage";
-import { createStarterSave, isRecord, parseSaveData } from "../game/save";
-import {
-  AVATARS,
-  cleanName,
-  isAvatar,
-  MAX_PROFILES,
-  type Avatar,
-  type Profile,
-  type ProfilesState,
-} from "./profiles";
+import { readText, removeKeys, writeText } from "../../shared/lib/storage";
+import { createProfile, type ProfilesState } from "./profiles";
+import { fromSaveFile, readDocument, toSaveFile, type ReadError } from "./saveFile";
+import { SAVE_FORMAT, SaveFileSchema } from "./schema";
 
-const PROFILES_KEY = "poo-game:profiles";
-/**
- * Set once profiles have been written sealed. v0.1.1 stored plain JSON; that is read (and
- * resealed) only while this marker is absent, so pasting plain JSON back in doesn't work.
- */
-const SEALED_MARKER_KEY = "poo-game:sealed";
-/**
- * Bump when the stored shape (this container, `Profile` or `SaveData`) changes, and migrate
- * every older version in `parseProfiles` so players never lose progress.
- */
-const PROFILES_VERSION = 1;
+/** The sealed save file (see schema.ts for its shape, sealedStorage.ts for the sealing). */
+const SAVE_KEY = "poo-game:profiles";
+/** Written by v0.1.1's sealing migration; unused now, removed with the rest of the data. */
+const LEGACY_KEYS = ["poo-game:sealed"];
 
-const randomAvatar = (): Avatar =>
-  AVATARS[Math.floor(Math.random() * AVATARS.length)] ?? AVATARS[0];
+export type LoadResult =
+  | {
+      status: "ok";
+      state: ProfilesState;
+      /** The document as loaded, so writes keep fields and emojis this version doesn't know. */
+      base?: unknown;
+    }
+  | { status: "error"; reason: ReadError };
 
-export const createProfile = (name: string, avatar: Avatar = randomAvatar()): Profile => ({
-  id: crypto.randomUUID(),
-  name: cleanName(name),
-  avatar,
-  save: createStarterSave(),
-});
-
-/** Validates one stored or imported profile. */
-export const parseProfile = (value: unknown): Profile | undefined => {
-  if (!isRecord(value) || typeof value.id !== "string" || typeof value.name !== "string") {
-    return undefined;
-  }
-  const save = parseSaveData(value.save);
-  if (!save) return undefined;
-  return {
-    id: value.id,
-    name: cleanName(value.name),
-    avatar: isAvatar(value.avatar) ? value.avatar : AVATARS[0],
-    save,
-  };
-};
-
-const parseProfiles = (value: unknown): ProfilesState | undefined => {
-  if (!isRecord(value) || value.version !== PROFILES_VERSION) return undefined;
-  if (!Array.isArray(value.profiles)) return undefined;
-
-  const profiles: Profile[] = [];
-  for (const item of value.profiles) {
-    const profile = parseProfile(item);
-    const duplicate = profiles.some(({ id }) => id === profile?.id);
-    if (profile && !duplicate && profiles.length < MAX_PROFILES) profiles.push(profile);
-  }
-  const [first] = profiles;
-  if (!first) return undefined;
-
-  const active = profiles.find(({ id }) => id === value.activeId);
-  return { activeId: (active ?? first).id, profiles };
-};
-
-/** Stored profiles are sealed (see sealedStorage); v0.1.1's plain JSON migrates once. */
-const readStored = (): unknown => {
-  const text = readText(PROFILES_KEY);
-  if (text === undefined) return undefined;
-  if (isSealed(text)) return openValue(text);
-  if (readText(SEALED_MARKER_KEY) !== undefined) return undefined;
-  try {
-    return JSON.parse(text);
-  } catch {
-    return undefined;
-  }
-};
-
-/**
- * The stored profiles, or a single new "Player 1" profile on first run. Edited or damaged
- * storage fails its checksum and also starts fresh.
- */
-export const loadProfiles = (): ProfilesState => {
-  const stored = parseProfiles(readStored());
-  if (stored) return stored;
+const firstRun = (): LoadResult => {
   const profile = createProfile("Player 1");
-  return { activeId: profile.id, profiles: [profile] };
+  return { status: "ok", state: { activeId: profile.id, profiles: [profile] } };
 };
 
-export const writeProfiles = (state: ProfilesState): void => {
-  writeText(PROFILES_KEY, sealValue({ version: PROFILES_VERSION, ...state }));
-  writeText(SEALED_MARKER_KEY, "1");
+/** Reads the raw stored value: sealed data, or v0.1.1's plain JSON (reported as outdated). */
+const readStored = (text: string): { value: unknown } | { error: ReadError } => {
+  if (isSealed(text)) {
+    const value = openValue(text);
+    return value === undefined ? { error: "damaged" } : { value };
+  }
+  try {
+    const value: unknown = JSON.parse(text);
+    // v0.1.1 stored plain JSON without a `format`; plain JSON with one was typed in by hand.
+    return typeof value === "object" && value !== null && !("format" in value)
+      ? { error: "outdated" }
+      : { error: "damaged" };
+  } catch {
+    return { error: "damaged" };
+  }
+};
+
+/**
+ * The stored profiles, a fresh "Player 1" on first run, or why the stored data can't be used.
+ * An error is never overwritten automatically: the player chooses to remove the data.
+ */
+export const loadProfiles = (): LoadResult => {
+  const text = readText(SAVE_KEY);
+  if (text === undefined) return firstRun();
+
+  const stored = readStored(text);
+  if ("error" in stored) return { status: "error", reason: stored.error };
+
+  const read = readDocument(stored.value, SAVE_FORMAT, SaveFileSchema);
+  if (!read.ok) return { status: "error", reason: read.error };
+  return { status: "ok", state: fromSaveFile(read.document), base: read.document };
+};
+
+export const writeProfiles = (state: ProfilesState, base?: unknown): void => {
+  writeText(SAVE_KEY, sealValue(toSaveFile(state, base)));
+};
+
+/** Deletes all saved progress on this device (the sound setting stays). */
+export const clearSavedData = (): void => {
+  removeKeys(SAVE_KEY, ...LEGACY_KEYS);
 };

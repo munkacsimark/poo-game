@@ -7,8 +7,8 @@ export type CollectionEntry = { emoji: Emoji; count: number; rarity: Rarity };
 /** Rarest first, then most collected, then by code point for a stable order. */
 export const sortCollection = (collection: Collection): CollectionEntry[] =>
   Object.entries(collection)
-    .flatMap(([emoji, count]) =>
-      isEmoji(emoji) && count ? [{ emoji, count, rarity: getRarity(emoji) }] : [],
+    .flatMap(([emoji, owned]) =>
+      isEmoji(emoji) && owned ? [{ emoji, count: owned.count, rarity: getRarity(emoji) }] : [],
     )
     .toSorted(
       (a, b) =>

@@ -59,7 +59,8 @@ src/
       sounds/               mp3s + useFartSound
       assets/               stage background photo (source; optimized at build time)
       components/           PooButton (stage), StageBackground, DropToast (live region)
-    profiles/               multiple profiles: reducer, versioned storage, picker + editor
+    profiles/               multiple profiles: reducer, schema (Valibot) + migrations, sealed
+                            storage, save error screen, picker + editor, profile files
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
     faq/                    /faq route: lazy FaqDialog with the drop-rate table
@@ -90,9 +91,10 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
   set by `RARITY_CLASS[rarity]`; use `text-(--rarity)`, `bg-(--rarity)/10`, etc. Never build class
   names from strings at runtime (Tailwind can't see them). New tokens/keyframes go in the
   `@theme` block of `src/app/index.css`.
-- **Persisted data is versioned.** If the stored profiles or `SaveData` change shape, bump
-  `PROFILES_VERSION` in `profiles/storage.ts`, migrate every older version, and add a test.
-  Players must never lose progress.
+- **Persisted data has a schema** (`features/profiles/schema.ts`, Valibot, version 2). Additive
+  optional fields need no version bump; anything else bumps `SAVE_VERSION` and adds a migration
+  in `migrations.ts` plus a pinned fixture. Refer to emojis by id (`game/emojiIds.ts`), never by
+  character, and never change or reuse an id. See "Data format" in docs/architecture.md.
 - **Accessibility:** real `<button>`s, accessible names that contain the visible text,
   `aria-pressed` for toggles, decorative emoji `aria-hidden`, motion respects
   `prefers-reduced-motion`. Lighthouse accessibility must stay at 100.

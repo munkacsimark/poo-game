@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState, gameReducer } from "./gameReducer";
 
+const T0 = "2026-01-01T00:00:00.000Z";
+const T1 = "2026-02-02T00:00:00.000Z";
+
 const initial = createInitialState(
-  { selected: "🍟", clicks: 0, collection: { "🍟": 1 }, pity: { legendary: 10, epic: 10 } },
+  {
+    selected: "🍟",
+    clicks: 0,
+    collection: { "🍟": { count: 1, firstFoundAt: T0 } },
+    pity: { legendary: 10, epic: 10 },
+  },
   2,
 );
 
@@ -30,37 +38,48 @@ describe("gameReducer", () => {
 
   it("adds the dropped emoji, selects it and resets the counter", () => {
     const dropping = { ...initial, pushes: 2, phase: "dropping" as const };
-    const state = gameReducer(dropping, { type: "drop", emoji: "🦄", pushesNeeded: 5 });
+    const state = gameReducer(dropping, { type: "drop", emoji: "🦄", pushesNeeded: 5, at: T1 });
     expect(state).toMatchObject({
       phase: "revealing",
       pushes: 0,
       pushesNeeded: 5,
       selected: "🦄",
       lastDrop: { id: 1, emoji: "🦄", isNew: true },
-      collection: { "🍟": 1, "🦄": 1 },
+      collection: {
+        "🍟": { count: 1, firstFoundAt: T0 },
+        "🦄": { count: 1, firstFoundAt: T1 },
+      },
     });
   });
 
   it("advances the pity counters", () => {
-    expect(gameReducer(initial, { type: "drop", emoji: "🍔", pushesNeeded: 5 }).pity).toEqual({
+    expect(
+      gameReducer(initial, { type: "drop", emoji: "🍔", pushesNeeded: 5, at: T1 }).pity,
+    ).toEqual({
       legendary: 11,
       epic: 11,
     });
-    expect(gameReducer(initial, { type: "drop", emoji: "👻", pushesNeeded: 5 }).pity).toEqual({
+    expect(
+      gameReducer(initial, { type: "drop", emoji: "👻", pushesNeeded: 5, at: T1 }).pity,
+    ).toEqual({
       legendary: 11,
       epic: 0,
     });
   });
 
   it("increments duplicates", () => {
-    const state = gameReducer(initial, { type: "drop", emoji: "🍟", pushesNeeded: 5 });
-    expect(state.collection).toEqual({ "🍟": 2 });
+    const state = gameReducer(initial, { type: "drop", emoji: "🍟", pushesNeeded: 5, at: T1 });
+    // Duplicates keep the first-found time.
+    expect(state.collection).toEqual({ "🍟": { count: 2, firstFoundAt: T0 } });
     expect(state.lastDrop).toEqual({ id: 1, emoji: "🍟", isNew: false });
   });
 
   it("only selects owned emojis", () => {
     expect(gameReducer(initial, { type: "select", emoji: "🦄" })).toBe(initial);
-    const owned = { ...initial, collection: { "🍟": 1, "🦄": 1 } };
+    const owned = {
+      ...initial,
+      collection: { ...initial.collection, "🦄": { count: 1, firstFoundAt: T1 } },
+    };
     expect(gameReducer(owned, { type: "select", emoji: "🦄" }).selected).toBe("🦄");
   });
 });

@@ -12,10 +12,16 @@ import {
 const save: SaveData = {
   selected: "🍟",
   clicks: 0,
-  collection: { "🍟": 1 },
+  collection: { "🍟": { count: 1, firstFoundAt: "2026-01-01T00:00:00.000Z" } },
   pity: { legendary: 0, epic: 0 },
 };
-const profile = (id: string, name = id): Profile => ({ id, name, avatar: "🐱", save });
+const profile = (id: string, name = id): Profile => ({
+  id,
+  name,
+  avatar: "🐱",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  save,
+});
 const state: ProfilesState = { activeId: "a", profiles: [profile("a", "Ann"), profile("b", "Bo")] };
 
 describe("cleanName", () => {

@@ -20,7 +20,8 @@ export type GameState = SaveData & {
 
 export type GameAction =
   | { type: "push" }
-  | { type: "drop"; emoji: Emoji; pushesNeeded: number }
+  /** `at` is the drop's ISO timestamp (the reducer never reads the clock). */
+  | { type: "drop"; emoji: Emoji; pushesNeeded: number; at: string }
   | { type: "revealed" }
   | { type: "select"; emoji: Emoji };
 
@@ -32,10 +33,13 @@ export const createInitialState = (save: SaveData, pushesNeeded: number): GameSt
   lastDrop: null,
 });
 
-const addToCollection = (collection: Collection, emoji: Emoji): Collection => ({
-  ...collection,
-  [emoji]: (collection[emoji] ?? 0) + 1,
-});
+const addToCollection = (collection: Collection, emoji: Emoji, at: string): Collection => {
+  const owned = collection[emoji];
+  return {
+    ...collection,
+    [emoji]: owned ? { ...owned, count: owned.count + 1 } : { count: 1, firstFoundAt: at },
+  };
+};
 
 export const gameReducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
@@ -61,7 +65,7 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
           emoji: action.emoji,
           isNew: !state.collection[action.emoji],
         },
-        collection: addToCollection(state.collection, action.emoji),
+        collection: addToCollection(state.collection, action.emoji, action.at),
         pity: advancePity(state.pity, getRarity(action.emoji)),
       };
     case "revealed":

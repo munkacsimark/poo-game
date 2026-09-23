@@ -43,7 +43,12 @@ export const useGame = ({ save, onSave, muted }: Options) => {
     if (state.pushes + 1 >= state.pushesNeeded) {
       const emoji = rollEmoji({ exclude: state.selected, floor: pityFloor(state.pity) });
       timer.current = window.setTimeout(() => {
-        dispatch({ type: "drop", emoji, pushesNeeded: rollPushesNeeded() });
+        dispatch({
+          type: "drop",
+          emoji,
+          pushesNeeded: rollPushesNeeded(),
+          at: new Date().toISOString(),
+        });
         vibrate([40, 30, 80]);
         timer.current = window.setTimeout(() => dispatch({ type: "revealed" }), REVEAL_DURATION_MS);
       }, DROP_DURATION_MS);

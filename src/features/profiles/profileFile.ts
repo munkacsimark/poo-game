@@ -5,8 +5,14 @@ import {
   toBase64Url,
   type Bytes,
 } from "../../shared/lib/obfuscation";
-import { isRecord, parseSaveData } from "../game/save";
-import { AVATARS, cleanName, isAvatar, type Avatar, type Profile } from "./profiles";
+import type { Profile } from "./profiles";
+import { fromStoredProfile, readDocument, toStoredProfile } from "./saveFile";
+import {
+  PROFILE_FILE_FORMAT,
+  ProfileFileSchema,
+  SAVE_VERSION,
+  type StoredProfileFile,
+} from "./schema";
 
 /**
  * Exported profile files ("<name>.poo"). They're obfuscated and signed so players can't casually
@@ -16,8 +22,10 @@ import { AVATARS, cleanName, isAvatar, type Avatar, type Profile } from "./profi
  * This is tamper *resistance*, not security: the key ships with the app, so a determined player
  * can still forge a file. It's enough to make hand-editing useless.
  *
- * Layout: "POO1" + base64url(salt[4] ‖ tag[16] ‖ scrambled payload)
- * To change the format, add "POO2" and keep decoding "POO1" so old files still import.
+ * Layout: "POO1" + base64url(salt[4] ‖ tag[16] ‖ scrambled payload). "POO1" versions this
+ * container; the JSON inside is a versioned `ProfileFileSchema` document (schema.ts) that goes
+ * through the same migrations as saves. Files from v0.1.1 carry unversioned JSON and are
+ * rejected as outdated.
  */
 
 const PREFIX = "POO1";
@@ -28,7 +36,7 @@ const MAX_FILE_LENGTH = 64 * 1024;
 
 const SECRET = new TextEncoder().encode("poo-game/profile-file/v1:💩🌈🦄✨");
 
-export type ProfileFileErrorReason = "format" | "tampered" | "invalid";
+export type ProfileFileErrorReason = "format" | "tampered" | "invalid" | "outdated" | "newer";
 
 export class ProfileFileError extends Error {
   constructor(readonly reason: ProfileFileErrorReason) {
@@ -37,14 +45,17 @@ export class ProfileFileError extends Error {
         format: "This isn't a Poo Game profile file.",
         tampered: "This profile file was modified or is damaged.",
         invalid: "This profile file has no valid progress in it.",
+        outdated: "This profile file is from an older version of Poo Game and can't be imported.",
+        newer:
+          "This profile file is from a newer version of Poo Game. Reload to update, then retry.",
       }[reason],
     );
     this.name = "ProfileFileError";
   }
 }
 
-/** What a file carries; importing always creates a new profile with a fresh id. */
-export type ExportedProfile = Pick<Profile, "name" | "avatar" | "save">;
+/** An imported profile; importing always gives it a fresh id. */
+export type ExportedProfile = Omit<Profile, "id">;
 
 const transform = async (bytes: Bytes, stream: CompressionStream | DecompressionStream) => {
   const body = new Response(bytes).body;
@@ -63,8 +74,15 @@ const sign = async (data: Bytes): Promise<Bytes> => {
   return new Uint8Array(await crypto.subtle.sign("HMAC", key, data)).slice(0, TAG_BYTES);
 };
 
-export const encodeProfile = async ({ name, avatar, save }: ExportedProfile): Promise<string> => {
-  const json = new TextEncoder().encode(JSON.stringify({ name, avatar, save }));
+export const encodeProfile = async (profile: Profile): Promise<string> => {
+  const document: StoredProfileFile = {
+    format: PROFILE_FILE_FORMAT,
+    version: SAVE_VERSION,
+    exportedAt: new Date().toISOString(),
+    appVersion: import.meta.env.VITE_APP_VERSION,
+    profile: toStoredProfile(profile),
+  };
+  const json = new TextEncoder().encode(JSON.stringify(document));
   const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
   const scrambled = scramble(
     await transform(json, new CompressionStream("deflate-raw")),
@@ -76,11 +94,10 @@ export const encodeProfile = async ({ name, avatar, save }: ExportedProfile): Pr
 };
 
 const parseExported = (value: unknown): ExportedProfile => {
-  if (!isRecord(value) || typeof value.name !== "string") throw new ProfileFileError("invalid");
-  const save = parseSaveData(value.save);
-  if (!save) throw new ProfileFileError("invalid");
-  const avatar: Avatar = isAvatar(value.avatar) ? value.avatar : AVATARS[0];
-  return { name: cleanName(value.name), avatar, save };
+  const read = readDocument(value, PROFILE_FILE_FORMAT, ProfileFileSchema);
+  if (!read.ok) throw new ProfileFileError(read.error === "damaged" ? "invalid" : read.error);
+  const { id: _id, ...profile } = fromStoredProfile(read.document.profile);
+  return profile;
 };
 
 /** Decodes and validates a profile file; throws a `ProfileFileError` explaining why not. */

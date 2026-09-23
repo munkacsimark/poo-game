@@ -1,4 +1,4 @@
-import type { SaveData } from "../game/save";
+import { createStarterSave, type SaveData } from "../game/save";
 
 export const MAX_PROFILES = 5;
 export const MAX_NAME_LENGTH = 20;
@@ -20,13 +20,32 @@ export const AVATARS = [
 ] as const;
 export type Avatar = (typeof AVATARS)[number];
 
-export const isAvatar = (value: unknown): value is Avatar =>
-  AVATARS.some((avatar) => avatar === value);
+/** Stable ids for storage; like emoji ids, never change one. */
+export const AVATAR_IDS = {
+  "🐱": "cat",
+  "🐶": "dog",
+  "🦊": "fox",
+  "🐸": "frog",
+  "🐵": "monkey",
+  "🐼": "panda",
+  "🐨": "koala",
+  "🐯": "tiger",
+  "🦁": "lion",
+  "🐧": "penguin",
+  "🐙": "octopus",
+  "🤖": "robot",
+} as const satisfies Record<Avatar, string>;
+
+/** The avatar for a stored id; unknown ids (e.g. from a newer version) fall back to the first. */
+export const avatarFromId = (id: string): Avatar =>
+  AVATARS.find((avatar) => AVATAR_IDS[avatar] === id) ?? AVATARS[0];
 
 export type Profile = {
   id: string;
   name: string;
   avatar: Avatar;
+  /** ISO timestamp. */
+  createdAt: string;
   save: SaveData;
 };
 
@@ -42,6 +61,21 @@ export type ProfilesAction =
   | { type: "remove"; id: string }
   | { type: "switch"; id: string }
   | { type: "save"; id: string; save: SaveData };
+
+const randomAvatar = (): Avatar =>
+  AVATARS[Math.floor(Math.random() * AVATARS.length)] ?? AVATARS[0];
+
+/** A brand-new profile with a starter emoji. */
+export const createProfile = (name: string, avatar: Avatar = randomAvatar()): Profile => {
+  const now = new Date().toISOString();
+  return {
+    id: crypto.randomUUID(),
+    name: cleanName(name),
+    avatar,
+    createdAt: now,
+    save: createStarterSave(now),
+  };
+};
 
 /** Trims and shortens a name; empty names become "Player". */
 export const cleanName = (name: string): string =>

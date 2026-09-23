@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { flipBase64Char } from "../../test/flipBase64Char";
 import { isSealed, openValue, sealValue } from "./sealedStorage";
 
 const value = { version: 1, name: "Mark", clicks: 420, collection: { "🦄": 2 } };
-
-const flipCharAt = (text: string, index: number) =>
-  text.slice(0, index) + (text[index] === "A" ? "B" : "A") + text.slice(index + 1);
 
 describe("sealedStorage", () => {
   it("round-trips any JSON value", () => {
@@ -23,7 +21,7 @@ describe("sealedStorage", () => {
   it("rejects any edit", () => {
     const sealed = sealValue(value);
     for (const index of [4, 10, 20, sealed.length - 1]) {
-      expect(openValue(flipCharAt(sealed, index))).toBeUndefined();
+      expect(openValue(flipBase64Char(sealed, index))).toBeUndefined();
     }
     expect(openValue(sealed.slice(0, 12))).toBeUndefined();
   });
