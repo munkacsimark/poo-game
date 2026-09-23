@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 
+const grid = () => screen.queryByRole("list", { name: "Your collection" });
+
 describe("App", () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -28,7 +30,7 @@ describe("App", () => {
     });
 
     expect(screen.getByRole("button", { name: "Push the 💩" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "💩, 1 collected" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "💩, 1 collected, new" })).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem("poo-game:save") ?? "{}")).toMatchObject({
       selected: "💩",
       clicks: 1,
@@ -60,5 +62,21 @@ describe("App", () => {
     unmount();
     render(<App />);
     expect(screen.getByRole("button", { name: "Sound", pressed: false })).toBeInTheDocument();
+  });
+
+  it("filters the collection by rarity", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem(
+      "poo-game:save",
+      JSON.stringify({ version: 1, selected: "🍟", clicks: 0, collection: { "🍟": 1, "🦄": 2 } }),
+    );
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Legendary: 1 of 6" }));
+    expect(within(grid()!).getAllByRole("button")).toHaveLength(1);
+
+    await user.click(screen.getByRole("button", { name: /^Epic: 0 of/ }));
+    expect(grid()).not.toBeInTheDocument();
+    expect(screen.getByText("No Epic emojis yet. Keep pushing!")).toBeInTheDocument();
   });
 });

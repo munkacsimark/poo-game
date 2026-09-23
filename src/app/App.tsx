@@ -1,4 +1,4 @@
-import { rarityStats, sortCollection } from "../features/collection/collection";
+import { sortCollection } from "../features/collection/collection";
 import { CollectionPanel } from "../features/collection/components/CollectionPanel";
 import { PooButton } from "../features/game/components/PooButton";
 import { useGame } from "../features/game/useGame";
@@ -28,8 +28,8 @@ export const App = () => {
           </div>
           <CollectionPanel
             entries={entries}
-            stats={rarityStats(entries)}
             selected={state.selected}
+            lastDrop={state.lastDrop}
             onSelect={select}
           />
         </main>
