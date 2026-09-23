@@ -60,7 +60,7 @@ src/
     profiles/               multiple profiles: reducer, versioned storage, picker + editor
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
-    help/                   HelpButton (native Popover API) + drop-rate table
+    faq/                    footer FAQ link (#faq) + lazy FaqDialog with the drop-rate table
     changelog/              footer VersionButton + lazy ChangelogDialog (parses CHANGELOG.md)
   shared/lib/               storage (never-throwing localStorage), haptics, random (crypto RNG)
   test/                     jsdom shims (setup.ts) and stubRandomWords

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaqLink } from "../features/faq/FaqLink";
 import { VersionButton } from "../features/changelog/VersionButton";
 import { ProfilePicker } from "../features/profiles/components/ProfilePicker";
 import { useProfiles } from "../features/profiles/useProfiles";
@@ -36,7 +37,11 @@ export const App = () => {
             onSwitchProfile={() => setPicking(true)}
           />
         )}
-        <footer className="flex justify-center">
+        <footer className="flex items-center justify-center gap-1">
+          <FaqLink />
+          <span aria-hidden className="text-xs text-white/20">
+            ·
+          </span>
           <VersionButton />
         </footer>
       </div>

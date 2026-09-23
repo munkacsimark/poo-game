@@ -178,11 +178,11 @@ from `public/icon.svg` at build time.
 
 ## Testing strategy
 
-| Layer      | Where                       | What                                                                               |
-| ---------- | --------------------------- | ---------------------------------------------------------------------------------- |
-| Unit       | `src/features/**/*.test.ts` | rolls (with fixed RNG), reducer, save/migration, sorting                           |
-| Component  | `src/app/App.test.tsx`      | first run, deterministic drop (fake timers), select, filter, mute                  |
-| End-to-end | `e2e/*.spec.ts`             | production build: drop + reload persistence, filter, popover, no overflow, offline |
+| Layer      | Where                       | What                                                                                         |
+| ---------- | --------------------------- | -------------------------------------------------------------------------------------------- |
+| Unit       | `src/features/**/*.test.ts` | rolls (with fixed RNG), reducer, save/migration, sorting                                     |
+| Component  | `src/app/App.test.tsx`      | first run, deterministic drop (fake timers), select, filter, mute                            |
+| End-to-end | `e2e/*.spec.ts`             | production build: drop + persistence, filter, FAQ, changelog, profiles, no overflow, offline |
 
 To make a drop deterministic, make `crypto.getRandomValues` fill zeros (`stubRandomWords(0)` in `src/test`): one push is then enough, and
 the drop is always 💩 (Galaxy Opal).

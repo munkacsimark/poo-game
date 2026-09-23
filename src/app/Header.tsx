@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { HelpButton } from "../features/help/HelpButton";
 import { MuteButton } from "../features/settings/MuteButton";
 
 const numberFormat = new Intl.NumberFormat();
@@ -25,7 +24,6 @@ export const Header = ({ clicks, muted, onToggleMuted, profileButton }: Props) =
         <span className="font-bold tabular-nums">{numberFormat.format(clicks)}</span>
       </p>
       <MuteButton muted={muted} onToggle={onToggleMuted} />
-      <HelpButton />
       {profileButton}
     </div>
   </header>

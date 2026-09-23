@@ -54,10 +54,24 @@ test("filters the collection by rarity", async ({ page }) => {
   await expect(page.getByText("No Epic emojis yet. Keep pushing!")).toBeVisible();
 });
 
-test("opens the help popover", async ({ page }) => {
+test("the FAQ link in the footer opens the FAQ", async ({ page }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "How to play" }).click();
-  await expect(page.getByText("How to play", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "FAQ" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "FAQ" });
+  await expect(dialog.getByText("How do I play?")).toBeVisible();
+  await dialog.getByText("What are the drop rates?").click();
+  await expect(dialog.getByRole("rowheader", { name: "Galaxy Opal" })).toBeVisible();
+  await expect(page).toHaveURL(/#faq$/);
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(page).not.toHaveURL(/#faq$/);
+});
+
+test("#faq opens the FAQ directly", async ({ page }) => {
+  await page.goto("./#faq");
+  await expect(page.getByRole("dialog", { name: "FAQ" })).toBeVisible();
 });
 
 test("does not scroll horizontally", async ({ page }) => {
