@@ -6,6 +6,7 @@ import { RARITIES, RARITY_CLASS } from "../rarity";
 import { DropBurst } from "./DropBurst";
 import { DropToast } from "./DropToast";
 import { StageBackground } from "./StageBackground";
+import { StageShine } from "./StageShine";
 
 type Props = {
   emoji: Emoji;
@@ -64,6 +65,7 @@ export const PooButton = ({ emoji, dropping, locked, lastDrop, showHint, onPush 
           className="group relative isolate grid aspect-[1/0.85] w-[min(100%,26rem,56dvh)] cursor-pointer touch-manipulation place-items-center overflow-hidden rounded-[2.5rem] glass outline-none select-none focus-visible:ring-4 focus-visible:ring-(--rarity)/60 aria-disabled:cursor-default sm:aspect-square lg:w-[min(100%,32rem,70dvh)]"
         >
           <StageBackground emoji={emoji} />
+          <StageShine emoji={emoji} rarity={rarity} />
           {ripples.map(({ id, x, y }) => (
             <span
               key={id}
@@ -78,12 +80,12 @@ export const PooButton = ({ emoji, dropping, locked, lastDrop, showHint, onPush 
             aria-hidden
             className={`animate-float ${locked ? "[animation-play-state:paused]" : ""}`}
           >
-            {/* Keyed so the pop-in and shine animations replay whenever the emoji changes. */}
+            {/* Keyed so the pop-in replays whenever the emoji changes. */}
             <span
               key={emoji}
               ref={emojiRef}
               aria-hidden
-              className="inline-block [animation:var(--animate-pop-in),var(--animate-shine)] rounded-[2rem] bg-[linear-gradient(45deg,transparent_45%,color-mix(in_oklch,var(--rarity)_60%,transparent)_50%,transparent_52%,color-mix(in_oklch,var(--rarity)_60%,transparent)_55%,transparent_60%)] bg-size-[230%_230%] bg-position-[0%_100%] px-4 font-emoji text-[clamp(7rem,40vw,13rem)] leading-none drop-shadow-[0_12px_32px_color-mix(in_oklch,var(--rarity)_45%,transparent)] transition-transform duration-300 group-aria-[disabled=false]:group-hover:scale-105 group-aria-[disabled=false]:group-active:scale-95"
+              className="inline-block animate-pop-in px-4 font-emoji text-[clamp(7rem,40vw,13rem)] leading-none drop-shadow-[0_12px_32px_color-mix(in_oklch,var(--rarity)_45%,transparent)] transition-transform duration-300 group-aria-[disabled=false]:group-hover:scale-105 group-aria-[disabled=false]:group-active:scale-95"
             >
               {emoji}
             </span>

@@ -20,7 +20,9 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --animate-shine: shine 0.8s ease-in-out forwards;
+  --animate-shine-sweep: shine-sweep 1.4s var(--ease-out-expo) 0.15s both;
+  --animate-shine-idle: shine-idle 7s ease-in-out 2.5s infinite;
+  --animate-rays: rays 48s linear infinite;
   --animate-drop: drop 2s ease-in forwards;
   --animate-aurora: aurora 18s ease-in-out infinite alternate;
   --animate-opal: opal 4s linear infinite;
@@ -51,6 +53,34 @@
     }
     to {
       background-position: -200% 0;
+    }
+  }
+
+  /* Stage light (StageShine): one sweep across the stage, left to right... */
+  @keyframes shine-sweep {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: 200% 0;
+    }
+  }
+
+  /* ...and a faint glint that crosses in the first fifth of every cycle, then waits. */
+  @keyframes shine-idle {
+    0% {
+      translate: 0 0;
+    }
+    22%,
+    100% {
+      translate: 200% 0;
+    }
+  }
+
+  /* Slow turn of the rarity rays. */
+  @keyframes rays {
+    to {
+      rotate: 360deg;
     }
   }
 
@@ -118,15 +148,6 @@
     to {
       opacity: 0;
       scale: 2.4;
-    }
-  }
-
-  @keyframes shine {
-    from {
-      background-position: 0% 100%;
-    }
-    to {
-      background-position: 0% -80%;
     }
   }
 

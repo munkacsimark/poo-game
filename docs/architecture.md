@@ -178,7 +178,7 @@ scrambled = deflate-raw(JSON { name, avatar, save }) XOR xorshift32 stream(secre
 ## Styling system
 
 - `src/app/index.css` holds the Tailwind entry point and `@theme` tokens: fonts, the rarity
-  palette (`--color-common` … `--color-mythic`, `--color-galaxy-opal`) and animations (shine, drop, aurora, opal,
+  palette (`--color-common` … `--color-mythic`, `--color-galaxy-opal`) and animations (shine sweep and rays, drop, aurora, opal,
   pop-in, toast).
 - Custom utilities there: `glass` (frosted panel), `rarity-*` (sets `--rarity`) and
   `opal-border` (animated iridescent border using a registered `@property`).
