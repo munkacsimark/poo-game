@@ -1,7 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 
-/** Makes every roll 0: one push is enough for a drop, and the drop is always 💩. */
-const forceZeroRolls = (page: Page) => page.addInitScript(() => (Math.random = () => 0));
+/** Makes every game roll 0: one push is enough for a drop, and the drop is always 💩. */
+const forceZeroRolls = (page: Page) =>
+  page.addInitScript(() => {
+    crypto.getRandomValues = (array) => {
+      if (array instanceof Uint32Array) array.fill(0);
+      return array;
+    };
+  });
 
 const collection = (page: Page) => page.getByRole("list", { name: "Your collection" });
 const pushButton = (page: Page) => page.getByRole("button", { name: /^Push the/ });

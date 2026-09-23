@@ -113,5 +113,5 @@ from `public/icon.svg` at build time.
 | Component  | `src/app/App.test.tsx`      | first run, deterministic drop (fake timers), select, filter, mute                  |
 | End-to-end | `e2e/*.spec.ts`             | production build: drop + reload persistence, filter, popover, no overflow, offline |
 
-To make a drop deterministic, stub `Math.random` to return `0`: one push is then enough, and
+To make a drop deterministic, make `crypto.getRandomValues` fill zeros (`stubRandomWords(0)` in `src/test`): one push is then enough, and
 the drop is always 💩 (Galaxy Opal).

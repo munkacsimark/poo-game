@@ -37,7 +37,7 @@ so agents can drive a real Chrome:
 | Mobile / desktop     | `emulate` viewport `390x844x2,mobile,touch` / `1440x900x1`            |
 | See it               | `take_screenshot` (visual), `take_snapshot` (a11y tree with uids)     |
 | Interact             | `click`, `press_key`, `fill`                                          |
-| Seed / inspect state | `evaluate_script` (localStorage, `Math.random` stubs)                 |
+| Seed / inspect state | `evaluate_script` (localStorage, zero-filled crypto rolls)            |
 | Errors               | `list_console_messages` (types `error`, `warn`)                       |
 | Quality gates        | `lighthouse_audit` on the preview build (a11y / best practices / SEO) |
 | Offline              | `emulate` `networkConditions: "Offline"` on the preview build         |

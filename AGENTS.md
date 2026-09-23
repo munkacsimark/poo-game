@@ -59,8 +59,8 @@ src/
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
     help/                   HelpButton (native Popover API)
-  shared/lib/               storage (never-throwing localStorage), haptics
-  test/setup.ts             jsdom shims (Audio.play, Element.animate, matchMedia)
+  shared/lib/               storage (never-throwing localStorage), haptics, random (crypto RNG)
+  test/                     jsdom shims (setup.ts) and stubRandomWords
 e2e/                        Playwright specs
 docs/                       architecture and agent workflow docs
 ```
@@ -70,7 +70,8 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
 ## Conventions
 
 - **Keep game logic pure.** Randomness is injected (`Rng`) or rolled in `useGame` and passed
-  into reducer actions; the reducer never calls `Math.random`, timers or storage.
+  into reducer actions; the reducer never touches randomness, timers or storage. Rolls use `secureRandom`
+  (`shared/lib/random.ts`, backed by `crypto.getRandomValues`), never `Math.random`.
 - **No manual memoization.** The React Compiler handles it; don't add `useMemo`/`useCallback`/`memo`
   unless a profiler proves a need. Effects are only for syncing with external systems.
 - **Rarity is data.** Add or rebalance tiers in `RARITIES`/`EMOJIS_BY_RARITY`, never with

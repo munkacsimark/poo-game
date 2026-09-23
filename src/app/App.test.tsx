@@ -1,6 +1,7 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { stubRandomWords } from "../test/stubRandomWords";
 import { App } from "./App";
 
 const grid = () => screen.queryByRole("list", { name: "Your collection" });
@@ -23,8 +24,8 @@ describe("App", () => {
   it("drops a new emoji after enough pushes and persists it", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    // With a zero roll one push is enough and the drop is always 💩.
-    vi.spyOn(Math, "random").mockReturnValue(0);
+    // Zero rolls: one push is enough and the drop is always 💩.
+    stubRandomWords(0);
     render(<App />);
 
     await user.click(screen.getByRole("button", { name: /^Push the/ }));
@@ -48,7 +49,7 @@ describe("App", () => {
   it("ignores taps until the poo has dropped and the new emoji is revealed", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    const random = vi.spyOn(Math, "random").mockReturnValue(0);
+    const zeroRolls = stubRandomWords(0);
     render(<App />);
 
     await user.click(stage());
@@ -67,7 +68,7 @@ describe("App", () => {
     });
     expect(stage()).toHaveAttribute("aria-disabled", "false");
     // A zero roll can't pick anything but the selected 💩, so let the next drop roll for real.
-    random.mockRestore();
+    zeroRolls.mockRestore();
     await user.click(stage());
     expect(savedClicks()).toBe(2);
   });

@@ -29,7 +29,7 @@ description: Verify a UI change of Poo Game in a real browser via chrome-devtool
    Also check `360x740x2,mobile,touch` when header or chip layout changed.
 5. **Desktop:** `emulate` with viewport `1440x900x1` and take a screenshot.
 6. **Interact** with `take_snapshot` (a11y tree with uids) plus `click`. To force a drop on
-   the next push, add an init script that sets `Math.random = () => 0`, or push repeatedly
+   the next push, add an init script that zero-fills `crypto.getRandomValues` (`crypto.getRandomValues = (a) => a.fill(0)`), or push repeatedly
    (up to 60 times) and wait about 2 s for the drop animation.
 7. **Console:** `list_console_messages` with types `error` and `warn` must be empty.
 8. **Accessibility** (for non-trivial UI changes): `pnpm build`, run
