@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useCloseRoute } from "../../shared/lib/useCloseRoute";
+import { AccordionItem } from "../../shared/ui/AccordionItem";
 import { Modal } from "../../shared/ui/Modal";
 import { MAX_PROFILES } from "../profiles/profiles";
 import { RARITIES, RARITY_CLASS } from "../game/rarity";
@@ -14,15 +15,12 @@ const Question = ({
   children: ReactNode;
   open?: boolean;
 }) => (
-  <details open={open} className="group border-b border-white/10 py-3 last:border-0">
-    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg font-semibold text-white outline-none focus-visible:ring-2 focus-visible:ring-white [&::-webkit-details-marker]:hidden">
-      {title}
-      <span aria-hidden className="text-white/40 transition group-open:rotate-45">
-        +
-      </span>
-    </summary>
-    <div className="mt-2 flex flex-col gap-2 text-sm text-white/80">{children}</div>
-  </details>
+  <AccordionItem
+    defaultOpen={open}
+    summary={<span className="font-semibold text-white">{title}</span>}
+  >
+    <div className="flex flex-col gap-2 text-sm text-white/80">{children}</div>
+  </AccordionItem>
 );
 
 /** /faq: frequently asked questions, over the game. */

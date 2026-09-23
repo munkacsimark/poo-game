@@ -1,5 +1,6 @@
 import changelog from "virtual:changelog";
 import { useCloseRoute } from "../../shared/lib/useCloseRoute";
+import { AccordionItem } from "../../shared/ui/AccordionItem";
 import { Modal } from "../../shared/ui/Modal";
 import { parseChangelog } from "./changelog";
 
@@ -11,23 +12,24 @@ const dateFormat = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
 export const ChangelogDialog = () => (
   <Modal title="What's new" onClose={useCloseRoute("/")}>
     {releases.map(({ version, date, groups }, index) => (
-      <details
+      <AccordionItem
         key={version}
-        open={index === 0}
-        className="group border-b border-white/10 py-3 last:border-0"
-      >
-        <summary className="flex cursor-pointer items-baseline justify-between gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-white">
-          <span className="font-semibold text-white">
-            {version === "Unreleased" ? version : `v${version}`}
+        defaultOpen={index === 0}
+        summary={
+          <span className="flex flex-1 items-baseline justify-between gap-3">
+            <span className="font-semibold text-white">
+              {version === "Unreleased" ? version : `v${version}`}
+            </span>
+            {date && (
+              <time dateTime={date} className="text-xs text-white/50">
+                {dateFormat.format(new Date(`${date}T00:00:00`))}
+              </time>
+            )}
           </span>
-          {date && (
-            <time dateTime={date} className="text-xs text-white/50">
-              {dateFormat.format(new Date(`${date}T00:00:00`))}
-            </time>
-          )}
-        </summary>
+        }
+      >
         {groups.map(({ title, entries }) => (
-          <section key={title} className="mt-3">
+          <section key={title} className="mt-3 first:mt-0">
             <h3 className="mb-1 text-xs font-semibold tracking-wide text-white/50 uppercase">
               {title}
             </h3>
@@ -47,7 +49,7 @@ export const ChangelogDialog = () => (
             </ul>
           </section>
         ))}
-      </details>
+      </AccordionItem>
     ))}
   </Modal>
 );
