@@ -1,4 +1,5 @@
-import type { Emoji } from "./emojis";
+import { getRarity, type Emoji } from "./emojis";
+import { advancePity } from "./pity";
 import type { Collection, SaveData } from "./save";
 
 export type Drop = { id: number; emoji: Emoji; isNew: boolean };
@@ -61,6 +62,7 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
           isNew: !state.collection[action.emoji],
         },
         collection: addToCollection(state.collection, action.emoji),
+        pity: advancePity(state.pity, getRarity(action.emoji)),
       };
     case "revealed":
       return state.phase === "revealing" ? { ...state, phase: "idle" } : state;

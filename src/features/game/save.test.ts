@@ -10,7 +10,12 @@ describe("save", () => {
   });
 
   it("round-trips", () => {
-    const save = { selected: "🦄", clicks: 3, collection: { "🦄": 2 } } as const;
+    const save = {
+      selected: "🦄",
+      clicks: 3,
+      collection: { "🦄": 2 },
+      pity: { legendary: 40, epic: 7 },
+    } as const;
     writeSave(save);
     expect(loadSave()).toEqual(save);
   });
@@ -19,13 +24,40 @@ describe("save", () => {
     localStorage.setItem(
       "poo-game:save",
       JSON.stringify({
-        version: 1,
+        version: 2,
         selected: "🦄",
         clicks: -4,
         collection: { "🦄": 1, bogus: 3, "🍟": 0 },
+        pity: { legendary: -1, epic: "3" },
       }),
     );
-    expect(loadSave()).toEqual({ selected: "🦄", clicks: 0, collection: { "🦄": 1 } });
+    expect(loadSave()).toEqual({
+      selected: "🦄",
+      clicks: 0,
+      collection: { "🦄": 1 },
+      pity: { legendary: 0, epic: 0 },
+    });
+  });
+
+  it("migrates v1 saves with fresh pity counters", () => {
+    localStorage.setItem(
+      "poo-game:save",
+      JSON.stringify({ version: 1, selected: "🦄", clicks: 5, collection: { "🦄": 1 } }),
+    );
+    expect(loadSave()).toEqual({
+      selected: "🦄",
+      clicks: 5,
+      collection: { "🦄": 1 },
+      pity: { legendary: 0, epic: 0 },
+    });
+  });
+
+  it("ignores unknown versions", () => {
+    localStorage.setItem(
+      "poo-game:save",
+      JSON.stringify({ version: 99, selected: "🦄", clicks: 5, collection: {} }),
+    );
+    expect(loadSave()).toBeUndefined();
   });
 
   it("ignores corrupt data", () => {
@@ -41,7 +73,12 @@ describe("save", () => {
     legacy("last_emoji", "🦄");
     legacy("clicks", 42);
 
-    const expected = { selected: "🦄", clicks: 42, collection: { "🍟": 3, "🦄": 1 } };
+    const expected = {
+      selected: "🦄",
+      clicks: 42,
+      collection: { "🍟": 3, "🦄": 1 },
+      pity: { legendary: 0, epic: 0 },
+    };
     expect(loadSave()).toEqual(expected);
     expect(localStorage.getItem("collected_emojis")).toBeNull();
     expect(localStorage.getItem("clicks")).toBeNull();
@@ -51,6 +88,11 @@ describe("save", () => {
 
   it("adds the legacy last emoji to the collection if it was never saved there", () => {
     legacy("last_emoji", "🦄");
-    expect(loadSave()).toEqual({ selected: "🦄", clicks: 0, collection: { "🦄": 1 } });
+    expect(loadSave()).toEqual({
+      selected: "🦄",
+      clicks: 0,
+      collection: { "🦄": 1 },
+      pity: { legendary: 0, epic: 0 },
+    });
   });
 });

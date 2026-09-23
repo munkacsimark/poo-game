@@ -82,6 +82,14 @@ emoji: saves reference them.
 pool, so tier rates stay exact. Only when 💩 is showing and the roll lands on Galaxy Opal is the
 tier rerolled.
 
+**Bad-luck protection (pity).** `pity.ts` counts drops since the last Epic-or-better and
+Legendary-or-better drop. The 30th drop without an Epic or better is guaranteed to be one, and the
+150th without a Legendary or better likewise. A guaranteed roll only considers tiers at or above
+that floor, keeping their relative weights (an Epic-floor roll is Legendary 20 %, Epic 75 %,
+…). Pity makes the rare tiers slightly more frequent than the table in the long run; the table
+is the rate of a single, unprotected roll. The counters are saved, so reloading doesn't reset
+them.
+
 ## Persistence
 
 Progress lives in `localStorage` under one key and is validated on every load:
@@ -89,17 +97,19 @@ Progress lives in `localStorage` under one key and is validated on every load:
 ```jsonc
 // "poo-game:save"
 {
-  "version": 1,
+  "version": 2,
   "selected": "🦄", // must be a known emoji, otherwise the save is ignored
   "clicks": 1234, // non-negative integer
   "collection": { "🦄": 2 }, // unknown emojis / non-positive counts are dropped
+  "pity": { "legendary": 40, "epic": 7 }, // drops since that rarity or better; invalid → 0
 }
 ```
 
 - `"poo-game:muted"` stores the sound toggle (boolean).
 - **Legacy migration:** the 2022 version stored `collected_emojis`, `last_emoji` and `clicks`
   as `{ value, createdDate }` entries via `local-data-storage`. `loadSave()` converts them once
-  into the v1 format and deletes the old keys.
+  into the current format and deletes the old keys.
+- **v1 → v2:** v1 saves had no `pity`; they load with both counters at 0.
 - To change the format, bump `SAVE_VERSION`, migrate the previous version inside `loadSave()`,
   and cover it in `save.test.ts`.
 

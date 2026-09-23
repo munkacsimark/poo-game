@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createInitialState, gameReducer } from "./gameReducer";
 
-const initial = createInitialState({ selected: "🍟", clicks: 0, collection: { "🍟": 1 } }, 2);
+const initial = createInitialState(
+  { selected: "🍟", clicks: 0, collection: { "🍟": 1 }, pity: { legendary: 10, epic: 10 } },
+  2,
+);
 
 describe("gameReducer", () => {
   it("counts pushes and clicks", () => {
@@ -35,6 +38,17 @@ describe("gameReducer", () => {
       selected: "🦄",
       lastDrop: { id: 1, emoji: "🦄", isNew: true },
       collection: { "🍟": 1, "🦄": 1 },
+    });
+  });
+
+  it("advances the pity counters", () => {
+    expect(gameReducer(initial, { type: "drop", emoji: "🍔", pushesNeeded: 5 }).pity).toEqual({
+      legendary: 11,
+      epic: 11,
+    });
+    expect(gameReducer(initial, { type: "drop", emoji: "👻", pushesNeeded: 5 }).pity).toEqual({
+      legendary: 11,
+      epic: 0,
     });
   });
 

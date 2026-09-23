@@ -14,10 +14,11 @@ description: Verify a UI change of Poo Game in a real browser via chrome-devtool
    localStorage.setItem(
      "poo-game:save",
      JSON.stringify({
-       version: 1,
+       version: 2,
        selected: "🦄",
        clicks: 120,
        collection: { "🦄": 2, "💩": 1, "🍟": 5 },
+       pity: { legendary: 0, epic: 29 }, // the next drop is guaranteed Epic or better
      }),
    );
    location.reload();

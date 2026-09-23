@@ -1,5 +1,6 @@
 import { readJson, removeKeys, writeJson } from "../../shared/lib/storage";
 import { isEmoji, type Emoji } from "./emojis";
+import { INITIAL_PITY, type Pity } from "./pity";
 
 /** How many of each emoji the player owns. */
 export type Collection = Partial<Record<Emoji, number>>;
@@ -8,10 +9,12 @@ export type SaveData = {
   selected: Emoji;
   clicks: number;
   collection: Collection;
+  pity: Pity;
 };
 
 const SAVE_KEY = "poo-game:save";
-const SAVE_VERSION = 1;
+/** v2 added `pity`; v1 saves load with fresh pity counters. */
+const SAVE_VERSION = 2;
 
 /** Keys written by the pre-2026 version through `local-data-storage`. */
 const LEGACY_KEYS = {
@@ -26,6 +29,18 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isCount = (value: unknown): value is number =>
   typeof value === "number" && Number.isInteger(value) && value > 0;
 
+const isNonNegativeInteger = (value: unknown): value is number =>
+  typeof value === "number" && Number.isInteger(value) && value >= 0;
+
+const parsePity = (value: unknown): Pity => {
+  if (!isRecord(value)) return INITIAL_PITY;
+  const { legendary, epic } = value;
+  return {
+    legendary: isNonNegativeInteger(legendary) ? legendary : 0,
+    epic: isNonNegativeInteger(epic) ? epic : 0,
+  };
+};
+
 const parseCollection = (value: unknown): Collection => {
   const collection: Collection = {};
   if (!isRecord(value)) return collection;
@@ -36,13 +51,14 @@ const parseCollection = (value: unknown): Collection => {
 };
 
 const parseSave = (value: unknown): SaveData | undefined => {
-  if (!isRecord(value) || value.version !== SAVE_VERSION || !isEmoji(value.selected)) {
-    return undefined;
-  }
+  if (!isRecord(value) || !isEmoji(value.selected)) return undefined;
+  if (value.version !== 1 && value.version !== SAVE_VERSION) return undefined;
   return {
     selected: value.selected,
     clicks: isCount(value.clicks) ? value.clicks : 0,
     collection: parseCollection(value.collection),
+    // v1 had no pity counters (parsePity falls back to zeros).
+    pity: parsePity(value.pity),
   };
 };
 
@@ -70,7 +86,7 @@ const migrateLegacySave = (): SaveData | undefined => {
   if (!selected) return undefined;
 
   collection[selected] ??= 1;
-  return { selected, clicks: isCount(clicks) ? clicks : 0, collection };
+  return { selected, clicks: isCount(clicks) ? clicks : 0, collection, pity: INITIAL_PITY };
 };
 
 export const loadSave = (): SaveData | undefined => {

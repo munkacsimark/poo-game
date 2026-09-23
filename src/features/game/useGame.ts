@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef } from "react";
 import { vibrate } from "../../shared/lib/haptics";
 import type { Emoji } from "./emojis";
+import { INITIAL_PITY, pityFloor } from "./pity";
 import { createInitialState, gameReducer, type GameState } from "./gameReducer";
 import { rollCommonEmoji, rollEmoji, rollPushesNeeded } from "./roll";
 import { loadSave, writeSave } from "./save";
@@ -13,7 +14,12 @@ const REVEAL_DURATION_MS = 800;
 
 const init = (): GameState => {
   const starter = rollCommonEmoji();
-  const save = loadSave() ?? { selected: starter, clicks: 0, collection: { [starter]: 1 } };
+  const save = loadSave() ?? {
+    selected: starter,
+    clicks: 0,
+    collection: { [starter]: 1 },
+    pity: INITIAL_PITY,
+  };
   return createInitialState(save, rollPushesNeeded());
 };
 
@@ -22,10 +28,10 @@ export const useGame = ({ muted }: { muted: boolean }) => {
   const playFart = useFartSound();
   const timer = useRef<number>(undefined);
 
-  const { selected, clicks, collection } = state;
+  const { selected, clicks, collection, pity } = state;
   useEffect(() => {
-    writeSave({ selected, clicks, collection });
-  }, [selected, clicks, collection]);
+    writeSave({ selected, clicks, collection, pity });
+  }, [selected, clicks, collection, pity]);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
@@ -35,7 +41,7 @@ export const useGame = ({ muted }: { muted: boolean }) => {
     dispatch({ type: "push" });
 
     if (state.pushes + 1 >= state.pushesNeeded) {
-      const emoji = rollEmoji(state.selected);
+      const emoji = rollEmoji({ exclude: state.selected, floor: pityFloor(state.pity) });
       timer.current = window.setTimeout(() => {
         dispatch({ type: "drop", emoji, pushesNeeded: rollPushesNeeded() });
         vibrate([40, 30, 80]);
