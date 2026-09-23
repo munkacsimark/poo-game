@@ -10,7 +10,9 @@ as an app that runs offline.
 
 - Seven themed rarity tiers with published drop rates, a glassy dark UI and rarity glow effects
 - Collection progress per rarity with filtering and "new" badges
-- Sound toggle, haptics on Android, reduced-motion support
+- Bad-luck protection (Epic or better every 30 drops, Legendary or better every 150)
+- Up to 5 player profiles per device, with export/import to move progress between devices
+- In-app FAQ and changelog; sound toggle, haptics on Android, reduced-motion support
 - Installable PWA with offline play; progress is saved locally
 
 ## Development
