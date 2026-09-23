@@ -3,11 +3,13 @@ import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import pkg from "./package.json" with { type: "json" };
 import { imagetools } from "vite-imagetools";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   base: "/poo-game/",
+  define: { "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkg.version) },
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),

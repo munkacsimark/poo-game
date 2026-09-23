@@ -1,4 +1,5 @@
 import { sortCollection } from "../features/collection/collection";
+import { VersionButton } from "../features/changelog/VersionButton";
 import { CollectionPanel } from "../features/collection/components/CollectionPanel";
 import { PooButton } from "../features/game/components/PooButton";
 import { useGame } from "../features/game/useGame";
@@ -34,6 +35,9 @@ export const App = () => {
             onSelect={select}
           />
         </main>
+        <footer className="flex justify-center">
+          <VersionButton />
+        </footer>
       </div>
     </div>
   );

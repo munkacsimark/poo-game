@@ -59,7 +59,8 @@ src/
       components/           PooButton (stage), StageBackground, DropToast (live region)
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
-    help/                   HelpButton (native Popover API)
+    help/                   HelpButton (native Popover API) + drop-rate table
+    changelog/              footer VersionButton + lazy ChangelogDialog (parses CHANGELOG.md)
   shared/lib/               storage (never-throwing localStorage), haptics, random (crypto RNG)
   test/                     jsdom shims (setup.ts) and stubRandomWords
 e2e/                        Playwright specs

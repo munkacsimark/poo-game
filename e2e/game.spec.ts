@@ -80,3 +80,15 @@ test("keeps working offline once installed", async ({ page, context }) => {
   await expect(pushButton(page)).toBeVisible();
   await context.setOffline(false);
 });
+
+test("the version in the footer opens the changelog", async ({ page }) => {
+  await page.goto("./");
+
+  await page.getByRole("button", { name: /^Version \d+\.\d+\.\d+/ }).click();
+  const dialog = page.getByRole("dialog", { name: "What's new" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("v0.1.0")).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+});
