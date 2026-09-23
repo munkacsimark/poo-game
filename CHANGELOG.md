@@ -3,7 +3,7 @@
 All notable changes to Poo Game. Generated from the commit history by
 [git-cliff](https://git-cliff.org); release with `pnpm release`.
 
-## [Unreleased]
+## [0.1.1] - 2026-09-23
 
 ### Features
 
@@ -21,17 +21,31 @@ All notable changes to Poo Game. Generated from the commit history by
 - Multiple player profiles with a "Who's playing?" picker
 - Export and import profiles as tamper-resistant files
 - Replace the help button with a FAQ link in the footer
+- Show the collection on the left on large screens
+- Route every screen and dialog with TanStack Router
+- **ui:** Animate dialogs in and out
+- **ui:** Smooth accordions in the FAQ and changelog
+- **ui:** Blur-fade view transitions between screens
+- **ui:** Make the stage feel alive
+- **ui:** Animate the collection
+- **ui:** Springy buttons, animated sound icon and livelier profile screens
+- **ui:** Replace the stage emoji's shine with soft light and rarity rays
 
 ### Bug fixes
 
 - Lock the stage while the poo drops and the new emoji appears
 - **a11y:** Make the version and profile tiles' names contain their visible text
+- Generate the in-app changelog from git at build time
+- **ui:** Stop the collection from cropping hovered tiles and badges
+- **ui:** Make the footer's FAQ and version links findable on phones
+- **ui:** Keep the footer as plain links on desktop
 
 ### Refactoring
 
 - Restructure into features and rewrite game state
 - Start the save format fresh at v1
 - Extract a shared Modal from the changelog dialog
+- **ui:** Drop the repeating idle glint on the stage
 
 ### Documentation
 
