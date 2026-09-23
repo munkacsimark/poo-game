@@ -10,35 +10,45 @@ description: Verify a UI change of Poo Game in a real browser via chrome-devtool
 2. **Open it** with `new_page` (or `navigate_page` if a tab exists). Every screen has a URL
    (`/poo-game/profiles`, `/poo-game/profiles/manage`, `/poo-game/faq`, …; see
    `src/app/router.tsx`), so open the one you changed directly, and check Back/Forward.
-3. **Seed state when the change needs it**, via `evaluate_script`. The save format is:
-
-   Storage is sealed (unreadable), but plain v1 JSON is still accepted on a device that has
-   never written sealed data, so clear storage first and then seed:
+3. **Seed state when the change needs it**, via `evaluate_script`. Storage is sealed, so use
+   the dev-server helper (schema: "Data format" in docs/architecture.md):
 
    ```js
-   localStorage.clear();
-   const save = (selected, collection, clicks = 0) => ({
+   const now = new Date().toISOString();
+   const progress = (selected, ids, taps = 0) => ({
      selected,
-     clicks,
-     collection,
-     pity: { legendary: 0, epic: 29 }, // the next drop is guaranteed Epic or better
+     taps,
+     collection: Object.fromEntries(ids.map((id) => [id, { count: 1, firstFoundAt: now }])),
+     pity: { sinceEpic: 29, sinceLegendary: 0 }, // the next drop is guaranteed Epic or better
    });
-   localStorage.setItem(
-     "poo-game:profiles",
-     JSON.stringify({
-       version: 1,
-       activeId: "a",
-       profiles: [
-         { id: "a", name: "Mark", avatar: "🦊", save: save("🦄", { "🦄": 2, "💩": 1 }, 120) },
-         { id: "b", name: "Anna", avatar: "🐼", save: save("🍟", { "🍟": 5 }) },
-       ],
-     }),
-   );
+   window.pooGameDev.writeSave({
+     format: "poo-game/save",
+     version: 2,
+     updatedAt: now,
+     activeProfileId: "a",
+     profiles: [
+       {
+         id: "a",
+         name: "Mark",
+         avatar: "fox",
+         createdAt: now,
+         progress: progress("unicorn", ["unicorn", "pile-of-poo"], 120),
+       },
+       {
+         id: "b",
+         name: "Anna",
+         avatar: "panda",
+         createdAt: now,
+         progress: progress("french-fries", ["french-fries"]),
+       },
+     ],
+   });
    location.reload();
    ```
 
-   With two or more profiles the app opens on the profile picker. Call `localStorage.clear()`
-   and reload to see the first-run experience (a single "Player 1" profile).
+   `window.pooGameDev.readSave()` shows what's stored. With two or more profiles the app opens
+   on the picker. `localStorage.clear()` and a reload show the first-run experience; writing
+   anything invalid shows the save error screen.
 
 4. **Mobile first:** `emulate` with viewport `390x844x2,mobile,touch`, then `take_screenshot`.
    Also check `360x740x2,mobile,touch` when header or chip layout changed.
