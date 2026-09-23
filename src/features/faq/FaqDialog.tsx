@@ -101,10 +101,11 @@ export const FaqDialog = () => (
       <p>Exporting now and then is also a good backup.</p>
     </Question>
 
-    <Question title="Can I edit a profile file?">
+    <Question title="Can I edit a profile file or my saved progress?">
       <p>
-        No. Profile files are scrambled and signed, so any change makes the import fail. Your emojis
-        have to be earned the honest way.
+        No. Profile files and the progress saved in your browser are scrambled and signed. An edited
+        file won't import, and edited saved progress is thrown away. Your emojis have to be earned
+        the honest way.
       </p>
     </Question>
 

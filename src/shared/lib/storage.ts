@@ -18,3 +18,19 @@ export const writeJson = (key: string, value: unknown): void => {
     // Progress simply isn't persisted when storage is unavailable.
   }
 };
+
+export const readText = (key: string): string | undefined => {
+  try {
+    return localStorage.getItem(key) ?? undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+export const writeText = (key: string, value: string): void => {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Progress simply isn't persisted when storage is unavailable.
+  }
+};

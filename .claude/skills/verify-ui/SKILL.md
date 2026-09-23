@@ -12,7 +12,11 @@ description: Verify a UI change of Poo Game in a real browser via chrome-devtool
    `src/app/router.tsx`), so open the one you changed directly, and check Back/Forward.
 3. **Seed state when the change needs it**, via `evaluate_script`. The save format is:
 
+   Storage is sealed (unreadable), but plain v1 JSON is still accepted on a device that has
+   never written sealed data, so clear storage first and then seed:
+
    ```js
+   localStorage.clear();
    const save = (selected, collection, clicks = 0) => ({
      selected,
      clicks,

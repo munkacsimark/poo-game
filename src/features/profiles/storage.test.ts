@@ -55,6 +55,35 @@ describe("profile storage", () => {
     expect(loadProfiles().profiles[0]?.name).toBe("Player 1");
   });
 
+  it("stores profiles sealed, not as readable JSON", () => {
+    writeProfiles({ activeId: "a", profiles: [{ id: "a", name: "Ann", avatar: "🐱", save }] });
+    const raw = localStorage.getItem("poo-game:profiles") ?? "";
+    expect(raw).toMatch(/^PGS1/);
+    expect(raw).not.toContain("Ann");
+  });
+
+  it("starts fresh when the sealed data was edited", () => {
+    writeProfiles({ activeId: "a", profiles: [{ id: "a", name: "Ann", avatar: "🐱", save }] });
+    const raw = localStorage.getItem("poo-game:profiles") ?? "";
+    localStorage.setItem("poo-game:profiles", `${raw.slice(0, -2)}AA`);
+    expect(loadProfiles().profiles[0]?.name).toBe("Player 1");
+  });
+
+  it("migrates v0.1.1's plain JSON once, then refuses plain JSON", () => {
+    const plain = {
+      version: 1,
+      activeId: "a",
+      profiles: [{ id: "a", name: "Ann", avatar: "🐱", save }],
+    };
+    stored(plain);
+    const migrated = loadProfiles();
+    expect(migrated.profiles[0]?.name).toBe("Ann");
+
+    writeProfiles(migrated);
+    stored({ ...plain, profiles: [{ id: "a", name: "Cheater", avatar: "🐱", save }] });
+    expect(loadProfiles().profiles[0]?.name).toBe("Player 1");
+  });
+
   it("falls back to a default avatar", () => {
     expect(parseProfile({ id: "a", name: "Ann", avatar: "💩", save })?.avatar).toBe("🐱");
   });

@@ -1,4 +1,5 @@
-import { readJson, writeJson } from "../../shared/lib/storage";
+import { isSealed, openValue, sealValue } from "../../shared/lib/sealedStorage";
+import { readText, writeText } from "../../shared/lib/storage";
 import { createStarterSave, isRecord, parseSaveData } from "../game/save";
 import {
   AVATARS,
@@ -11,6 +12,11 @@ import {
 } from "./profiles";
 
 const PROFILES_KEY = "poo-game:profiles";
+/**
+ * Set once profiles have been written sealed. v0.1.1 stored plain JSON; that is read (and
+ * resealed) only while this marker is absent, so pasting plain JSON back in doesn't work.
+ */
+const SEALED_MARKER_KEY = "poo-game:sealed";
 /**
  * Bump when the stored shape (this container, `Profile` or `SaveData`) changes, and migrate
  * every older version in `parseProfiles` so players never lose progress.
@@ -59,14 +65,31 @@ const parseProfiles = (value: unknown): ProfilesState | undefined => {
   return { activeId: (active ?? first).id, profiles };
 };
 
-/** The stored profiles, or a single new "Player 1" profile on first run. */
+/** Stored profiles are sealed (see sealedStorage); v0.1.1's plain JSON migrates once. */
+const readStored = (): unknown => {
+  const text = readText(PROFILES_KEY);
+  if (text === undefined) return undefined;
+  if (isSealed(text)) return openValue(text);
+  if (readText(SEALED_MARKER_KEY) !== undefined) return undefined;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+};
+
+/**
+ * The stored profiles, or a single new "Player 1" profile on first run. Edited or damaged
+ * storage fails its checksum and also starts fresh.
+ */
 export const loadProfiles = (): ProfilesState => {
-  const stored = parseProfiles(readJson(PROFILES_KEY));
+  const stored = parseProfiles(readStored());
   if (stored) return stored;
   const profile = createProfile("Player 1");
   return { activeId: profile.id, profiles: [profile] };
 };
 
 export const writeProfiles = (state: ProfilesState): void => {
-  writeJson(PROFILES_KEY, { version: PROFILES_VERSION, ...state });
+  writeText(PROFILES_KEY, sealValue({ version: PROFILES_VERSION, ...state }));
+  writeText(SEALED_MARKER_KEY, "1");
 };

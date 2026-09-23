@@ -126,10 +126,14 @@ own progress. With more than one, the app opens on a "Who's playing?" picker; th
 button returns to it, and "Manage profiles" edits, adds or deletes them (never the last one).
 `profilesReducer` is pure; `useProfiles` persists every change.
 
-Everything lives in `localStorage` under one key and is validated on every load:
+Everything lives in `localStorage` under one key, **sealed** so players can't casually read or
+edit it (`shared/lib/sealedStorage.ts`): `"PGS1" + base64url(salt ‖ checksum ‖ XOR-scrambled
+JSON)`. An edited value fails its keyed checksum and the game starts fresh. Like profile files,
+this deters casual cheating; it isn't security. Once opened, the JSON is validated on every
+load:
 
 ```jsonc
-// "poo-game:profiles"
+// "poo-game:profiles", after unsealing
 {
   "version": 1,
   "activeId": "5b0c…", // falls back to the first profile
@@ -149,7 +153,11 @@ Everything lives in `localStorage` under one key and is validated on every load:
 }
 ```
 
-- `"poo-game:muted"` stores the sound toggle (boolean) for the whole device.
+- `"poo-game:muted"` stores the sound toggle (plain boolean, nothing to cheat) for the device.
+- `"poo-game:sealed"` marks that profiles have been written sealed. v0.1.1 stored plain JSON,
+  which is read (and resealed on the next write) only while this marker is absent.
+- The seal format is versioned by its prefix: a new format gets `PGS2`, and `PGS1` must stay
+  readable.
 - `parseSaveData` (game/save.ts) and `parseProfile` (profiles/storage.ts) validate untrusted
   data, whether it comes from storage or from an imported file.
 - **Compatibility:** v1 (released with v0.1.1) is the first format of the modernized app; data
