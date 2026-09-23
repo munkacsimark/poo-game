@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { prefersReducedMotion } from "../lib/motion";
 
 type Props = {
   title: string;
@@ -8,9 +9,13 @@ type Props = {
   footer?: ReactNode;
 };
 
+/** Longest exit transition in `modal-motion` (index.css), plus a little slack. */
+const EXIT_MS = 250;
+
 /**
- * Native modal `<dialog>` in the glass style: opens on mount, closes with Escape, the Close
- * button or a click on the backdrop, and calls `onClose` so the parent can unmount it.
+ * Native modal `<dialog>` in the glass style: opens on mount (animated in), closes with Escape,
+ * the Close button or a click on the backdrop (animated out), then calls `onClose` so the parent
+ * can unmount it.
  */
 export const Modal = ({ title, onClose, children, footer }: Props) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -21,6 +26,18 @@ export const Modal = ({ title, onClose, children, footer }: Props) => {
     dialogRef.current?.showModal();
   }, []);
 
+  // Plays the exit transition (data-closing), then really closes, which fires onClose.
+  const requestClose = () => {
+    const dialog = dialogRef.current;
+    if (!dialog?.open || dialog.dataset.closing !== undefined) return;
+    if (prefersReducedMotion()) {
+      dialog.close();
+      return;
+    }
+    dialog.dataset.closing = "";
+    window.setTimeout(() => dialog.close(), EXIT_MS);
+  };
+
   return (
     // Keyboard users close the dialog with Escape or the Close button; the click handler only
     // adds backdrop dismissal for pointers.
@@ -28,12 +45,17 @@ export const Modal = ({ title, onClose, children, footer }: Props) => {
     <dialog
       ref={dialogRef}
       onClose={onClose}
+      // Escape: animate out instead of vanishing.
+      onCancel={(event) => {
+        event.preventDefault();
+        requestClose();
+      }}
       // Clicking the backdrop (the dialog element itself, outside its content) closes it.
       onClick={(event) => {
-        if (event.target === event.currentTarget) event.currentTarget.close();
+        if (event.target === event.currentTarget) requestClose();
       }}
       aria-labelledby={titleId}
-      className="m-auto max-h-[min(40rem,calc(100dvh-2rem))] w-[min(32rem,calc(100vw-2rem))] overflow-hidden rounded-3xl glass bg-ink/90 p-0 text-white/90 backdrop:bg-ink/60 backdrop:backdrop-blur-sm"
+      className="m-auto max-h-[min(40rem,calc(100dvh-2rem))] w-[min(32rem,calc(100vw-2rem))] modal-motion overflow-hidden rounded-3xl glass bg-ink/90 p-0 text-white/90 backdrop:bg-ink/60 backdrop:backdrop-blur-sm"
     >
       <div className="flex max-h-[inherit] flex-col">
         <header className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
@@ -42,9 +64,9 @@ export const Modal = ({ title, onClose, children, footer }: Props) => {
           </h2>
           <button
             type="button"
-            onClick={() => dialogRef.current?.close()}
+            onClick={requestClose}
             aria-label="Close"
-            className="grid size-9 cursor-pointer place-items-center rounded-full glass text-lg transition outline-none hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white"
+            className="grid size-9 cursor-pointer place-items-center rounded-full glass text-lg transition duration-300 ease-spring outline-none hover:rotate-90 hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white active:scale-90"
           >
             <span aria-hidden>×</span>
           </button>

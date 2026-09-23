@@ -16,6 +16,10 @@
   --color-mythic: oklch(0.7 0.2 28);
   --color-galaxy-opal: oklch(0.78 0.2 340);
 
+  /* Motion: springy for things that pop, expo-out for things that glide into place. */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
   --animate-shine: shine 0.8s ease-in-out forwards;
   --animate-drop: drop 2s ease-in forwards;
   --animate-aurora: aurora 18s ease-in-out infinite alternate;
@@ -127,6 +131,46 @@
 }
 @utility rarity-galaxyOpal {
   --rarity: var(--color-galaxy-opal);
+}
+
+/*
+ * Modal <dialog> motion: slides up and scales in on open (@starting-style), and plays the reverse
+ * while `data-closing` is set, before Modal calls dialog.close(). The backdrop fades with it.
+ */
+@utility modal-motion {
+  transition:
+    opacity 0.25s var(--ease-out-expo),
+    translate 0.45s var(--ease-out-expo),
+    scale 0.45s var(--ease-out-expo);
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 2rem;
+    scale: 0.94;
+  }
+
+  &[data-closing] {
+    opacity: 0;
+    translate: 0 1rem;
+    scale: 0.97;
+    transition-duration: 0.2s;
+  }
+
+  &::backdrop {
+    transition:
+      opacity 0.35s var(--ease-out-expo),
+      backdrop-filter 0.35s var(--ease-out-expo);
+  }
+
+  @starting-style {
+    &::backdrop {
+      opacity: 0;
+    }
+  }
+
+  &[data-closing]::backdrop {
+    opacity: 0;
+  }
 }
 
 /* Animated iridescent border for Galaxy Opal tiles. */
