@@ -4,7 +4,6 @@ import { PooButton } from "../features/game/components/PooButton";
 import { useGame } from "../features/game/useGame";
 import { useMuted } from "../features/settings/useMuted";
 import { Aurora } from "./Aurora";
-import { Footer } from "./Footer";
 import { Header } from "./Header";
 
 export const App = () => {
@@ -34,7 +33,6 @@ export const App = () => {
             onSelect={select}
           />
         </main>
-        <Footer />
       </div>
     </div>
   );

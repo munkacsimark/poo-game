@@ -30,7 +30,3 @@ Playwright, oxlint, ESLint, oxfmt and knip.
 - [`AGENTS.md`](AGENTS.md): conventions and commands for contributors and AI agents
 - [`docs/architecture.md`](docs/architecture.md): game loop, state, persistence, styling
 - [`docs/agentic-workflow.md`](docs/agentic-workflow.md): working on this repo with AI agents
-
-## Credits
-
-Sounds from [myinstants.com](https://www.myinstants.com).
