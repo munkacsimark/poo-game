@@ -1,0 +1,76 @@
+import { expect, test, type Page } from "@playwright/test";
+
+/** Makes every roll 0: one push is enough for a drop, and the drop is always 💩. */
+const forceZeroRolls = (page: Page) => page.addInitScript(() => (Math.random = () => 0));
+
+const collection = (page: Page) => page.getByRole("list", { name: "Your collection" });
+const pushButton = (page: Page) => page.getByRole("button", { name: /^Push the/ });
+
+test("starts with one common emoji and no console errors", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+
+  await page.goto("./");
+
+  await expect(page.getByRole("heading", { name: "Poo Game" })).toBeVisible();
+  await expect(collection(page).getByRole("button")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: /^Common\s*1\s*of/ })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("pushing drops a new emoji that survives a reload", async ({ page }) => {
+  await forceZeroRolls(page);
+  await page.goto("./");
+
+  await pushButton(page).click();
+
+  await expect(page.getByRole("status")).toContainText("New Galaxy Opal!");
+  await expect(page.getByRole("button", { name: "Push the 💩" })).toBeVisible();
+  await expect(collection(page).getByRole("button")).toHaveCount(2);
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Push the 💩" })).toBeVisible();
+  await expect(collection(page).getByRole("button")).toHaveCount(2);
+});
+
+test("filters the collection by rarity", async ({ page }) => {
+  await forceZeroRolls(page);
+  await page.goto("./");
+  await pushButton(page).click();
+  await expect(collection(page).getByRole("button")).toHaveCount(2);
+
+  await page.getByRole("button", { name: /^Galaxy Opal\s*1\s*of\s*1/ }).click();
+  await expect(collection(page).getByRole("button")).toHaveCount(1);
+
+  await page.getByRole("button", { name: /^Epic\s*0\s*of/ }).click();
+  await expect(page.getByText("No Epic emojis yet. Keep pushing!")).toBeVisible();
+});
+
+test("opens the help popover", async ({ page }) => {
+  await page.goto("./");
+  await page.getByRole("button", { name: "How to play" }).click();
+  await expect(page.getByText("How to play", { exact: true })).toBeVisible();
+});
+
+test("does not scroll horizontally", async ({ page }) => {
+  await page.goto("./");
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBe(0);
+});
+
+test("keeps working offline once installed", async ({ page, context }) => {
+  await page.goto("./");
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+
+  await context.setOffline(true);
+  await page.reload();
+
+  await expect(pushButton(page)).toBeVisible();
+  await context.setOffline(false);
+});

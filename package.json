@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
+    "e2e": "playwright test",
     "lint": "oxlint --type-aware && eslint .",
     "lint:fix": "oxlint --type-aware --fix && eslint . --fix",
     "format": "oxfmt",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@babel/core": "^8.0.6",
+    "@playwright/test": "^1.63.0",
     "@rolldown/plugin-babel": "^0.2.4",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/dom": "^10.4.2",
