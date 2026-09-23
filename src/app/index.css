@@ -1,11 +1,146 @@
-@import "./colors.css";
+@import "tailwindcss";
+@import "@fontsource-variable/bricolage-grotesque";
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+
+  --color-ink: oklch(0.14 0.03 290);
+
+  /* Rarity palette. Galaxy Opal additionally gets an iridescent treatment. */
+  --color-common: oklch(0.86 0.02 260);
+  --color-uncommon: oklch(0.8 0.18 155);
+  --color-rare: oklch(0.72 0.16 250);
+  --color-epic: oklch(0.72 0.22 310);
+  --color-legendary: oklch(0.85 0.17 85);
+  --color-galaxy-opal: oklch(0.78 0.2 340);
+
+  --animate-shine: shine 0.8s ease-in-out forwards;
+  --animate-drop: drop 2s ease-in forwards;
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-opal: opal 4s linear infinite;
+  --animate-pop-in: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  @keyframes shine {
+    from {
+      background-position: 0% 100%;
+    }
+    to {
+      background-position: 0% -80%;
+    }
+  }
+
+  @keyframes drop {
+    0% {
+      opacity: 0;
+      transform: translateY(-2rem) scale(0.6);
+    }
+    25% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    75% {
+      opacity: 1;
+      transform: translateY(6rem) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(7rem) scale(0.9);
+    }
+  }
+
+  @keyframes aurora {
+    from {
+      transform: translate3d(-10%, -6%, 0) rotate(0deg) scale(1);
+    }
+    to {
+      transform: translate3d(8%, 6%, 0) rotate(25deg) scale(1.15);
+    }
+  }
+
+  @keyframes opal {
+    to {
+      --opal-angle: 360deg;
+    }
+  }
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
 }
-* {
-  box-sizing: border-box;
+
+@property --opal-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Frosted glass surface. */
+@utility glass {
+  background-color: oklch(1 0 0 / 0.06);
+  border: 1px solid oklch(1 0 0 / 0.12);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 8px 32px -8px oklch(0 0 0 / 0.5);
+  backdrop-filter: blur(20px) saturate(1.4);
+}
+
+/* Sets `--rarity` for descendants; see rarityVar in features/game/rarity.ts. */
+@utility rarity-common {
+  --rarity: var(--color-common);
+}
+@utility rarity-uncommon {
+  --rarity: var(--color-uncommon);
+}
+@utility rarity-rare {
+  --rarity: var(--color-rare);
+}
+@utility rarity-epic {
+  --rarity: var(--color-epic);
+}
+@utility rarity-legendary {
+  --rarity: var(--color-legendary);
+}
+@utility rarity-galaxyOpal {
+  --rarity: var(--color-galaxy-opal);
+}
+
+/* Animated iridescent border for Galaxy Opal tiles. */
+@utility opal-border {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--color-ink), var(--color-ink)) padding-box,
+    conic-gradient(
+        from var(--opal-angle),
+        oklch(0.8 0.2 340),
+        oklch(0.85 0.15 200),
+        oklch(0.85 0.17 85),
+        oklch(0.75 0.22 300),
+        oklch(0.8 0.2 340)
+      )
+      border-box;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-ink font-display text-white antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

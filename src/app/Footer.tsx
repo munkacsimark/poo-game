@@ -1,9 +1,11 @@
-import styles from "./Footer.module.css";
-
 export const Footer = () => (
-  <footer className={styles.footer}>
-    Background photo by Courtney Kenady on Unsplash
-    <br />
-    Farts from www.myinstants.com
+  <footer className="py-2 text-center text-xs text-white/40">
+    Sounds from{" "}
+    <a
+      href="https://www.myinstants.com"
+      className="underline decoration-white/20 underline-offset-2 hover:text-white/70"
+    >
+      myinstants.com
+    </a>
   </footer>
 );

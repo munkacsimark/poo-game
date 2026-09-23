@@ -1,26 +1,38 @@
-import { CollectionGrid } from "../features/collection/components/CollectionGrid";
-import { CollectionStats } from "../features/collection/components/CollectionStats";
 import { rarityStats, sortCollection } from "../features/collection/collection";
+import { CollectionPanel } from "../features/collection/components/CollectionPanel";
 import { PooButton } from "../features/game/components/PooButton";
 import { useGame } from "../features/game/useGame";
-import { HelpButton } from "../features/help/HelpButton";
-import styles from "./App.module.css";
+import { Aurora } from "./Aurora";
 import { Footer } from "./Footer";
+import { Header } from "./Header";
 
 export const App = () => {
   const { state, push, select } = useGame();
   const entries = sortCollection(state.collection);
 
   return (
-    <div className={styles.app}>
-      <div className={styles.backgroundImage} />
-      <main className={styles.mainSection}>
-        <HelpButton />
-        <CollectionStats clicks={state.clicks} stats={rarityStats(entries)} />
-        <PooButton emoji={state.selected} dropping={state.phase === "dropping"} onPush={push} />
-      </main>
-      <CollectionGrid entries={entries} onSelect={select} />
-      <Footer />
+    <div className="relative isolate min-h-dvh">
+      <Aurora />
+      <div className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-4 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6">
+        <Header clicks={state.clicks} />
+        <main className="grid flex-1 content-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start lg:gap-10 lg:pt-6">
+          <div className="lg:sticky lg:top-6">
+            <PooButton
+              emoji={state.selected}
+              dropping={state.phase === "dropping"}
+              showHint={state.clicks < 10}
+              onPush={push}
+            />
+          </div>
+          <CollectionPanel
+            entries={entries}
+            stats={rarityStats(entries)}
+            selected={state.selected}
+            onSelect={select}
+          />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };

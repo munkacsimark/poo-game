@@ -17,3 +17,13 @@ export const TOTAL_WEIGHT = RARITIES.reduce((sum, { weight }) => sum + weight, 0
 
 /** 0 = rarest. Used to sort by rarity. */
 export const rarityRank = (rarity: Rarity): number => RARITIES.findIndex(({ id }) => id === rarity);
+
+/** Utility classes (defined in app/index.css) that set the `--rarity` color variable. */
+export const RARITY_CLASS = {
+  galaxyOpal: "rarity-galaxyOpal",
+  legendary: "rarity-legendary",
+  epic: "rarity-epic",
+  rare: "rarity-rare",
+  uncommon: "rarity-uncommon",
+  common: "rarity-common",
+} as const satisfies Record<Rarity, string>;

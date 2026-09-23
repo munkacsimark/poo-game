@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "printWidth": 100,
+  "sortTailwindcss": { "stylesheet": "./src/app/index.css" },
   "ignorePatterns": ["dist/**", "coverage/**", "pnpm-lock.yaml"]
 }
