@@ -28,7 +28,8 @@ export const GameScreen = ({ profile, onSave, muted, onToggleMuted, onSwitchProf
         onToggleMuted={onToggleMuted}
         profileButton={<ProfileButton profile={profile} onClick={onSwitchProfile} />}
       />
-      <main className="grid flex-1 content-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start lg:gap-10 lg:pt-6">
+      {/* The stage comes first in the DOM (top on phones); on large screens the collection sits left. */}
+      <main className="grid flex-1 content-start gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start lg:gap-10 lg:pt-6">
         <div className="lg:sticky lg:top-6">
           <PooButton
             emoji={state.selected}
@@ -39,12 +40,14 @@ export const GameScreen = ({ profile, onSave, muted, onToggleMuted, onSwitchProf
             onPush={push}
           />
         </div>
-        <CollectionPanel
-          entries={entries}
-          selected={state.selected}
-          lastDrop={state.lastDrop}
-          onSelect={select}
-        />
+        <div className="lg:order-first">
+          <CollectionPanel
+            entries={entries}
+            selected={state.selected}
+            lastDrop={state.lastDrop}
+            onSelect={select}
+          />
+        </div>
       </main>
     </>
   );
