@@ -108,7 +108,7 @@ describe("App", () => {
     );
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: /^Legendary\s*1\s*of\s*6$/ }));
+    await user.click(screen.getByRole("button", { name: /^Mythic\s*1\s*of\s*4$/ }));
     expect(within(grid()!).getAllByRole("button")).toHaveLength(1);
 
     await user.click(screen.getByRole("button", { name: /^Epic\s*0\s*of/ }));

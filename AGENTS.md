@@ -2,7 +2,7 @@
 
 Guidance for AI coding agents (Claude Code, Codex, Cursor, Copilot, …) and humans working on
 **Poo Game**, a mobile-first emoji collecting game: tap the emoji until it poops out a new
-one, and collect all 298 across six rarities. It ships as an installable PWA on GitHub Pages at
+one, and collect all 298 across seven rarities. It ships as an installable PWA on GitHub Pages at
 <https://munkacsimark.github.io/poo-game/>.
 
 This file is the single source of truth. `CLAUDE.md` imports it; deeper material lives in

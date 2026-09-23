@@ -20,11 +20,15 @@ export const rollRarity = (rng: Rng = secureRandom): Rarity => {
   return "common";
 };
 
-/** Rolls a random emoji, never returning `exclude` so every drop is a visible change. */
+/**
+ * Rolls a random emoji, never returning `exclude` so every drop is a visible change. The excluded
+ * emoji is left out of its tier's pool rather than rerolled, so tier rates stay exactly as
+ * published; the rarity is only rerolled when the tier has nothing else (💩 showing).
+ */
 export const rollEmoji = (exclude?: Emoji, rng: Rng = secureRandom): Emoji => {
   for (;;) {
-    const emoji = pick(EMOJIS_BY_RARITY[rollRarity(rng)], rng);
-    if (emoji !== exclude) return emoji;
+    const pool = EMOJIS_BY_RARITY[rollRarity(rng)].filter((emoji) => emoji !== exclude);
+    if (pool.length > 0) return pick(pool, rng);
   }
 };
 

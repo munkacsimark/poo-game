@@ -29,10 +29,15 @@ describe("rollEmoji", () => {
     expect(rollEmoji(undefined, sequence(0, 0))).toBe(EMOJIS_BY_RARITY.galaxyOpal[0]);
   });
 
-  it("never returns the excluded emoji", () => {
-    // First roll lands on 💩 (excluded), the second on the first legendary emoji.
-    const rng = sequence(0, 0, 1 / TOTAL_WEIGHT, 0);
-    expect(rollEmoji("💩", rng)).toBe(EMOJIS_BY_RARITY.legendary[0]);
+  it("rerolls the rarity when the excluded emoji is the only one in its tier", () => {
+    // The first rarity roll lands on Galaxy Opal (only 💩, excluded), the second on Mythic.
+    const rng = sequence(0, RARITIES[0].weight / TOTAL_WEIGHT, 0);
+    expect(rollEmoji("💩", rng)).toBe(EMOJIS_BY_RARITY.mythic[0]);
+  });
+
+  it("leaves the excluded emoji out of its tier without rerolling the rarity", () => {
+    const [first, second] = EMOJIS_BY_RARITY.common;
+    expect(rollEmoji(first, sequence(0.999_999, 0))).toBe(second);
   });
 });
 

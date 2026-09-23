@@ -44,19 +44,43 @@ stateDiagram-v2
 
 ## Rarity and odds
 
-`RARITIES` in `features/game/rarity.ts` is ordered rarest → most common. Each tier has a weight,
-and a drop rolls a tier first, then a uniform emoji within it:
+`RARITIES` in `features/game/rarity.ts` is ordered rarest → most common. Weights are basis
+points (1/100 %) and sum to 10,000, so they read directly as the published rates. A drop rolls a
+tier first, then picks uniformly among that tier's emojis:
 
-| Rarity      | Weight | Chance per drop | Emojis |
-| ----------- | -----: | --------------: | -----: |
-| Galaxy Opal |      1 |           0.43% |      1 |
-| Legendary   |      4 |           1.72% |      6 |
-| Epic        |      8 |           3.43% |     16 |
-| Rare        |     21 |           9.01% |     45 |
-| Uncommon    |     55 |          23.61% |     80 |
-| Common      |    144 |          61.80% |    150 |
+| Rarity      | Weight | Chance per drop |  1 in | Emojis | Each emoji |
+| ----------- | -----: | --------------: | ----: | -----: | ---------: |
+| Galaxy Opal |      5 |           0.05% | 2,000 |      1 |     0.050% |
+| Mythic      |     25 |           0.25% |   400 |      4 |     0.063% |
+| Legendary   |    120 |           1.20% |    83 |     12 |     0.100% |
+| Epic        |    450 |           4.50% |    22 |     26 |     0.173% |
+| Rare        |  1,200 |          12.00% |   8.3 |     36 |     0.333% |
+| Uncommon    |  2,700 |          27.00% |   3.7 |     75 |     0.360% |
+| Common      |  5,500 |          55.00% |   1.8 |    144 |     0.382% |
 
-A drop never repeats the currently selected emoji, so every drop visibly changes the stage.
+Tier sizes shrink with rarity so that **each single emoji is rarer than every emoji of a more
+common tier** (the "Each emoji" column only ever grows downwards; a unit test enforces this).
+
+**Categorization.** The tier comes from the emoji's theme, never from a one-off decision:
+
+| Rarity      | Theme                                                                                          |
+| ----------- | ---------------------------------------------------------------------------------------------- |
+| Galaxy Opal | The one and only 💩, the game's namesake                                                       |
+| Mythic      | Myths and the cosmos: unicorn, dragon, planet, alien                                           |
+| Legendary   | Royalty and treasure: crowns, jewels, trophies, prizes                                         |
+| Epic        | Legends and the unknown: monsters, spirits, relics, robots, space travel                       |
+| Rare        | Wildlife and showbiz: wild and exotic animals, music, film, the stage                          |
+| Uncommon    | People, pets and play: faces, gestures, people, small animals and bugs, sports, toys           |
+| Common      | Everyday things: food and drink, nature and weather, clothes, home and office, vehicles, signs |
+
+`EMOJIS_BY_RARITY` groups each tier by these sub-themes with comments. To add an emoji, find
+its theme and append it there, then check that the per-emoji test still passes. Never remove an
+emoji: saves reference them.
+
+**Randomness.** Rolls use `secureRandom` (`shared/lib/random.ts`): 53-bit floats built from
+`crypto.getRandomValues`. A drop never repeats the selected emoji: it's left out of its tier's
+pool, so tier rates stay exact. Only when 💩 is showing and the roll lands on Galaxy Opal is the
+tier rerolled.
 
 ## Persistence
 
@@ -82,7 +106,7 @@ Progress lives in `localStorage` under one key and is validated on every load:
 ## Styling system
 
 - `src/app/index.css` holds the Tailwind entry point and `@theme` tokens: fonts, the rarity
-  palette (`--color-common` … `--color-galaxy-opal`) and animations (shine, drop, aurora, opal,
+  palette (`--color-common` … `--color-mythic`, `--color-galaxy-opal`) and animations (shine, drop, aurora, opal,
   pop-in, toast).
 - Custom utilities there: `glass` (frosted panel), `rarity-*` (sets `--rarity`) and
   `opal-border` (animated iridescent border using a registered `@property`).

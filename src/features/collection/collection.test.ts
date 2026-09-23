@@ -18,7 +18,7 @@ describe("rarityStats", () => {
   it("counts distinct emojis per rarity", () => {
     const stats = rarityStats(sortCollection({ "🍟": 5, "🍺": 1, "🦄": 2 }));
     expect(stats.find(({ id }) => id === "common")?.collected).toBe(2);
-    expect(stats.find(({ id }) => id === "legendary")?.collected).toBe(1);
+    expect(stats.find(({ id }) => id === "mythic")?.collected).toBe(1);
     expect(stats.find(({ id }) => id === "epic")?.collected).toBe(0);
   });
 

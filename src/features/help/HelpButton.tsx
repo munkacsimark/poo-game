@@ -15,7 +15,7 @@ export const HelpButton = () => (
     >
       <p className="mb-1 font-bold text-white">How to play</p>
       Tap the emoji over and over. Every so often it poops out a new one: collect them all, from
-      Common up to the one-in-233 Galaxy Opal. Tap any emoji in your collection to show it off.
+      Common up to the one-in-2,000 Galaxy Opal. Tap any emoji in your collection to show it off.
     </div>
   </>
 );

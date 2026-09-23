@@ -1,14 +1,14 @@
 # 💩 Poo Game
 
 Tap the emoji. Keep tapping. Eventually it poops out a new one. Collect all 298, from
-Common up to the one-in-233 **Galaxy Opal**.
+Common up to the one-in-2,000 **Galaxy Opal**.
 
 **Play:** <https://munkacsimark.github.io/poo-game/>. It works on phones and can be installed
 as an app that runs offline.
 
 ## Features
 
-- Six rarity tiers with weighted drops, a glassy dark UI and rarity glow effects
+- Seven themed rarity tiers with published drop rates, a glassy dark UI and rarity glow effects
 - Collection progress per rarity with filtering and "new" badges
 - Sound toggle, haptics on Android, reduced-motion support
 - Installable PWA with offline play; progress is saved locally
