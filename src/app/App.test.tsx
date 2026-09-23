@@ -46,4 +46,19 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: "🦄, 2 collected" }));
     expect(screen.getByRole("button", { name: "Push the 🦄" })).toBeInTheDocument();
   });
+
+  it("stays silent when muted and remembers the setting", async () => {
+    const user = userEvent.setup();
+    const play = vi.spyOn(HTMLMediaElement.prototype, "play");
+    const { unmount } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Sound", pressed: true }));
+    play.mockClear();
+    await user.click(screen.getByRole("button", { name: /^Push the/ }));
+    expect(play).not.toHaveBeenCalled();
+
+    unmount();
+    render(<App />);
+    expect(screen.getByRole("button", { name: "Sound", pressed: false })).toBeInTheDocument();
+  });
 });

@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useRef } from "react";
+import { vibrate } from "../../shared/lib/haptics";
 import type { Emoji } from "./emojis";
 import { createInitialState, gameReducer, type GameState } from "./gameReducer";
 import { rollCommonEmoji, rollEmoji, rollPushesNeeded } from "./roll";
@@ -14,7 +15,7 @@ const init = (): GameState => {
   return createInitialState(save, rollPushesNeeded());
 };
 
-export const useGame = () => {
+export const useGame = ({ muted }: { muted: boolean }) => {
   const [state, dispatch] = useReducer(gameReducer, undefined, init);
   const playFart = useFartSound();
   const dropTimer = useRef<number>(undefined);
@@ -28,13 +29,14 @@ export const useGame = () => {
 
   const push = () => {
     if (state.phase === "dropping") return;
-    playFart();
+    if (!muted) playFart();
     dispatch({ type: "push" });
 
     if (state.pushes + 1 >= state.pushesNeeded) {
       const emoji = rollEmoji(state.selected);
       dropTimer.current = window.setTimeout(() => {
         dispatch({ type: "drop", emoji, pushesNeeded: rollPushesNeeded() });
+        vibrate([40, 30, 80]);
       }, DROP_DURATION_MS);
     }
   };
