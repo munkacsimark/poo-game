@@ -46,7 +46,12 @@ export const CollectionPanel = ({ entries, selected, lastDrop, onSelect }: Props
 
       <RarityFilter stats={rarityStats(entries)} active={filter} onChange={setFilter} />
 
-      <div className="-mx-1 overflow-y-auto overscroll-contain px-1 pt-1.5">
+      {/*
+        Scrolls on large screens. A scroll container clips its overflow, so it gets 0.75rem of
+        inner room (cancelled by negative margins) for hovered tiles, rings and badges. The
+        bottom padding doubles as a soft fade where the grid scrolls.
+      */}
+      <div className="-mx-3 -mb-3 overflow-y-auto overscroll-contain mask-b-from-[calc(100%-0.75rem)] px-3 pt-2.5 pb-3">
         {visible.length > 0 ? (
           <CollectionGrid
             entries={visible}

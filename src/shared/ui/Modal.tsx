@@ -71,7 +71,8 @@ export const Modal = ({ title, onClose, children, footer }: Props) => {
             <span aria-hidden>×</span>
           </button>
         </header>
-        <div className="overflow-y-auto px-5 pb-5">{children}</div>
+        {/* pt-2: room for the first row's focus ring inside the scroll container. */}
+        <div className="overflow-y-auto px-5 pt-2 pb-5">{children}</div>
         {footer && <div className="border-t border-white/10 px-5 py-4">{footer}</div>}
       </div>
     </dialog>

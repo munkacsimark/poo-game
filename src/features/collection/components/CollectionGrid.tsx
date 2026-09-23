@@ -14,7 +14,7 @@ type Props = {
 export const CollectionGrid = ({ entries, selected, lastDrop, onSelect }: Props) => (
   <ul
     aria-label="Your collection"
-    className="grid grid-cols-[repeat(auto-fill,minmax(3.5rem,1fr))] gap-2.5 p-1"
+    className="grid grid-cols-[repeat(auto-fill,minmax(3.5rem,1fr))] gap-2.5"
   >
     {entries.map(({ emoji, count, rarity }) => {
       const isNew = lastDrop?.isNew === true && lastDrop.emoji === emoji;
