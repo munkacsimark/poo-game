@@ -61,7 +61,7 @@ src/
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
     faq/                    footer FAQ link (#faq) + lazy FaqDialog with the drop-rate table
-    changelog/              footer VersionButton + lazy ChangelogDialog (parses CHANGELOG.md)
+    changelog/              footer VersionButton + lazy ChangelogDialog (parses virtual:changelog)
   shared/lib/               storage (never-throwing localStorage), haptics, random (crypto RNG)
   test/                     jsdom shims (setup.ts) and stubRandomWords
 e2e/                        Playwright specs
@@ -116,9 +116,12 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
 
 - Versions are semver git tags (`v0.1.0` is the original 2022 app). `package.json` holds the
   current version, and the app shows it in the footer.
-- `CHANGELOG.md` is generated from Conventional Commit subjects by git-cliff (`cliff.toml`), so
-  write subjects for players and maintainers: they become changelog lines. Don't edit the
-  changelog by hand; regenerate it.
+- The changelog is generated from Conventional Commit subjects by git-cliff (`cliff.toml`), so
+  write subjects for players and maintainers: they become changelog lines. The in-app changelog
+  is generated from git at build time (`scripts/changelogPlugin.ts`, `virtual:changelog`), so it
+  always matches the build; commits after the latest tag show as "Unreleased". `CHANGELOG.md`
+  is the committed copy, rewritten by `pnpm release` (or `pnpm changelog`); never edit it by
+  hand.
 - Release with `pnpm release` (defaults to a patch bump). It commits `chore(release): vX.Y.Z` and
   creates the tag. `git push --follow-tags` publishes it, and the Release workflow creates a
   GitHub Release from that version's changelog section.

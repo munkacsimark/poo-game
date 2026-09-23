@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 import pkg from "./package.json" with { type: "json" };
 import { imagetools } from "vite-imagetools";
 import { VitePWA } from "vite-plugin-pwa";
+import { changelogPlugin } from "./scripts/changelogPlugin";
 
 export default defineConfig({
   base: "/poo-game/",
@@ -15,6 +16,7 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
     imagetools(),
+    changelogPlugin(),
     VitePWA({
       registerType: "autoUpdate",
       pwaAssets: { config: true, overrideManifestIcons: true },

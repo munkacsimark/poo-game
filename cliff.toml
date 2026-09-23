@@ -1,5 +1,6 @@
 # git-cliff config: CHANGELOG.md is generated from the commit history (Conventional Commits).
-# The in-app changelog (src/features/changelog) parses this exact shape: keep "## [x.y.z] - date",
+# The in-app changelog is generated with this config at build time (scripts/changelogPlugin.ts)
+# and parses this exact shape: keep "## [x.y.z] - date",
 # "### Group" and "- item" lines if you change the template.
 # https://git-cliff.org/docs/configuration
 

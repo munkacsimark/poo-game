@@ -17,19 +17,26 @@ All notable changes to Poo Game. Generated from the commit history by
 - Seven themed rarity tiers with published rates
 - Bad-luck protection for Epic and Legendary drops
 - Publish drop rates and pity rules in Help
+- Show the app version in the footer and open the changelog from it
+- Multiple player profiles with a "Who's playing?" picker
+- Export and import profiles as tamper-resistant files
+- Replace the help button with a FAQ link in the footer
 
 ### Bug fixes
 
 - Lock the stage while the poo drops and the new emoji appears
+- **a11y:** Make the version and profile tiles' names contain their visible text
 
 ### Refactoring
 
 - Restructure into features and rewrite game state
 - Start the save format fresh at v1
+- Extract a shared Modal from the changelog dialog
 
 ### Documentation
 
 - Add agent workflow docs, architecture guide and new README
+- List profiles, luck protection, FAQ and changelog in the README
 
 ### Testing
 

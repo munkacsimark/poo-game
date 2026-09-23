@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import changelog from "../../../CHANGELOG.md?raw";
+import changelog from "virtual:changelog";
 import { parseChangelog } from "./changelog";
 
 const sample = `# Changelog
@@ -46,9 +46,10 @@ describe("parseChangelog", () => {
     ]);
   });
 
-  it("understands the generated CHANGELOG.md", () => {
+  it("understands the changelog generated from git", () => {
     const releases = parseChangelog(changelog);
-    expect(releases.at(-1)).toMatchObject({ version: "0.1.0" });
+    // v0.1.0 is the original app (48516f7): its section holds every commit up to that tag.
+    expect(releases.at(-1)).toMatchObject({ version: "0.1.0", date: "2023-08-03" });
     for (const { groups } of releases) {
       for (const { entries } of groups) expect(entries.length).toBeGreaterThan(0);
     }

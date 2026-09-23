@@ -1,4 +1,4 @@
-import changelog from "../../../CHANGELOG.md?raw";
+import changelog from "virtual:changelog";
 import { Modal } from "../../shared/ui/Modal";
 import { parseChangelog } from "./changelog";
 
