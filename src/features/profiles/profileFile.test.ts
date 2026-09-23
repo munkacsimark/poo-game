@@ -48,6 +48,14 @@ describe("profile files", () => {
     });
   });
 
+  it("still imports files exported by v0.1.1 (POO1)", async () => {
+    // Exported with the POO1 format as released. Never regenerate this: it guards
+    // compatibility with files players already have.
+    const file =
+      "POO1ZcvxPLcAzYABLMUA1ZA8Zw0VzOl9-8PH2GLuQQIac1cq7T9_f3MY094ypcuSmNSqjXgUAMrzSa8mXQQvYLSW3dce5a8R_v03IlJdp1Aw3LbV6cX8Wx_tJAdHpVLjQiuS-pSifiv8QDGSFrNj6TEYbUtj4JAFWvV-5ezKHkPfkc0XQH2Ipudc";
+    expect(await decodeProfile(file)).toEqual(profile);
+  });
+
   it("tolerates surrounding whitespace", async () => {
     expect(await decodeProfile(`\n ${await encodeProfile(profile)}\n`)).toEqual(profile);
   });

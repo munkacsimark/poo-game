@@ -1,3 +1,10 @@
+import {
+  fromBase64Url,
+  sameBytes,
+  scramble,
+  toBase64Url,
+  type Bytes,
+} from "../../shared/lib/obfuscation";
 import { isRecord, parseSaveData } from "../game/save";
 import { AVATARS, cleanName, isAvatar, type Avatar, type Profile } from "./profiles";
 
@@ -19,8 +26,6 @@ const TAG_BYTES = 16;
 /** Imports larger than this can't be genuine profiles. */
 const MAX_FILE_LENGTH = 64 * 1024;
 
-type Bytes = Uint8Array<ArrayBuffer>;
-
 const SECRET = new TextEncoder().encode("poo-game/profile-file/v1:💩🌈🦄✨");
 
 export type ProfileFileErrorReason = "format" | "tampered" | "invalid";
@@ -41,34 +46,10 @@ export class ProfileFileError extends Error {
 /** What a file carries; importing always creates a new profile with a fresh id. */
 export type ExportedProfile = Pick<Profile, "name" | "avatar" | "save">;
 
-// Base64url without padding, via the widely supported btoa/atob.
-const toBase64Url = (bytes: Bytes): string =>
-  btoa(Array.from(bytes, (byte) => String.fromCodePoint(byte)).join(""))
-    .replaceAll("+", "-")
-    .replaceAll("/", "_")
-    .replace(/=+$/, "");
-
-const fromBase64Url = (text: string): Bytes => {
-  const binary = atob(text.replaceAll("-", "+").replaceAll("_", "/"));
-  return Uint8Array.from(binary, (char) => char.codePointAt(0) ?? 0);
-};
-
 const transform = async (bytes: Bytes, stream: CompressionStream | DecompressionStream) => {
   const body = new Response(bytes).body;
   if (!body) throw new Error("Empty stream");
   return new Uint8Array(await new Response(body.pipeThrough(stream)).arrayBuffer());
-};
-
-/** XORs `bytes` with an xorshift32 key stream seeded from the secret and the salt. */
-const scramble = (bytes: Bytes, salt: Bytes): Bytes => {
-  let state = 0x9e_37_79_b9;
-  for (const byte of [...SECRET, ...salt]) state = Math.imul(state ^ byte, 0x01_00_01_93);
-  return bytes.map((byte) => {
-    state ^= state << 13;
-    state ^= state >>> 17;
-    state ^= state << 5;
-    return byte ^ (state & 0xff);
-  });
 };
 
 const sign = async (data: Bytes): Promise<Bytes> => {
@@ -82,13 +63,14 @@ const sign = async (data: Bytes): Promise<Bytes> => {
   return new Uint8Array(await crypto.subtle.sign("HMAC", key, data)).slice(0, TAG_BYTES);
 };
 
-const sameBytes = (a: Bytes, b: Bytes) =>
-  a.length === b.length && a.every((byte, index) => byte === b[index]);
-
 export const encodeProfile = async ({ name, avatar, save }: ExportedProfile): Promise<string> => {
   const json = new TextEncoder().encode(JSON.stringify({ name, avatar, save }));
   const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
-  const scrambled = scramble(await transform(json, new CompressionStream("deflate-raw")), salt);
+  const scrambled = scramble(
+    await transform(json, new CompressionStream("deflate-raw")),
+    SECRET,
+    salt,
+  );
   const tag = await sign(new Uint8Array([...salt, ...scrambled]));
   return PREFIX + toBase64Url(new Uint8Array([...salt, ...tag, ...scrambled]));
 };
@@ -125,7 +107,10 @@ export const decodeProfile = async (text: string): Promise<ExportedProfile> => {
 
   let value: unknown;
   try {
-    const json = await transform(scramble(scrambled, salt), new DecompressionStream("deflate-raw"));
+    const json = await transform(
+      scramble(scrambled, SECRET, salt),
+      new DecompressionStream("deflate-raw"),
+    );
     value = JSON.parse(new TextDecoder().decode(json));
   } catch {
     throw new ProfileFileError("invalid");
