@@ -98,7 +98,7 @@ test("keeps working offline once installed", async ({ page, context }) => {
 test("the version in the footer opens the changelog", async ({ page }) => {
   await page.goto("./");
 
-  await page.getByRole("button", { name: /^Version \d+\.\d+\.\d+/ }).click();
+  await page.getByRole("button", { name: /^What's new in v\d+\.\d+\.\d+$/ }).click();
   const dialog = page.getByRole("dialog", { name: "What's new" });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText("v0.1.0")).toBeVisible();

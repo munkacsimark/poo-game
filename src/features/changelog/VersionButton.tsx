@@ -14,10 +14,9 @@ export const VersionButton = () => {
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        aria-label={`Version ${import.meta.env.VITE_APP_VERSION}, what's new`}
         className="cursor-pointer rounded-full px-3 py-1 text-xs text-white/40 tabular-nums transition outline-none hover:text-white/80 focus-visible:ring-2 focus-visible:ring-white"
       >
-        v{import.meta.env.VITE_APP_VERSION}
+        <span className="sr-only">What's new in </span>v{import.meta.env.VITE_APP_VERSION}
       </button>
       {open && (
         <Suspense>

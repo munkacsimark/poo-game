@@ -6,7 +6,7 @@ test("exports a profile and imports it back as a new profile", async ({ page }) 
   await page.getByRole("button", { name: /^Switch profile/ }).click();
 
   await page.getByRole("button", { name: "Manage profiles" }).click();
-  await page.getByRole("button", { name: "Edit Player 1" }).click();
+  await page.getByRole("button", { name: /^Edit\s*Player\s*1\s*,/ }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("dialog").getByRole("button", { name: "Export" }).click();
   const download = await downloadPromise;
@@ -21,7 +21,7 @@ test("exports a profile and imports it back as a new profile", async ({ page }) 
     buffer: Buffer.from(file),
   });
   await expect(page.getByRole("status")).toHaveText("Imported Player 1.");
-  await expect(page.getByRole("button", { name: "Edit Player 1 2" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Edit\s*Player\s*1\s*2\s*,/ })).toBeVisible();
 
   // Any hand edit is rejected.
   const tampered = file.slice(0, -3) + (file.endsWith("AAA") ? "BBB" : "AAA");

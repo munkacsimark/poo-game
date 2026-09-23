@@ -72,7 +72,6 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
                 onClick={() =>
                   managing ? setEditing({ mode: "edit", profile }) : onPick(profile.id)
                 }
-                aria-label={managing ? `Edit ${profile.name}` : `Play as ${profile.name}`}
                 className={tileClass}
               >
                 <span aria-hidden className={avatarClass}>
@@ -83,9 +82,14 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
                     </span>
                   )}
                 </span>
-                <span className="max-w-full truncate font-semibold">{profile.name}</span>
+                <span className="max-w-full truncate font-semibold">
+                  <span className="sr-only">{managing ? "Edit " : "Play as "}</span>
+                  {profile.name}
+                </span>
                 <span className="-mt-2 text-xs text-white/50 tabular-nums">
+                  <span className="sr-only">, </span>
                   {found} / {TOTAL_EMOJIS}
+                  <span className="sr-only"> found</span>
                 </span>
               </button>
             </li>

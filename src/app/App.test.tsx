@@ -117,11 +117,11 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "Who's playing?" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Play as Bo" }));
+    await user.click(screen.getByRole("button", { name: /^Play\s*as\s*Bo\s*,/ }));
     expect(stage()).toHaveAccessibleName("Push the 🍟");
 
     await user.click(screen.getByRole("button", { name: "Switch profile (Bo)" }));
-    await user.click(screen.getByRole("button", { name: "Play as Ann" }));
+    await user.click(screen.getByRole("button", { name: /^Play\s*as\s*Ann\s*,/ }));
     expect(stage()).toHaveAccessibleName("Push the 🦄");
     expect(storedSave().clicks).toBe(5);
   });
@@ -136,17 +136,17 @@ describe("App", () => {
     await user.type(within(dialog).getByRole("textbox", { name: "Name" }), "Cy");
     await user.click(within(dialog).getByRole("radio", { name: "🤖" }));
     await user.click(within(dialog).getByRole("button", { name: "Add profile" }));
-    expect(screen.getByRole("button", { name: "Play as Cy" })).toHaveTextContent("🤖");
+    expect(screen.getByRole("button", { name: /^Play\s*as\s*Cy\s*,/ })).toHaveTextContent("🤖");
 
     await user.click(screen.getByRole("button", { name: "Manage profiles" }));
-    await user.click(screen.getByRole("button", { name: "Edit Cy" }));
+    await user.click(screen.getByRole("button", { name: /^Edit\s*Cy\s*,/ }));
     const editor = screen.getByRole("dialog", { name: "Edit profile" });
     await user.click(within(editor).getByRole("button", { name: "Delete profile" }));
     await user.click(within(editor).getByRole("button", { name: "Delete" }));
-    expect(screen.queryByRole("button", { name: "Edit Cy" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Edit\s*Cy\s*,/ })).not.toBeInTheDocument();
 
     // The last profile can't be deleted.
-    await user.click(screen.getByRole("button", { name: "Edit Player 1" }));
+    await user.click(screen.getByRole("button", { name: /^Edit\s*Player\s*1\s*,/ }));
     expect(screen.queryByRole("button", { name: "Delete profile" })).not.toBeInTheDocument();
   });
 });
