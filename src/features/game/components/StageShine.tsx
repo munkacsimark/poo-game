@@ -16,8 +16,8 @@ const sweepGradient =
   "bg-[linear-gradient(105deg,transparent_20%,color-mix(in_oklch,var(--rarity)_35%,white)_45%,white_50%,color-mix(in_oklch,var(--rarity)_35%,white)_55%,transparent_80%)]";
 
 /**
- * Light behind the stage emoji, over the photo: a soft sweep whenever the emoji changes, a
- * fainter glint every few seconds, and rarity-colored rays for Rare and up. Everything sits
+ * Light behind the stage emoji, over the photo: a soft sweep whenever the emoji changes and
+ * rarity-colored rays for Rare and up. Everything sits
  * below the emoji (negative z-index inside the stage's isolated stacking context) and is
  * screen-blended onto the photo, so it reads as light rather than a painted shape.
  */
@@ -30,9 +30,6 @@ export const StageShine = ({ emoji, rarity }: { emoji: Emoji; rarity: Rarity }) 
     <span
       key={emoji}
       className={`absolute inset-y-0 -left-full w-full animate-shine-sweep opacity-70 mix-blend-screen blur-md ${sweepGradient}`}
-    />
-    <span
-      className={`absolute inset-y-0 -left-full w-full animate-shine-idle opacity-30 mix-blend-screen blur-lg ${sweepGradient}`}
     />
   </span>
 );

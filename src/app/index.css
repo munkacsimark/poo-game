@@ -21,7 +21,6 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --animate-shine-sweep: shine-sweep 1.4s var(--ease-out-expo) 0.15s both;
-  --animate-shine-idle: shine-idle 7s ease-in-out 2.5s infinite;
   --animate-rays: rays 48s linear infinite;
   --animate-drop: drop 2s ease-in forwards;
   --animate-aurora: aurora 18s ease-in-out infinite alternate;
@@ -56,23 +55,12 @@
     }
   }
 
-  /* Stage light (StageShine): one sweep across the stage, left to right... */
+  /* Stage light (StageShine): one sweep across the stage, left to right. */
   @keyframes shine-sweep {
     from {
       translate: 0 0;
     }
     to {
-      translate: 200% 0;
-    }
-  }
-
-  /* ...and a faint glint that crosses in the first fifth of every cycle, then waits. */
-  @keyframes shine-idle {
-    0% {
-      translate: 0 0;
-    }
-    22%,
-    100% {
       translate: 200% 0;
     }
   }
