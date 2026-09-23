@@ -132,6 +132,24 @@ Everything lives in `localStorage` under one key and is validated on every load:
   backward compatible: bump `PROFILES_VERSION`, migrate each older version inside
   `parseProfiles()`, and cover it in `storage.test.ts`.
 
+### Profile files (import/export)
+
+"Manage profiles" → a profile → **Export** downloads `poo-game-<name>.poo`. **Import profile** on
+the picker adds a file as a new profile (fresh id, name made unique). `profileFile.ts`:
+
+```
+"POO1" + base64url( salt[4] ‖ HMAC-SHA-256(salt ‖ scrambled)[16] ‖ scrambled )
+scrambled = deflate-raw(JSON { name, avatar, save }) XOR xorshift32 stream(secret, salt)
+```
+
+- The file is unreadable, looks different on every export (random salt), and any edit fails the
+  HMAC check: "This profile file was modified or is damaged."
+- It's **obfuscation, not security**: the key ships in the bundle, so a determined player could
+  forge a file. That's acceptable for a local, single-player game.
+- Decoded data goes through the same `parseSaveData` validation as storage.
+- The `POO1` prefix versions the format. A new format gets a new prefix, and `decodeProfile`
+  must keep accepting every older one.
+
 ## Styling system
 
 - `src/app/index.css` holds the Tailwind entry point and `@theme` tokens: fonts, the rarity

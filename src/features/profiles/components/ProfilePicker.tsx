@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { downloadText } from "../../../shared/lib/download";
 import { TOTAL_EMOJIS } from "../../collection/collection";
 import { MAX_PROFILES, type Avatar, type Profile, type ProfilesAction } from "../profiles";
+import { decodeProfile, encodeProfile, ProfileFileError, profileFileName } from "../profileFile";
 import { createProfile } from "../storage";
 import { ProfileEditor } from "./ProfileEditor";
 
@@ -11,9 +13,12 @@ type Props = {
 };
 
 type Editing = { mode: "add" } | { mode: "edit"; profile: Profile } | null;
+type Notice = { kind: "success" | "error"; text: string } | null;
 
 const tileClass =
   "group flex w-28 cursor-pointer flex-col items-center gap-2 rounded-2xl p-1 outline-none focus-visible:ring-2 focus-visible:ring-white sm:w-32";
+const outlineButtonClass =
+  "cursor-pointer rounded-full border border-white/30 px-5 py-2 text-sm font-semibold tracking-wide text-white/80 uppercase transition outline-none enabled:hover:border-white enabled:hover:text-white focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-40";
 const avatarClass =
   "relative grid aspect-square w-full place-items-center rounded-3xl glass font-emoji text-5xl transition group-hover:scale-105 group-hover:bg-white/15 sm:text-6xl";
 
@@ -21,6 +26,26 @@ const avatarClass =
 export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
   const [managing, setManaging] = useState(false);
   const [editing, setEditing] = useState<Editing>(null);
+  const [notice, setNotice] = useState<Notice>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const full = profiles.length >= MAX_PROFILES;
+
+  const importFile = async (file: File) => {
+    try {
+      const { name, avatar, save } = await decodeProfile(await file.text());
+      dispatch({ type: "add", profile: { ...createProfile(name, avatar), save } });
+      setNotice({ kind: "success", text: `Imported ${name}.` });
+    } catch (error) {
+      const text =
+        error instanceof ProfileFileError ? error.message : "That file couldn't be read.";
+      setNotice({ kind: "error", text });
+    }
+  };
+
+  const exportProfile = async (profile: Profile) => {
+    downloadText(profileFileName(profile.name), await encodeProfile(profile));
+    setNotice({ kind: "success", text: `Exported ${profile.name}.` });
+  };
 
   const submit = ({ name, avatar }: { name: string; avatar: Avatar }) => {
     if (editing?.mode === "edit") {
@@ -66,7 +91,7 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
             </li>
           );
         })}
-        {profiles.length < MAX_PROFILES && (
+        {!full && (
           <li>
             <button type="button" onClick={() => setEditing({ mode: "add" })} className={tileClass}>
               <span
@@ -81,13 +106,42 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
         )}
       </ul>
 
-      <button
-        type="button"
-        onClick={() => setManaging((value) => !value)}
-        className="cursor-pointer rounded-full border border-white/30 px-5 py-2 text-sm font-semibold tracking-wide text-white/80 uppercase transition outline-none hover:border-white hover:text-white focus-visible:ring-2 focus-visible:ring-white"
+      <div className="flex flex-wrap justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => setManaging((value) => !value)}
+          className={outlineButtonClass}
+        >
+          {managing ? "Done" : "Manage profiles"}
+        </button>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={full}
+          title={full ? `Up to ${MAX_PROFILES} profiles; delete one to import another.` : undefined}
+          className={outlineButtonClass}
+        >
+          Import profile
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".poo,text/plain,application/octet-stream"
+          aria-label="Profile file to import"
+          className="hidden"
+          onChange={(event) => {
+            const file = event.currentTarget.files?.[0];
+            event.currentTarget.value = "";
+            if (file) void importFile(file);
+          }}
+        />
+      </div>
+      <p
+        role={notice?.kind === "error" ? "alert" : "status"}
+        className={`-mt-6 min-h-5 text-center text-sm ${notice?.kind === "error" ? "text-red-300" : "text-white/70"}`}
       >
-        {managing ? "Done" : "Manage profiles"}
-      </button>
+        {notice?.text}
+      </p>
 
       {editing && (
         <ProfileEditor
@@ -97,6 +151,9 @@ export const ProfilePicker = ({ profiles, dispatch, onPick }: Props) => {
           onDelete={() => {
             if (editing.mode === "edit") dispatch({ type: "remove", id: editing.profile.id });
             setEditing(null);
+          }}
+          onExport={() => {
+            if (editing.mode === "edit") void exportProfile(editing.profile);
           }}
           onClose={() => setEditing(null)}
         />

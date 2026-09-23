@@ -8,6 +8,7 @@ type Props = {
   canDelete: boolean;
   onSubmit: (values: { name: string; avatar: Avatar }) => void;
   onDelete: () => void;
+  onExport: () => void;
   onClose: () => void;
 };
 
@@ -15,7 +16,14 @@ const buttonClass =
   "cursor-pointer rounded-full px-4 py-2 text-sm font-semibold transition outline-none focus-visible:ring-2 focus-visible:ring-white";
 
 /** Create or edit a profile: name, avatar, and (when editing) deletion. */
-export const ProfileEditor = ({ profile, canDelete, onSubmit, onDelete, onClose }: Props) => {
+export const ProfileEditor = ({
+  profile,
+  canDelete,
+  onSubmit,
+  onDelete,
+  onExport,
+  onClose,
+}: Props) => {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const formId = profile ? `edit-${profile.id}` : "new-profile";
 
@@ -46,17 +54,26 @@ export const ProfileEditor = ({ profile, canDelete, onSubmit, onDelete, onClose 
           </div>
         ) : (
           <div className="flex flex-wrap items-center justify-between gap-3">
-            {profile && canDelete ? (
-              <button
-                type="button"
-                onClick={() => setConfirmingDelete(true)}
-                className={`${buttonClass} text-red-300 hover:bg-red-500/15`}
-              >
-                Delete profile
-              </button>
-            ) : (
-              <span />
-            )}
+            <div className="flex gap-1">
+              {profile && canDelete && (
+                <button
+                  type="button"
+                  onClick={() => setConfirmingDelete(true)}
+                  className={`${buttonClass} text-red-300 hover:bg-red-500/15`}
+                >
+                  Delete profile
+                </button>
+              )}
+              {profile && (
+                <button
+                  type="button"
+                  onClick={onExport}
+                  className={`${buttonClass} text-white/80 hover:bg-white/10`}
+                >
+                  Export
+                </button>
+              )}
+            </div>
             <button
               type="submit"
               form={formId}
