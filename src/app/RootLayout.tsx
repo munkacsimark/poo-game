@@ -3,6 +3,10 @@ import { VersionLink } from "../features/changelog/VersionLink";
 import { ProfilesProvider } from "../features/profiles/ProfilesProvider";
 import { Aurora } from "./Aurora";
 
+/** Footer pills: readable on the aurora and a full 44 px touch target. */
+const footerLinkClass =
+  "inline-flex min-h-11 items-center rounded-full glass px-4 text-sm font-medium text-white/75 transition duration-300 ease-spring outline-none hover:-translate-y-0.5 hover:bg-white/15 hover:text-white focus-visible:ring-2 focus-visible:ring-white active:scale-95";
+
 /** Shell shared by every route: background, safe-area layout and the footer links. */
 export const RootLayout = () => (
   <ProfilesProvider>
@@ -13,17 +17,11 @@ export const RootLayout = () => (
         <div className="flex flex-1 flex-col gap-4 [view-transition-name:screen]">
           <Outlet />
         </div>
-        <footer className="flex items-center justify-center gap-1">
-          <Link
-            to="/faq"
-            className="rounded-full px-3 py-1 text-xs text-white/40 transition outline-none hover:text-white/80 focus-visible:ring-2 focus-visible:ring-white"
-          >
+        <footer className="flex items-center justify-center gap-2 pt-2 pb-1">
+          <Link to="/faq" className={footerLinkClass}>
             FAQ
           </Link>
-          <span aria-hidden className="text-xs text-white/20">
-            ·
-          </span>
-          <VersionLink />
+          <VersionLink className={footerLinkClass} />
         </footer>
       </div>
     </div>
