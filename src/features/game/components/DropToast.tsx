@@ -13,7 +13,7 @@ export const DropToast = ({ drop }: { drop: Drop | null }) => {
         // Keyed by drop id so the animation replays for every drop.
         <span
           key={drop.id}
-          className={`${RARITY_CLASS[rarity]} flex animate-toast items-center gap-2 rounded-full border border-(--rarity)/50 bg-ink/70 px-4 py-1.5 text-sm font-bold shadow-[0_0_24px_-4px_var(--rarity)] backdrop-blur-md`}
+          className={`${RARITY_CLASS[rarity]} flex animate-toast items-center gap-2 rounded-pill border border-(--rarity)/50 bg-canvas/70 px-4 py-1.5 text-sm font-bold shadow-[0_0_24px_-4px_var(--rarity)] backdrop-blur-md`}
         >
           <span className="font-emoji">{drop.emoji}</span>
           <span className="text-(--rarity)">{drop.isNew ? `New ${label}!` : `+1 ${label}`}</span>

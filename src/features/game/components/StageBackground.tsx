@@ -34,27 +34,30 @@ export const StageBackground = ({ emoji }: { emoji: Emoji }) => {
 
   return (
     <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
-      <div ref={layerRef} className="absolute inset-0">
-        <div
-          className="absolute inset-0 scale-110 bg-cover bg-center blur-xl"
-          style={{ backgroundImage: `url(${placeholder})` }}
-        />
-        <picture>
-          <source type="image/avif" srcSet={avifSrcset} sizes={SIZES} />
-          <source type="image/webp" srcSet={webpSrcset} sizes={SIZES} />
-          <img
-            src={fallback}
-            alt=""
-            decoding="async"
-            fetchPriority="high"
-            onLoad={() => setLoaded(true)}
-            className={`absolute inset-0 size-full object-cover transition-[opacity,filter] duration-700 ease-out ${loaded ? "opacity-100 blur-none" : "opacity-0 blur-lg"}`}
+      {/* The theme can grade the photo (e.g. green monochrome in Terminal); see themes.css. */}
+      <div className="absolute inset-0 [filter:var(--stage-filter)]">
+        <div ref={layerRef} className="absolute inset-0">
+          <div
+            className="absolute inset-0 scale-110 bg-cover bg-center blur-xl"
+            style={{ backgroundImage: `url(${placeholder})` }}
           />
-        </picture>
+          <picture>
+            <source type="image/avif" srcSet={avifSrcset} sizes={SIZES} />
+            <source type="image/webp" srcSet={webpSrcset} sizes={SIZES} />
+            <img
+              src={fallback}
+              alt=""
+              decoding="async"
+              fetchPriority="high"
+              onLoad={() => setLoaded(true)}
+              className={`absolute inset-0 size-full object-cover transition-[opacity,filter] duration-700 ease-out ${loaded ? "opacity-100 blur-none" : "opacity-0 blur-lg"}`}
+            />
+          </picture>
+        </div>
       </div>
       {/* Keeps the emoji readable and tints the photo with the rarity color. */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,color-mix(in_oklch,var(--rarity)_35%,transparent),transparent_60%)]" />
-      <div className="absolute inset-0 bg-linear-to-b from-ink/20 via-transparent to-ink/55" />
+      <div className="absolute inset-0 bg-linear-to-b from-canvas/20 via-transparent to-canvas/55" />
     </div>
   );
 };

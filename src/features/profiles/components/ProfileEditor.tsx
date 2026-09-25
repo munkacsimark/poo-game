@@ -13,7 +13,7 @@ type Props = {
 };
 
 const buttonClass =
-  "cursor-pointer rounded-full px-4 py-2 text-sm font-semibold transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-white active:scale-95";
+  "cursor-pointer rounded-pill px-4 py-2 text-sm font-semibold transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95";
 
 /** Create or edit a profile: name, avatar, and (when editing) deletion. */
 export const ProfileEditor = ({
@@ -39,14 +39,14 @@ export const ProfileEditor = ({
               <button
                 type="button"
                 onClick={() => setConfirmingDelete(false)}
-                className={`${buttonClass} glass hover:bg-white/15`}
+                className={`${buttonClass} glass hover:bg-fg/15`}
               >
                 Keep
               </button>
               <button
                 type="button"
                 onClick={onDelete}
-                className={`${buttonClass} bg-red-500/80 text-white hover:bg-red-500`}
+                className={`${buttonClass} bg-red-700 text-white hover:bg-red-800`}
               >
                 Delete
               </button>
@@ -59,7 +59,7 @@ export const ProfileEditor = ({
                 <button
                   type="button"
                   onClick={() => setConfirmingDelete(true)}
-                  className={`${buttonClass} text-red-300 hover:bg-red-500/15`}
+                  className={`${buttonClass} text-danger hover:bg-danger/15`}
                 >
                   Delete profile
                 </button>
@@ -68,7 +68,7 @@ export const ProfileEditor = ({
                 <button
                   type="button"
                   onClick={onExport}
-                  className={`${buttonClass} text-white/80 hover:bg-white/10`}
+                  className={`${buttonClass} text-fg/80 hover:bg-fg/10`}
                 >
                   Export
                 </button>
@@ -77,7 +77,7 @@ export const ProfileEditor = ({
             <button
               type="submit"
               form={formId}
-              className={`${buttonClass} bg-white text-ink hover:bg-white/85`}
+              className={`${buttonClass} bg-accent text-on-accent hover:bg-accent/85`}
             >
               {profile ? "Save" : "Add profile"}
             </button>
@@ -107,7 +107,7 @@ export const ProfileEditor = ({
             maxLength={MAX_NAME_LENGTH}
             defaultValue={profile?.name}
             autoComplete="off"
-            className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-base font-normal outline-none focus-visible:border-white/40 focus-visible:ring-2 focus-visible:ring-white/40"
+            className="rounded-xl border border-fg/15 bg-fg/5 px-3 py-2 text-base font-normal outline-none focus-visible:border-fg/40 focus-visible:ring-2 focus-visible:ring-accent/40"
           />
         </label>
         <fieldset className="m-0 border-0 p-0">
@@ -116,7 +116,7 @@ export const ProfileEditor = ({
             {AVATARS.map((avatar, index) => (
               <label
                 key={avatar}
-                className="grid aspect-square cursor-pointer place-items-center rounded-xl border border-white/10 bg-white/5 font-emoji text-2xl transition duration-300 ease-spring hover:scale-105 hover:bg-white/10 active:scale-90 has-checked:scale-110 has-checked:border-white has-checked:bg-white/20 has-checked:shadow-[0_0_20px_-4px_white] has-focus-visible:ring-2 has-focus-visible:ring-white"
+                className="grid aspect-square cursor-pointer place-items-center rounded-xl border border-fg/10 bg-fg/5 font-emoji text-2xl transition duration-300 ease-spring hover:scale-105 hover:bg-fg/10 active:scale-90 has-checked:scale-110 has-checked:border-accent has-checked:bg-fg/20 has-checked:shadow-[0_0_20px_-4px_var(--color-accent)] has-focus-visible:ring-2 has-focus-visible:ring-accent"
               >
                 <input
                   type="radio"

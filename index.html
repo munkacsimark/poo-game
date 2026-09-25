@@ -1,11 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="aurora" data-mode="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b0814" />
     <meta name="description" content="Push the emoji, collect them all." />
     <title>💩 Poo Game</title>
+    <script>
+      // Applies the saved theme before the first paint so it never flashes the default one.
+      // ThemeProvider (src/features/theme) validates the value and takes over once React runs.
+      try {
+        const saved = JSON.parse(localStorage.getItem("poo-game:appearance")) || {};
+        const root = document.documentElement;
+        if (typeof saved.theme === "string") root.dataset.theme = saved.theme;
+        const dark =
+          saved.mode === "light" || saved.mode === "dark"
+            ? saved.mode === "dark"
+            : matchMedia("(prefers-color-scheme: dark)").matches;
+        root.dataset.mode = dark ? "dark" : "light";
+      } catch {}
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

@@ -62,7 +62,7 @@ export const PooButton = ({ emoji, dropping, locked, lastDrop, showHint, onPush 
           // aria-disabled instead of disabled so keyboard focus stays on the button.
           aria-disabled={locked}
           aria-label={`Push the ${emoji}`}
-          className="group relative isolate grid aspect-[1/0.85] w-[min(100%,26rem,56dvh)] cursor-pointer touch-manipulation place-items-center overflow-hidden rounded-[2.5rem] glass outline-none select-none focus-visible:ring-4 focus-visible:ring-(--rarity)/60 aria-disabled:cursor-default sm:aspect-square lg:w-[min(100%,32rem,70dvh)]"
+          className="group relative isolate grid aspect-[1/0.85] w-[min(100%,26rem,56dvh)] cursor-pointer touch-manipulation place-items-center overflow-hidden rounded-stage glass outline-none select-none focus-visible:ring-4 focus-visible:ring-(--rarity)/60 aria-disabled:cursor-default sm:aspect-square lg:w-[min(100%,32rem,70dvh)]"
         >
           <StageBackground emoji={emoji} />
           <StageShine emoji={emoji} rarity={rarity} />
@@ -102,7 +102,7 @@ export const PooButton = ({ emoji, dropping, locked, lastDrop, showHint, onPush 
         {lastDrop && <DropBurst key={lastDrop.id} drop={lastDrop} />}
         <span
           aria-hidden
-          className={`pointer-events-none absolute bottom-5 text-sm text-white/60 transition-opacity duration-500 ${showHint && !locked ? "opacity-100" : "opacity-0"}`}
+          className={`pointer-events-none absolute bottom-5 rounded-pill glass px-3 py-1 text-sm text-fg/80 transition-opacity duration-500 ${showHint && !locked ? "opacity-100" : "opacity-0"}`}
         >
           Keep tapping to make it poop!
         </span>

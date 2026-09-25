@@ -17,9 +17,9 @@ const Question = ({
 }) => (
   <AccordionItem
     defaultOpen={open}
-    summary={<span className="font-semibold text-white">{title}</span>}
+    summary={<span className="font-semibold text-fg">{title}</span>}
   >
-    <div className="flex flex-col gap-2 text-sm text-white/80">{children}</div>
+    <div className="flex flex-col gap-2 text-sm text-fg/80">{children}</div>
   </AccordionItem>
 );
 
@@ -35,7 +35,7 @@ export const FaqDialog = () => (
 
     <Question title="What are the drop rates?">
       <table className="w-full text-xs tabular-nums">
-        <thead className="text-white/50">
+        <thead className="text-muted">
           <tr>
             <th scope="col" className="pb-1 text-left font-medium">
               Rarity
@@ -53,13 +53,13 @@ export const FaqDialog = () => (
         </thead>
         <tbody>
           {dropRates().map(({ id, label, chance, oneIn, emojis }) => (
-            <tr key={id} className={`${RARITY_CLASS[id]} border-t border-white/10`}>
+            <tr key={id} className={`${RARITY_CLASS[id]} border-t border-fg/10`}>
               <th scope="row" className="py-1 text-left font-medium text-(--rarity)">
                 {label}
               </th>
               <td className="py-1 text-right">{chance}</td>
-              <td className="py-1 text-right text-white/60">{oneIn}</td>
-              <td className="py-1 text-right text-white/60">{emojis}</td>
+              <td className="py-1 text-right text-muted">{oneIn}</td>
+              <td className="py-1 text-right text-muted">{emojis}</td>
             </tr>
           ))}
         </tbody>

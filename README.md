@@ -12,7 +12,8 @@ as an app that runs offline.
 - Collection progress per rarity with filtering and "new" badges
 - Bad-luck protection (Epic or better every 30 drops, Legendary or better every 150)
 - Up to 5 player profiles per device, with export/import to move progress between devices
-- In-app FAQ and changelog; sound toggle, haptics on Android, reduced-motion support
+- Four themes (Aurora, Retro Web, Terminal, Luxe), each in light and dark or following the
+  system; in-app FAQ and changelog; sound toggle, haptics on Android, reduced-motion support
 - Installable PWA with offline play; progress is saved locally
 
 ## Development

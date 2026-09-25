@@ -17,7 +17,7 @@ export const RarityFilter = ({ stats, active, onChange }: Props) => (
         type="button"
         aria-pressed={active === id}
         onClick={() => onChange(active === id ? null : id)}
-        className={`${RARITY_CLASS[id]} group flex cursor-pointer items-center gap-1.5 rounded-full border border-(--rarity)/30 bg-(--rarity)/10 px-2.5 py-1 text-xs transition duration-300 ease-spring outline-none hover:bg-(--rarity)/20 focus-visible:ring-2 focus-visible:ring-white active:scale-90 aria-pressed:border-(--rarity) aria-pressed:bg-(--rarity)/25 ${collected === total ? "shadow-[0_0_12px_-2px_var(--rarity)]" : ""}`}
+        className={`${RARITY_CLASS[id]} group flex cursor-pointer items-center gap-1.5 rounded-pill border border-(--rarity)/30 bg-(--rarity)/10 px-2.5 py-1 text-xs transition duration-300 ease-spring outline-none hover:bg-(--rarity)/20 focus-visible:ring-2 focus-visible:ring-accent active:scale-90 aria-pressed:border-(--rarity) aria-pressed:bg-(--rarity)/25 ${collected === total ? "shadow-[0_0_12px_-2px_var(--rarity)]" : ""}`}
       >
         <span
           aria-hidden
@@ -27,7 +27,7 @@ export const RarityFilter = ({ stats, active, onChange }: Props) => (
         <span className="sr-only"> </span>
         <span className="font-semibold tabular-nums">
           {collected}
-          <span className="text-white/40">
+          <span className="text-muted">
             <span aria-hidden>/</span>
             <span className="sr-only">{" of "}</span>
             {total}

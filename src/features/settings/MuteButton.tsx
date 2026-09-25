@@ -9,7 +9,7 @@ export const MuteButton = ({ muted, onToggle }: Props) => (
     onClick={onToggle}
     aria-label="Sound"
     aria-pressed={!muted}
-    className="group grid size-10 cursor-pointer place-items-center rounded-full glass transition duration-300 ease-spring outline-none hover:-translate-y-0.5 hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white active:scale-90"
+    className="group grid size-10 cursor-pointer place-items-center rounded-pill glass transition duration-300 ease-spring outline-none hover:-translate-y-0.5 hover:bg-fg/15 focus-visible:ring-2 focus-visible:ring-accent active:scale-90"
   >
     <svg
       viewBox="0 0 24 24"

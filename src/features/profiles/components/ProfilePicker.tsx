@@ -8,11 +8,11 @@ import { useProfiles } from "../ProfilesProvider";
 type Notice = { kind: "success" | "error"; text: string } | null;
 
 const tileClass =
-  "group flex w-28 cursor-pointer flex-col items-center gap-2 rounded-2xl p-1 transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-white active:scale-95 sm:w-32";
+  "group flex w-28 cursor-pointer flex-col items-center gap-2 rounded-2xl p-1 transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95 sm:w-32";
 const outlineButtonClass =
-  "cursor-pointer rounded-full border border-white/30 px-5 py-2 text-sm font-semibold tracking-wide text-white/80 uppercase transition duration-300 ease-spring outline-none not-disabled:active:scale-95 hover:not-disabled:border-white hover:not-disabled:text-white focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-40";
+  "cursor-pointer rounded-pill border border-fg/30 px-5 py-2 text-sm font-semibold tracking-wide text-fg/80 uppercase transition duration-300 ease-spring outline-none not-disabled:active:scale-95 hover:not-disabled:border-fg hover:not-disabled:text-fg focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-40";
 const avatarClass =
-  "relative grid aspect-square w-full place-items-center rounded-3xl glass font-emoji text-5xl transition duration-300 ease-spring group-hover:-translate-y-1 group-hover:scale-105 group-hover:bg-white/15 group-hover:shadow-[0_16px_40px_-12px_oklch(0.6_0.2_300/0.6)] sm:text-6xl";
+  "relative grid aspect-square w-full place-items-center rounded-3xl glass font-emoji text-5xl transition duration-300 ease-spring group-hover:-translate-y-1 group-hover:scale-105 group-hover:bg-fg/15 group-hover:shadow-[0_16px_40px_-12px_color-mix(in_oklch,var(--color-accent)_45%,transparent)] sm:text-6xl";
 
 type TileActionProps = {
   managing: boolean;
@@ -90,7 +90,7 @@ export const ProfilePicker = () => {
                     {profile.avatar}
                   </span>
                   {managing && (
-                    <span className="absolute inset-0 grid animate-rise-in place-items-center rounded-3xl bg-ink/55 font-display text-2xl">
+                    <span className="absolute inset-0 grid animate-rise-in place-items-center rounded-3xl bg-canvas/55 font-display text-2xl">
                       ✎
                     </span>
                   )}
@@ -99,7 +99,7 @@ export const ProfilePicker = () => {
                   <span className="sr-only">{managing ? "Edit " : "Play as "}</span>
                   {profile.name}
                 </span>
-                <span className="-mt-2 text-xs text-white/50 tabular-nums">
+                <span className="-mt-2 text-xs text-muted tabular-nums">
                   <span className="sr-only">, </span>
                   {found} / {TOTAL_EMOJIS}
                   <span className="sr-only"> found</span>
@@ -113,11 +113,11 @@ export const ProfilePicker = () => {
             <Link to="/profiles/new" className={tileClass}>
               <span
                 aria-hidden
-                className={`${avatarClass} border-dashed font-display text-4xl text-white/60`}
+                className={`${avatarClass} border-dashed font-display text-4xl text-muted`}
               >
                 +
               </span>
-              <span className="font-semibold text-white/80">Add profile</span>
+              <span className="font-semibold text-fg/80">Add profile</span>
             </Link>
           </li>
         )}
@@ -151,7 +151,7 @@ export const ProfilePicker = () => {
       </div>
       <p
         role={notice?.kind === "error" ? "alert" : "status"}
-        className={`-mt-6 min-h-5 text-center text-sm ${notice?.kind === "error" ? "text-red-300" : "text-white/70"}`}
+        className={`-mt-6 min-h-5 text-center text-sm ${notice?.kind === "error" ? "text-danger" : "text-fg/70"}`}
       >
         {notice?.text}
       </p>

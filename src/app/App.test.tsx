@@ -166,6 +166,48 @@ describe("App", () => {
     expect(screen.queryByRole("button", { name: "Delete profile" })).not.toBeInTheDocument();
   });
 
+  describe("theme", () => {
+    const root = document.documentElement;
+
+    afterEach(() => {
+      delete root.dataset.theme;
+      delete root.dataset.mode;
+    });
+
+    it("follows the system color mode by default", async () => {
+      await renderApp();
+      // The jsdom matchMedia shim reports no dark preference.
+      expect(root.dataset).toMatchObject({ theme: "aurora", mode: "light" });
+    });
+
+    it("switches theme and mode from the Theme dialog and remembers them", async () => {
+      const user = userEvent.setup();
+      await renderApp();
+
+      await user.click(screen.getByRole("link", { name: "Theme" }));
+      const dialog = await screen.findByRole("dialog", { name: "Theme" });
+      await user.click(within(dialog).getByRole("radio", { name: /^Terminal/ }));
+      await user.click(within(dialog).getByRole("radio", { name: "Dark" }));
+
+      expect(within(dialog).getByRole("radio", { name: /^Terminal/ })).toBeChecked();
+      expect(root.dataset).toMatchObject({ theme: "hacker", mode: "dark" });
+      expect(JSON.parse(localStorage.getItem("poo-game:appearance") ?? "null")).toEqual({
+        theme: "hacker",
+        mode: "dark",
+      });
+    });
+
+    it("restores the saved theme and ignores unknown values", async () => {
+      localStorage.setItem("poo-game:appearance", JSON.stringify({ theme: "luxury", mode: "x" }));
+      await renderApp("/theme");
+
+      const dialog = await screen.findByRole("dialog", { name: "Theme" });
+      expect(within(dialog).getByRole("radio", { name: /^Luxe/ })).toBeChecked();
+      expect(within(dialog).getByRole("radio", { name: "System" })).toBeChecked();
+      expect(root.dataset).toMatchObject({ theme: "luxury", mode: "light" });
+    });
+  });
+
   describe("routing", () => {
     it("opens the FAQ over the game and closes it with Back", async () => {
       const user = userEvent.setup();

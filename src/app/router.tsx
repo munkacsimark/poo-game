@@ -18,7 +18,7 @@ import { RootLayout } from "./RootLayout";
  * Routes (under the /poo-game/ base path):
  *
  *   /                           the game (asks who's playing first on multi-profile devices)
- *   /faq, /changelog            dialogs over the game
+ *   /faq, /changelog, /theme    dialogs over the game
  *   /profiles                   "Who's playing?"
  *   /profiles/new               "Add profile" dialog over the picker
  *   /profiles/manage            "Manage profiles"
@@ -55,6 +55,15 @@ const changelogRoute = createRoute({
   ),
 });
 
+const themeRoute = createRoute({
+  getParentRoute: () => gameRoute,
+  path: "theme",
+  component: lazyRouteComponent(
+    () => import("../features/theme/components/ThemeDialog"),
+    "ThemeDialog",
+  ),
+});
+
 const profilesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "profiles",
@@ -82,7 +91,7 @@ const editProfileRoute = createRoute({
 });
 
 const routeTree = rootRoute.addChildren([
-  gameRoute.addChildren([playRoute, faqRoute, changelogRoute]),
+  gameRoute.addChildren([playRoute, faqRoute, changelogRoute, themeRoute]),
   profilesRoute.addChildren([
     profilesIndexRoute,
     newProfileRoute,

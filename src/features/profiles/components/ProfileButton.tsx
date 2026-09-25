@@ -7,7 +7,7 @@ export const ProfileButton = ({ profile }: { profile: Profile }) => (
     to="/profiles"
     aria-label={`Switch profile (${profile.name})`}
     title={profile.name}
-    className="group grid size-10 place-items-center rounded-full glass font-emoji text-xl transition duration-300 ease-spring outline-none hover:-translate-y-0.5 hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white active:scale-90"
+    className="group grid size-10 place-items-center rounded-pill glass font-emoji text-xl transition duration-300 ease-spring outline-none hover:-translate-y-0.5 hover:bg-fg/15 focus-visible:ring-2 focus-visible:ring-accent active:scale-90"
   >
     <span
       aria-hidden

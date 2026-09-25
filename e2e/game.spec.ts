@@ -124,3 +124,26 @@ test("the version in the footer opens the changelog", async ({ page }) => {
   await expect(dialog).toBeHidden();
   await expect(page).toHaveURL(/\/poo-game\/$/);
 });
+
+test("the theme picker restyles the app and the choice survives a reload", async ({ page }) => {
+  await page.goto("./");
+  await page.getByRole("link", { name: "Theme" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "Theme" });
+  await expect(page).toHaveURL(/\/poo-game\/theme$/);
+  await dialog.getByText("Terminal").click();
+  await dialog.getByText("Light", { exact: true }).click();
+
+  const html = page.locator("html");
+  await expect(html).toHaveAttribute("data-theme", "hacker");
+  await expect(html).toHaveAttribute("data-mode", "light");
+
+  await page.keyboard.press("Escape");
+  await page.reload();
+  await expect(html).toHaveAttribute("data-theme", "hacker");
+  await expect(html).toHaveAttribute("data-mode", "light");
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBe(0);
+});

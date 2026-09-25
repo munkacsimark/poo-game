@@ -7,10 +7,10 @@ export const NotFound = () => (
       🧻
     </p>
     <h1 className="text-2xl font-extrabold tracking-tight">Nothing to see here</h1>
-    <p className="text-white/60">This page doesn't exist.</p>
+    <p className="text-muted">This page doesn't exist.</p>
     <Link
       to="/"
-      className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-ink transition duration-300 ease-spring outline-none hover:bg-white/85 focus-visible:ring-2 focus-visible:ring-white active:scale-95"
+      className="rounded-pill bg-accent px-5 py-2 text-sm font-semibold text-on-accent transition duration-300 ease-spring outline-none hover:bg-accent/85 focus-visible:ring-2 focus-visible:ring-accent active:scale-95"
     >
       Back to the game
     </Link>

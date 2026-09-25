@@ -50,15 +50,15 @@ stateDiagram-v2
 
 TanStack Router (code-based, fully typed; `src/app/router.tsx`) under the `/poo-game/` base:
 
-| Path                          | Screen                                                      |
-| ----------------------------- | ----------------------------------------------------------- |
-| `/`                           | the game; redirects to `/profiles` until someone has picked |
-| `/faq`, `/changelog`          | dialogs over the game (lazy-loaded)                         |
-| `/profiles`                   | "Who's playing?"                                            |
-| `/profiles/new`               | "Add profile" dialog over the picker                        |
-| `/profiles/manage`            | "Manage profiles"                                           |
-| `/profiles/manage/$profileId` | "Edit profile" dialog (unknown ids go back to manage mode)  |
-| anything else                 | `NotFound`                                                  |
+| Path                           | Screen                                                      |
+| ------------------------------ | ----------------------------------------------------------- |
+| `/`                            | the game; redirects to `/profiles` until someone has picked |
+| `/faq`, `/changelog`, `/theme` | dialogs over the game (lazy-loaded)                         |
+| `/profiles`                    | "Who's playing?"                                            |
+| `/profiles/new`                | "Add profile" dialog over the picker                        |
+| `/profiles/manage`             | "Manage profiles"                                           |
+| `/profiles/manage/$profileId`  | "Edit profile" dialog (unknown ids go back to manage mode)  |
+| anything else                  | `NotFound`                                                  |
 
 - Dialogs are child routes rendered through an `<Outlet />` over their parent screen. They close
   with `useCloseRoute(fallback)`: history back when opened in the app, otherwise a replace to the
@@ -129,7 +129,8 @@ button returns to it, and "Manage profiles" edits, adds or deletes them (never t
 Everything lives in `localStorage` under one key, **sealed** so players can't casually read or
 edit it (`shared/lib/sealedStorage.ts`): `"PGS1" + base64url(salt ‖ checksum ‖ XOR-scrambled
 JSON)`. Like profile files, this deters casual cheating; it isn't security. The sound toggle
-(`"poo-game:muted"`) is a plain boolean for the device.
+(`"poo-game:muted"`) is a plain boolean for the device, and so is the look:
+`"poo-game:appearance"` holds `{ theme, mode }` (see [Themes](#themes)).
 
 ### Data format (schema v2)
 
@@ -248,13 +249,35 @@ first visit. Images are cached at runtime (cache-first), so each device stores o
 photo size it actually loaded. `pwa-assets.config.ts` generates favicon, Apple touch, maskable and manifest icons
 from `public/icon.svg` at build time.
 
+## Themes
+
+`features/theme` lets players pick a **theme** (Aurora, Retro Web, Terminal, Luxe; `THEMES` in
+`themes.ts`) and a **color mode** (system, light or dark) on the `/theme` dialog. The choice is
+per device and never part of the save.
+
+- `ThemeProvider` (under `RootLayout`) resolves `system` with `prefers-color-scheme`, sets
+  `data-theme` and `data-mode="light|dark"` on `<html>`, updates `<meta name="theme-color">`
+  and persists the choice. Changes cross-fade with a view transition.
+- An inline script in `index.html` sets the same attributes before the first paint, so a
+  reload never flashes the default theme.
+- All styling goes through semantic tokens (`fg`, `muted`, `canvas`, `accent`, `on-accent`,
+  `danger`, `rounded-pill`, `rounded-stage`, the `glass` surface), whose values each theme and
+  mode sets in `features/theme/themes.css`. Rarity colors get deeper in light mode so labels
+  keep their contrast.
+- Any element with `data-theme` and `data-mode` renders its subtree in that theme: the picker's
+  previews rely on this, so every theme block sets every variable.
+
+To add a theme: add it to `THEMES` and `CANVAS_COLOR`, then add a `[data-theme="…"]` block
+(dark values) and a `[data-theme="…"][data-mode="light"]` block to `themes.css`. Check every
+screen in both modes for WCAG AA contrast.
+
 ## Testing strategy
 
-| Layer      | Where                       | What                                                                                         |
-| ---------- | --------------------------- | -------------------------------------------------------------------------------------------- |
-| Unit       | `src/features/**/*.test.ts` | rolls (with fixed RNG), reducer, save/migration, sorting                                     |
-| Component  | `src/app/App.test.tsx`      | first run, deterministic drop (fake timers), select, filter, mute                            |
-| End-to-end | `e2e/*.spec.ts`             | production build: drop + persistence, filter, FAQ, changelog, profiles, no overflow, offline |
+| Layer      | Where                       | What                                                                                                |
+| ---------- | --------------------------- | --------------------------------------------------------------------------------------------------- |
+| Unit       | `src/features/**/*.test.ts` | rolls (with fixed RNG), reducer, save/migration, sorting                                            |
+| Component  | `src/app/App.test.tsx`      | first run, deterministic drop (fake timers), select, filter, mute                                   |
+| End-to-end | `e2e/*.spec.ts`             | production build: drop + persistence, filter, FAQ, changelog, profiles, theme, no overflow, offline |
 
 To make a drop deterministic, make `crypto.getRandomValues` fill zeros (`stubRandomWords(0)` in `src/test`): one push is then enough, and
 the drop is always 💩 (Galaxy Opal).

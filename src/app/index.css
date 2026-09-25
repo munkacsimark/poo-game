@@ -1,11 +1,30 @@
 @import "tailwindcss";
 @import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/playfair-display";
+@import "../features/theme/themes.css";
 
 @theme {
   --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-display);
   --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 
-  --color-ink: oklch(0.14 0.03 290);
+  /*
+   * Semantic colors and shapes. These are the Aurora (dark) defaults; every theme and color mode
+   * redefines them in features/theme/themes.css. Use these, never raw white/black, so that all
+   * themes work: text-fg, text-muted (secondary text that still passes contrast), bg-canvas,
+   * bg-accent + text-on-accent (primary buttons, focus rings), text-danger.
+   */
+  --color-canvas: oklch(0.14 0.03 290);
+  --color-fg: oklch(1 0 0);
+  --color-muted: oklch(0.74 0.02 290);
+  --color-accent: oklch(1 0 0);
+  --color-on-accent: oklch(0.14 0.03 290);
+  --color-danger: oklch(0.81 0.11 20);
+
+  /* Pill-shaped controls and the stage; square in some themes. */
+  --radius-pill: calc(infinity * 1px);
+  --radius-stage: 2.5rem;
 
   /* Rarity palette. Galaxy Opal additionally gets an iridescent treatment. */
   --color-common: oklch(0.86 0.02 260);
@@ -203,14 +222,21 @@
   initial-value: 0deg;
 }
 
-/* Frosted glass surface. */
+/* The theme's panel surface: frosted glass in Aurora, bevelled, glowing or gilded in others. */
 @utility glass {
-  background-color: oklch(1 0 0 / 0.06);
-  border: 1px solid oklch(1 0 0 / 0.12);
-  box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 0.08),
-    0 8px 32px -8px oklch(0 0 0 / 0.5);
-  backdrop-filter: blur(20px) saturate(1.4);
+  background-color: var(--surface-bg);
+  border-width: var(--surface-border-width);
+  border-style: solid;
+  border-color: var(--surface-border);
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: var(--surface-filter);
+}
+
+/* The theme's page background (color plus its pattern), for the body and theme previews. */
+@utility theme-canvas {
+  background-color: var(--color-canvas);
+  background-image: var(--canvas-image);
+  background-size: var(--canvas-size);
 }
 
 /* Sets `--rarity` for descendants; see rarityVar in features/game/rarity.ts. */
@@ -339,7 +365,7 @@ html:active-view-transition-type(screen) {
 @utility opal-border {
   border-color: transparent;
   background:
-    linear-gradient(var(--color-ink), var(--color-ink)) padding-box,
+    linear-gradient(var(--color-canvas), var(--color-canvas)) padding-box,
     conic-gradient(
         from var(--opal-angle),
         oklch(0.8 0.2 340),
@@ -353,14 +379,17 @@ html:active-view-transition-type(screen) {
 
 @layer base {
   :root {
-    color-scheme: dark;
     /* Lets `height: auto` transitions work (accordion). */
     interpolate-size: allow-keywords;
     -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    @apply bg-ink font-display text-white antialiased;
+    @apply theme-canvas font-display text-fg antialiased;
+  }
+
+  :where(h1, h2, h3) {
+    font-family: var(--font-heading);
   }
 
   @media (prefers-reduced-motion: reduce) {

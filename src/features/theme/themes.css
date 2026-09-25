@@ -1,0 +1,347 @@
+/*
+ * Themes and color modes. <html> carries data-theme (see THEMES in themes.ts) and data-mode
+ * ("light" | "dark", already resolved from the system preference). Any element can carry both
+ * to render a subtree in another theme: the theme picker's previews do that. So every theme
+ * block sets every variable, and dark values live in the theme's base block with light
+ * overrides next to it.
+ *
+ * Variables beyond the @theme tokens in app/index.css:
+ *   --font-heading            h1–h3 (base rule in index.css)
+ *   --surface-*               the `glass` utility
+ *   --canvas-image/-size      the page pattern (`theme-canvas` utility)
+ *   --aurora-1..3/-opacity    the drifting blobs behind everything (app/Aurora.tsx)
+ *   --overlay-image           a fixed layer over the page, e.g. scanlines (app/Aurora.tsx)
+ *   --stage-filter            CSS filter on the stage photo
+ *
+ * Text colors must pass WCAG AA on the canvas and on surfaces: Lighthouse accessibility stays
+ * at 100 in every theme and mode.
+ */
+
+@layer base {
+  /* Rarity colors: bright on dark backgrounds, deeper on light ones so labels stay readable. */
+  [data-mode="dark"] {
+    color-scheme: dark;
+    --color-common: oklch(0.86 0.02 260);
+    --color-uncommon: oklch(0.8 0.18 155);
+    --color-rare: oklch(0.72 0.16 250);
+    --color-epic: oklch(0.72 0.22 310);
+    --color-legendary: oklch(0.85 0.17 85);
+    --color-mythic: oklch(0.7 0.2 28);
+    --color-galaxy-opal: oklch(0.78 0.2 340);
+  }
+
+  [data-mode="light"] {
+    color-scheme: light;
+    --color-common: oklch(0.47 0.03 260);
+    --color-uncommon: oklch(0.5 0.14 155);
+    --color-rare: oklch(0.5 0.17 250);
+    --color-epic: oklch(0.5 0.22 310);
+    --color-legendary: oklch(0.52 0.12 70);
+    --color-mythic: oklch(0.52 0.19 30);
+    --color-galaxy-opal: oklch(0.52 0.21 340);
+  }
+
+  /* ─── Aurora: the original frosted glass over drifting color ─────────────────────────── */
+
+  [data-theme="aurora"] {
+    --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-display);
+    --radius-pill: calc(infinity * 1px);
+    --radius-stage: 2.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
+
+    --color-canvas: oklch(0.14 0.03 290);
+    --color-fg: oklch(1 0 0);
+    --color-muted: oklch(0.74 0.02 290);
+    --color-accent: oklch(1 0 0);
+    --color-on-accent: oklch(0.14 0.03 290);
+    --color-danger: oklch(0.81 0.11 20);
+
+    --surface-bg: oklch(1 0 0 / 0.06);
+    --surface-border: oklch(1 0 0 / 0.12);
+    --surface-border-width: 1px;
+    --surface-shadow: inset 0 1px 0 oklch(1 0 0 / 0.08), 0 8px 32px -8px oklch(0 0 0 / 0.5);
+    --surface-filter: blur(20px) saturate(1.4);
+
+    --canvas-image: none;
+    --canvas-size: auto;
+    --overlay-image: none;
+    --aurora-opacity: 1;
+    --aurora-1: oklch(0.5 0.25 300 / 0.55);
+    --aurora-2: oklch(0.55 0.2 200 / 0.4);
+    --aurora-3: oklch(0.6 0.24 350 / 0.3);
+    --stage-filter: none;
+  }
+
+  [data-theme="aurora"][data-mode="light"] {
+    --color-canvas: #f6f3fa;
+    --color-fg: oklch(0.22 0.05 290);
+    --color-muted: oklch(0.45 0.04 290);
+    --color-accent: oklch(0.22 0.05 290);
+    --color-on-accent: #f6f3fa;
+    --color-danger: oklch(0.5 0.19 25);
+
+    --surface-bg: oklch(1 0 0 / 0.55);
+    --surface-border: oklch(0.22 0.05 290 / 0.1);
+    --surface-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.8), 0 8px 32px -12px oklch(0.35 0.08 290 / 0.25);
+
+    --aurora-1: oklch(0.8 0.14 300 / 0.55);
+    --aurora-2: oklch(0.86 0.1 200 / 0.5);
+    --aurora-3: oklch(0.85 0.12 350 / 0.45);
+  }
+
+  /* ─── Retro Web: a 1997 homepage, bevelled Windows chrome and Comic Sans ────────────── */
+
+  [data-theme="retro"] {
+    --font-display: "Times New Roman", Times, "Liberation Serif", "Noto Serif", serif;
+    --font-heading: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
+    --radius-pill: 0;
+    --radius-stage: 0;
+    --radius-xl: 0;
+    --radius-2xl: 0;
+    --radius-3xl: 0;
+
+    --color-canvas: #000018;
+    --color-fg: #ffffff;
+    --color-muted: #c0c0c0;
+    --color-accent: #ffff00;
+    --color-on-accent: #000000;
+    --color-danger: #ff7070;
+
+    --surface-bg: #000080;
+    --surface-border: #6b6bff #000040 #000040 #6b6bff;
+    --surface-border-width: 3px;
+    --surface-shadow: 4px 4px 0 #000000;
+    --surface-filter: none;
+
+    /* A tiled starfield, the classic personal homepage wallpaper. */
+    --canvas-image:
+      radial-gradient(1px 1px at 12px 18px, #ffffff 50%, transparent 51%),
+      radial-gradient(1px 1px at 58px 44px, #ffff99 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 30px 70px, #ffffff 50%, transparent 51%),
+      radial-gradient(1px 1px at 84px 90px, #99ccff 50%, transparent 51%),
+      radial-gradient(1px 1px at 100px 20px, #ffffff 50%, transparent 51%);
+    --canvas-size: 120px 110px;
+    --overlay-image: none;
+    --aurora-opacity: 0;
+    --stage-filter: saturate(1.6) contrast(1.15);
+  }
+
+  [data-theme="retro"][data-mode="light"] {
+    --color-canvas: #c0c0c0;
+    --color-fg: #000000;
+    --color-muted: #3a3a3a;
+    --color-accent: #000080;
+    --color-on-accent: #ffffff;
+    --color-danger: #a00000;
+
+    --color-common: oklch(0.38 0.03 260);
+    --color-uncommon: oklch(0.4 0.13 155);
+    --color-rare: oklch(0.4 0.17 260);
+    --color-epic: oklch(0.4 0.2 310);
+    --color-legendary: oklch(0.42 0.1 70);
+    --color-mythic: oklch(0.42 0.17 30);
+    --color-galaxy-opal: oklch(0.42 0.2 340);
+
+    --surface-bg: #d4d0c8;
+    --surface-border: #ffffff #808080 #808080 #ffffff;
+    --surface-border-width: 2px;
+    --surface-shadow: 1px 1px 0 #000000;
+
+    /* Dithered gray, like a 256-color desktop. */
+    --canvas-image: repeating-conic-gradient(#c0c0c0 0 25%, #b8b8b8 0 50%);
+    --canvas-size: 4px 4px;
+  }
+
+  [data-theme="retro"] h1 {
+    color: var(--color-accent);
+    text-shadow: 2px 2px 0 #ff00ff;
+  }
+
+  [data-theme="retro"][data-mode="light"] h1 {
+    text-shadow: 2px 2px 0 #ffffff;
+  }
+
+  /* Dialog headers become title bars. */
+  [data-theme="retro"] [data-slot="title-bar"] {
+    --color-fg: #ffffff;
+    background: linear-gradient(90deg, #000080, #1084d0);
+    border-color: transparent;
+  }
+
+  [data-theme="retro"] footer::after {
+    content: "Best viewed in Netscape Navigator at 800 × 600" / "";
+    flex-basis: 100%;
+    text-align: center;
+    font-size: 0.625rem;
+    font-style: italic;
+    color: var(--color-muted);
+  }
+
+  [data-theme="retro"] footer {
+    flex-wrap: wrap;
+  }
+
+  /* ─── Terminal: green phosphor, scanlines and a blinking cursor ──────────────────────── */
+
+  [data-theme="hacker"] {
+    --font-display: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --font-heading: var(--font-display);
+    --radius-pill: 0;
+    --radius-stage: 0;
+    --radius-xl: 0;
+    --radius-2xl: 0;
+    --radius-3xl: 0;
+
+    --color-canvas: #020a04;
+    --color-fg: #3dff7a;
+    --color-muted: #27b85a;
+    --color-accent: #3dff7a;
+    --color-on-accent: #02140a;
+    --color-danger: #ff6b61;
+
+    --surface-bg: rgb(61 255 122 / 0.04);
+    --surface-border: rgb(61 255 122 / 0.4);
+    --surface-border-width: 1px;
+    --surface-shadow:
+      0 0 24px -8px rgb(61 255 122 / 0.45), inset 0 0 24px -12px rgb(61 255 122 / 0.3);
+    --surface-filter: blur(2px);
+
+    --canvas-image:
+      linear-gradient(rgb(61 255 122 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(61 255 122 / 0.05) 1px, transparent 1px);
+    --canvas-size: 24px 24px;
+    --overlay-image: repeating-linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.2) 0 1px,
+      transparent 1px 3px
+    );
+    --aurora-opacity: 0.8;
+    --aurora-1: oklch(0.55 0.2 150 / 0.25);
+    --aurora-2: oklch(0.45 0.14 170 / 0.18);
+    --aurora-3: transparent;
+    --stage-filter: grayscale(1) sepia(1) hue-rotate(75deg) saturate(3) brightness(0.55)
+      contrast(1.2);
+  }
+
+  [data-theme="hacker"][data-mode="light"] {
+    --color-canvas: #eef5ec;
+    --color-fg: #0b3d1c;
+    --color-muted: #2c6a3f;
+    --color-accent: #0b6b2e;
+    --color-on-accent: #eef5ec;
+    --color-danger: #b3261e;
+
+    --surface-bg: rgb(255 255 255 / 0.6);
+    --surface-border: rgb(11 61 28 / 0.4);
+    --surface-shadow: 3px 3px 0 rgb(11 61 28 / 0.15);
+    --surface-filter: none;
+
+    --canvas-image:
+      linear-gradient(rgb(11 61 28 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(11 61 28 / 0.06) 1px, transparent 1px);
+    --overlay-image: repeating-linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.035) 0 1px,
+      transparent 1px 3px
+    );
+    --aurora-opacity: 0;
+    --stage-filter: grayscale(1) sepia(0.6) hue-rotate(75deg) saturate(1.6) brightness(1.05);
+  }
+
+  [data-theme="hacker"][data-mode="dark"] {
+    text-shadow: 0 0 6px rgb(61 255 122 / 0.35);
+  }
+
+  /* A blinking block cursor after headings, and a prompt before dialog titles. */
+  [data-theme="hacker"] h1::after {
+    content: "▋" / "";
+    margin-inline-start: 0.15em;
+    animation: cursor-blink 1s steps(1) infinite;
+  }
+
+  [data-theme="hacker"] h2 {
+    white-space: nowrap;
+  }
+
+  [data-theme="hacker"] h2::before {
+    content: "> " / "";
+    color: var(--color-muted);
+  }
+
+  /* ─── Luxe: black and ivory, gold leaf and a Didone serif ───────────────────────────── */
+
+  [data-theme="luxury"] {
+    --font-display: Optima, Candara, "Noto Sans", "Segoe UI", ui-sans-serif, sans-serif;
+    --font-heading: "Playfair Display Variable", "Didot", Georgia, serif;
+    --radius-pill: 0.25rem;
+    --radius-stage: 1rem;
+    --radius-xl: 0.375rem;
+    --radius-2xl: 0.5rem;
+    --radius-3xl: 0.75rem;
+
+    --color-canvas: #0d0b09;
+    --color-fg: #f3ead8;
+    --color-muted: #b5a88f;
+    --color-accent: #d8b45a;
+    --color-on-accent: #1a1408;
+    --color-danger: #f28b82;
+
+    --surface-bg: rgb(216 180 90 / 0.05);
+    --surface-border: rgb(216 180 90 / 0.35);
+    --surface-border-width: 1px;
+    --surface-shadow: inset 0 1px 0 rgb(255 230 170 / 0.12), 0 20px 50px -20px rgb(0 0 0 / 0.8);
+    --surface-filter: blur(16px);
+
+    --canvas-image:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgb(216 180 90 / 0.14), transparent),
+      repeating-linear-gradient(45deg, rgb(216 180 90 / 0.035) 0 1px, transparent 1px 14px);
+    --canvas-size: auto;
+    --overlay-image: none;
+    --aurora-opacity: 0.7;
+    --aurora-1: oklch(0.7 0.12 85 / 0.18);
+    --aurora-2: oklch(0.5 0.08 60 / 0.16);
+    --aurora-3: oklch(0.6 0.1 40 / 0.1);
+    --stage-filter: sepia(0.4) saturate(0.85) contrast(1.05) brightness(0.9);
+  }
+
+  [data-theme="luxury"][data-mode="light"] {
+    --color-canvas: #f7f2e8;
+    --color-fg: #1d1a14;
+    --color-muted: #5c5343;
+    --color-accent: #775a12;
+    --color-on-accent: #fbf7ee;
+    --color-danger: #a52a1f;
+
+    --surface-bg: rgb(255 255 255 / 0.65);
+    --surface-border: rgb(119 90 18 / 0.3);
+    --surface-shadow: inset 0 1px 0 #ffffff, 0 20px 40px -24px rgb(60 45 10 / 0.35);
+
+    --canvas-image:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgb(216 180 90 / 0.18), transparent),
+      repeating-linear-gradient(45deg, rgb(119 90 18 / 0.04) 0 1px, transparent 1px 14px);
+    --aurora-1: oklch(0.85 0.08 85 / 0.35);
+    --aurora-2: oklch(0.9 0.05 60 / 0.3);
+    --aurora-3: oklch(0.88 0.06 40 / 0.2);
+    --stage-filter: sepia(0.3) saturate(0.9) contrast(1.02);
+  }
+
+  [data-theme="luxury"] h1 {
+    color: var(--color-accent);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  [data-theme="luxury"] [data-slot="title-bar"] {
+    border-color: var(--surface-border);
+  }
+}
+
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}

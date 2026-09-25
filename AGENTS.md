@@ -64,6 +64,7 @@ src/
     collection/             sorting/stats helpers + CollectionPanel, CollectionGrid, RarityFilter
     settings/               mute toggle (useMuted, MuteButton)
     faq/                    /faq route: lazy FaqDialog with the drop-rate table
+    theme/                  themes + light/dark: THEMES, ThemeProvider, themes.css, /theme dialog
     changelog/              footer VersionLink + /changelog route (lazy, parses virtual:changelog)
   shared/lib/               storage (never-throwing localStorage), haptics, random (crypto RNG)
   test/                     jsdom shims (setup.ts) and stubRandomWords
@@ -87,7 +88,11 @@ See [`docs/architecture.md`](docs/architecture.md) for data flow, the state mach
   unless a profiler proves a need. Effects are only for syncing with external systems.
 - **Rarity is data.** Add or rebalance tiers in `RARITIES`/`EMOJIS_BY_RARITY`, never with
   per-rarity `if` chains. Every emoji must appear exactly once (a unit test enforces this).
-- **Styling:** Tailwind utilities in JSX. Rarity colors flow through the `--rarity` CSS variable
+- **Styling:** Tailwind utilities in JSX, using the semantic tokens so every theme works:
+  `text-fg`, `text-muted` (secondary text; never `text-fg/50`, it fails contrast in light mode),
+  `bg-canvas`, `bg-accent text-on-accent` (primary actions), `ring-accent`, `text-danger`,
+  `rounded-pill` for pill-shaped controls and `glass` for panels. Never use raw `white`/`black`.
+  Theme values live in `features/theme/themes.css`. Rarity colors flow through the `--rarity` CSS variable
   set by `RARITY_CLASS[rarity]`; use `text-(--rarity)`, `bg-(--rarity)/10`, etc. Never build class
   names from strings at runtime (Tailwind can't see them). New tokens/keyframes go in the
   `@theme` block of `src/app/index.css`.

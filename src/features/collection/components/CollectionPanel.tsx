@@ -31,16 +31,16 @@ export const CollectionPanel = ({ entries, selected, lastDrop, onSelect }: Props
           <h2 id="collection-heading" className="text-xl font-bold">
             Collection
           </h2>
-          <p className="text-sm text-white/60 tabular-nums">
-            <span className="font-semibold text-white">{entries.length}</span> / {TOTAL_EMOJIS}{" "}
-            found · {numberFormat.format(drops)} {drops === 1 ? "drop" : "drops"}
+          <p className="text-sm text-muted tabular-nums">
+            <span className="font-semibold text-fg">{entries.length}</span> / {TOTAL_EMOJIS} found ·{" "}
+            {numberFormat.format(drops)} {drops === 1 ? "drop" : "drops"}
           </p>
         </div>
         <progress
           aria-label="Collection progress"
           value={entries.length}
           max={TOTAL_EMOJIS}
-          className="h-1.5 w-full appearance-none overflow-hidden rounded-full bg-white/10 [&::-moz-progress-bar]:animate-sheen [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-epic [&::-moz-progress-bar]:to-legendary [&::-moz-progress-bar]:bg-size-[200%_100%] [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:animate-sheen [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-epic [&::-webkit-progress-value]:via-galaxy-opal [&::-webkit-progress-value]:to-legendary [&::-webkit-progress-value]:bg-size-[200%_100%] [&::-webkit-progress-value]:transition-[width] [&::-webkit-progress-value]:duration-700"
+          className="h-1.5 w-full appearance-none overflow-hidden rounded-pill bg-fg/10 [&::-moz-progress-bar]:animate-sheen [&::-moz-progress-bar]:bg-linear-to-r [&::-moz-progress-bar]:from-epic [&::-moz-progress-bar]:to-legendary [&::-moz-progress-bar]:bg-size-[200%_100%] [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:animate-sheen [&::-webkit-progress-value]:rounded-pill [&::-webkit-progress-value]:bg-linear-to-r [&::-webkit-progress-value]:from-epic [&::-webkit-progress-value]:via-galaxy-opal [&::-webkit-progress-value]:to-legendary [&::-webkit-progress-value]:bg-size-[200%_100%] [&::-webkit-progress-value]:transition-[width] [&::-webkit-progress-value]:duration-700"
         />
       </header>
 
@@ -62,7 +62,7 @@ export const CollectionPanel = ({ entries, selected, lastDrop, onSelect }: Props
             onSelect={onSelect}
           />
         ) : (
-          <p key={filter} className="animate-rise-in py-6 text-center text-sm text-white/50">
+          <p key={filter} className="animate-rise-in py-6 text-center text-sm text-muted">
             No {filterLabel} emojis yet. Keep pushing!
           </p>
         )}

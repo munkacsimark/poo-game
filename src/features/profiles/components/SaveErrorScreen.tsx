@@ -17,7 +17,7 @@ const MESSAGES: Record<ReadError, { title: string; body: string }> = {
 };
 
 const buttonClass =
-  "inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-5 text-sm font-semibold transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-white active:scale-95";
+  "inline-flex min-h-11 cursor-pointer items-center justify-center rounded-pill px-5 text-sm font-semibold transition duration-300 ease-spring outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95";
 
 /** Shown instead of the app when the saved data can't be used; nothing is overwritten meanwhile. */
 export const SaveErrorScreen = ({
@@ -42,19 +42,19 @@ export const SaveErrorScreen = ({
         <h1 id="save-error-title" className="text-xl font-extrabold tracking-tight sm:text-2xl">
           {title}
         </h1>
-        <p className="text-sm text-white/70">{body}</p>
+        <p className="text-sm text-fg/70">{body}</p>
 
         {reason === "newer" && (
           <button
             type="button"
             onClick={() => location.reload()}
-            className={`${buttonClass} bg-white text-ink hover:bg-white/85`}
+            className={`${buttonClass} bg-accent text-on-accent hover:bg-accent/85`}
           >
             Reload
           </button>
         )}
 
-        <div className="mt-2 w-full border-t border-white/10 pt-4">
+        <div className="mt-2 w-full border-t border-fg/10 pt-4">
           {confirming ? (
             <div className="flex animate-rise-in flex-col items-center gap-3">
               <p className="text-sm">
@@ -65,14 +65,14 @@ export const SaveErrorScreen = ({
                 <button
                   type="button"
                   onClick={() => setConfirming(false)}
-                  className={`${buttonClass} glass hover:bg-white/15`}
+                  className={`${buttonClass} glass hover:bg-fg/15`}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={onRemove}
-                  className={`${buttonClass} bg-red-500/85 text-white hover:bg-red-500`}
+                  className={`${buttonClass} bg-red-700 text-white hover:bg-red-800`}
                 >
                   Remove and start over
                 </button>
@@ -82,7 +82,7 @@ export const SaveErrorScreen = ({
             <button
               type="button"
               onClick={() => setConfirming(true)}
-              className={`${buttonClass} text-red-300 hover:bg-red-500/15`}
+              className={`${buttonClass} text-danger hover:bg-danger/15`}
             >
               Remove saved data
             </button>
