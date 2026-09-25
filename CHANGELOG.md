@@ -3,6 +3,12 @@
 All notable changes to Poo Game. Generated from the commit history by
 [git-cliff](https://git-cliff.org); release with `pnpm release`.
 
+## [0.1.3] - 2026-09-25
+
+### Features
+
+- **ui:** Theme picker with Retro Web, Terminal and Luxe themes, light and dark
+
 ## [0.1.2] - 2026-09-23
 
 ### Features
